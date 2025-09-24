@@ -1,0 +1,65 @@
+<!--login.wxml-->
+<view class="login-container">
+  <!-- 背景图片区域 -->
+  <view class="background-section">
+    <image 
+      class="background-image" 
+      src="{{backgroundImage}}" 
+      mode="aspectFill"
+      wx:if="{{backgroundImage}}"
+    ></image>
+  </view>
+
+  <!-- 登录表单区域 -->
+  <view class="form-section">
+    <view class="form-card">
+      <!-- 登录标题 -->
+      <view class="form-title">
+        <text class="title-text">登录</text>
+      </view>
+      
+      <!-- 表单内容 -->
+      <view class="form-content">
+        <!-- 姓名输入 -->
+        <view class="form-item">
+          <text class="form-label">姓名</text>
+          <input 
+            class="form-input name-input" 
+            type="text" 
+            placeholder="请输入姓名"
+            value="{{formData.name}}"
+            bindinput="onNameInput"
+          />
+        </view>
+        
+        <!-- 证件类型选择 -->
+        <view class="form-item">
+          <text class="form-label">证件类型</text>
+          <view class="form-select" bindtap="onIdTypeSelect">
+            <text class="select-text {{formData.idType ? '' : 'placeholder'}}">
+              {{formData.idType || '请选择证件类型'}}
+            </text>
+            <text class="select-arrow">></text>
+          </view>
+        </view>
+        
+        <!-- 证件号输入 -->
+        <view class="form-item">
+          <text class="form-label">证件号</text>
+          <input 
+            class="form-input id-input" 
+            type="text" 
+            placeholder="请输入证件号"
+            value="{{formData.idNumber}}"
+            bindinput="onIdNumberInput"
+          />
+        </view>
+        
+        <!-- 登录按钮 -->
+        <view class="login-button" bindtap="onLogin">
+          <text class="button-text">立即登录</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

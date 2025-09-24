@@ -14,7 +14,7 @@
     "useStaticServer": false,
     "useLanDebug": false,
     "showES6CompileOption": false,
-    "compileHotReLoad": true,
+    "compileHotReLoad": false,
     "bigPackageSizeSupport": false,
     "checkInvalidKey": true,
     "ignoreDevUnusedFiles": true
@@ -23,11 +23,18 @@
     "miniprogram": {
       "list": [
         {
-          "name": "log",
-          "pathName": "pages/logs/logs",
+          "name": "pages/login/login",
+          "pathName": "pages/login/login",
           "query": "",
           "scene": null,
           "launchMode": "default"
+        },
+        {
+          "name": "log",
+          "pathName": "pages/logs/logs",
+          "query": "",
+          "launchMode": "default",
+          "scene": null
         }
       ]
     }
