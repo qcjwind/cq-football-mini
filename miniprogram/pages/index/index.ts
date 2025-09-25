@@ -56,9 +56,8 @@ Page({
   // 查看赛事详情
   onMatchDetail(e: any) {
     const matchId = e.currentTarget.dataset.id
-    wx.showToast({
-      title: `查看赛事 ${matchId} 详情`,
-      icon: 'none'
+    wx.navigateTo({
+      url: `/pages/match-detail/match-detail?id=${matchId}`
     })
   },
   

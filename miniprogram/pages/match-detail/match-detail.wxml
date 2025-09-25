@@ -1,0 +1,77 @@
+<!-- match-detail.wxml -->
+<view class="page">
+  <!-- 赛事信息卡片 -->
+  <view class="match-info-card">
+    <view class="match-image">
+      <image class="match-bg" src="../../assets/home_back.png" mode="aspectFill"></image>
+    </view>
+    <view class="match-details">
+      <view class="match-title-section">
+        <text class="match-title">{{matchInfo.title}}</text>
+      </view>
+      <view class="match-time-section">
+        <text class="match-time">{{matchInfo.time}}</text>
+        <text class="match-disclaimer">以现场为准</text>
+      </view>
+    </view>
+  </view>
+  <!-- 场馆和政策信息 -->
+  <view class="venue-policy-section-container">
+    <view class="venue-policy-section">
+      <view class="price-info">
+        <text class="match-price">¥{{matchInfo.price}}起</text>
+      </view>
+      <view class="venue-info">
+        <view class="venue-name">
+          <text class="venue-text">{{matchInfo.venue}}</text>
+          <image class="arrow-icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQuNSA5TDcuNSA2TDQuNSAzIiBzdHJva2U9IiM5OTk5OTkiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPg==" mode="aspectFit"></image>
+        </view>
+        <text class="venue-address">{{matchInfo.address}}</text>
+      </view>
+      <view class="policy-list">
+        <view class="policy-item">
+          <image class="policy-icon" src="../../assets/no_quit.png" mode="aspectFill"></image>
+          <text class="policy-text">不支持退</text>
+        </view>
+        <view class="policy-item">
+          <image class="policy-icon" src="../../assets/shiming.png" mode="aspectFill"></image>
+          <text class="policy-text">实名制购票和入场</text>
+        </view>
+        <view class="policy-item">
+          <image class="policy-icon" src="../../assets/dianzi.png" mode="aspectFill"></image>
+          <text class="policy-text">电子票</text>
+        </view>
+      </view>
+    </view>
+  </view>
+  <!-- 赛事介绍 -->
+  <view class="event-intro-section">
+    <text class="intro-title">赛事介绍</text>
+    <view class="intro-content">
+      <view class="intro-image">
+        <image class="intro-bg" src="../../assets/home_back.png" mode="aspectFill"></image>
+        <view class="stats-overlay">
+          <text class="stats-title">关键数据统计</text>
+          <view class="stats-item">
+            <text class="stats-label">控球率: 58% VS 42%</text>
+            <view class="stats-bar">
+              <view class="stats-bar-orange" style="width: 58%"></view>
+              <view class="stats-bar-gray" style="width: 42%"></view>
+            </view>
+          </view>
+          <view class="stats-item">
+            <text class="stats-label">射门次数: 12 VS 8</text>
+            <view class="stats-bar">
+              <view class="stats-bar-orange" style="width: 60%"></view>
+              <view class="stats-bar-gray" style="width: 40%"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+  <!-- 底部购票按钮 -->
+  <view class="bottom-ticket-bar">
+    <button style="width: 100%;" class="ticket-btn" bindtap="onBuyTicket">立即购票</button>
+  </view>
+</view>

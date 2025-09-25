@@ -1,0 +1,264 @@
+/**match-detail.less**/
+.page {
+  height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 140rpx; /* 为底部按钮留出空间 */
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+
+/* 赛事信息卡片 */
+.match-info-card {
+  background: #fff;
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: none;
+  display: flex;
+  padding: 48rpx 40rpx 30rpx;
+}
+
+.match-image {
+  width: 170rpx;
+  height: 206rpx;
+  position: relative;
+  overflow: hidden;
+  border-radius: 15rpx;
+  flex-shrink: 0;
+}
+
+.match-bg {
+  width: 100%;
+  height: 100%;
+}
+
+
+.match-details {
+  flex: 1;
+  padding-left: 30rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.match-title-section {
+  display: flex;
+  align-items: flex-start;
+}
+
+.match-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+}
+
+.match-time-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.match-time {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+  display: block;
+}
+
+.match-disclaimer {
+  font-size: 24rpx;
+  color: #999;
+  display: block;
+}
+
+.match-price {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #ff4444;
+  display: block;
+}
+
+.venue-policy-section-container {
+  background: #fff;
+}
+
+/* 场馆和政策信息 */
+.venue-policy-section {
+  background: #f5f5f5;
+  margin: 0;
+  border-radius: 24rpx 24rpx 0 0;
+  padding: 30rpx 40rpx 0;
+  box-shadow: none;
+}
+
+.price-info {
+  margin-bottom: 30rpx;
+}
+
+.venue-info {
+  margin-bottom: 28rpx;
+}
+
+.venue-name {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10rpx;
+}
+
+.venue-text {
+  font-size: 30rpx;
+  font-weight: 500;
+  color: #333;
+  flex: 1;
+}
+
+.arrow-icon {
+  width: 24rpx;
+  height: 24rpx;
+  margin-left: 10rpx;
+}
+
+.venue-address {
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.4;
+}
+
+.policy-list {
+  display: flex;
+  flex-direction: row;
+  padding-top: 30rpx;
+  border-top: 1rpx solid #e5e5e5;
+}
+
+.policy-item {
+  display: flex;
+  align-items: center;
+  margin-right: 20rpx;
+}
+
+.policy-item:last-child {
+  margin-right: 0;
+}
+
+.policy-icon {
+  width: 24rpx;
+  height: 24rpx;
+  margin-right: 6rpx;
+}
+
+.policy-text {
+  font-size: 26rpx;
+  color: #666;
+}
+
+/* 赛事介绍 */
+.event-intro-section {
+  background: #f5f5f5;
+  margin: 0;
+  border-radius: 0;
+  padding: 30rpx 0;
+  box-shadow: none;
+}
+
+.intro-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+  padding: 0 40rpx;
+  display: block;
+}
+
+.intro-content {
+  margin-top: 20rpx;
+}
+
+.intro-image {
+  height: 400rpx;
+  position: relative;
+  // border-radius: 15rpx;
+  overflow: hidden;
+}
+
+.intro-bg {
+  width: 100%;
+  height: 100%;
+}
+
+.stats-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 300rpx;
+  background: rgba(0, 0, 0, 0.7);
+  padding: 30rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.stats-title {
+  color: #fff;
+  font-size: 28rpx;
+  font-weight: bold;
+  margin-bottom: 30rpx;
+  text-align: center;
+}
+
+.stats-item {
+  margin-bottom: 25rpx;
+}
+
+.stats-label {
+  color: #fff;
+  font-size: 24rpx;
+  margin-bottom: 10rpx;
+  display: block;
+}
+
+.stats-bar {
+  display: flex;
+  height: 8rpx;
+  border-radius: 4rpx;
+  overflow: hidden;
+}
+
+.stats-bar-orange {
+  background: #ff6b35;
+  height: 100%;
+}
+
+.stats-bar-gray {
+  background: #ccc;
+  height: 100%;
+}
+
+/* 底部购票按钮 */
+.bottom-ticket-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  padding: 20rpx 20rpx;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.ticket-btn {
+  width: 100%;
+  height: 100rpx;
+  background: #3461FD;
+  color: #fff;
+  font-size: 36rpx;
+  font-weight: bold;
+  border-radius: 50rpx;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
