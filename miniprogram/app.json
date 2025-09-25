@@ -4,6 +4,24 @@
     "pages/login/login",
     "pages/logs/logs"
   ],
+  "tabBar": {
+    "color": "#999",
+    "selectedColor": "#3461FD",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "/assets/home.png",
+        "selectedIconPath": "/assets/home-active.png"
+      },
+      {
+        "pagePath": "pages/logs/logs",
+        "text": "我的",
+        "iconPath": "/assets/my.png",
+        "selectedIconPath": "/assets/my-active.png"
+      }
+    ]
+  },
   "window": {
     "navigationBarTextStyle": "black",
     "navigationStyle": "custom"
