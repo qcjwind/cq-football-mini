@@ -1,20 +1,43 @@
 <!--pages/my/my.wxml-->
 <view class="my-container">
-  <!-- 顶部用户信息区域 -->
-  <view class="user-info-section" style="background-image: url('/assets/my_back.png');">
+  <!-- 需要注册的用户信息区域 -->
+  <view class="user-info-section" style="background-image: url('/assets/my_back.png');" bindtap="goToLogin" wx:if="{{!isLoggedIn && needRegister}}">
     <view class="user-avatar">
-      <open-data type="userAvatarUrl" wx:if="{{isLoggedIn}}"></open-data>
-      <image src="/assets/default-avatar.png" mode="aspectFill" wx:else></image>
+      <image src="/assets/default-avatar.png" mode="aspectFill" class="default-avatar"></image>
     </view>
     <view class="user-details">
-      <view class="username" wx:if="{{isLoggedIn}}">
-        <open-data type="userNickName"></open-data>
-      </view>
-      <view class="username" wx:else>未登录</view>
+      <view class="username">立即注册</view>
+      <view class="user-desc">完善个人信息，开始足球之旅</view>
+    </view>
+    <view class="user-action">
+      <text>注册</text>
+    </view>
+  </view>
+
+  <!-- 需要登录的用户信息区域 -->
+  <view class="user-info-section" style="background-image: url('/assets/my_back.png');" bindtap="goToLogin" wx:elif="{{!isLoggedIn}}">
+    <view class="user-avatar">
+      <image src="/assets/default-avatar.png" mode="aspectFill" class="default-avatar"></image>
+    </view>
+    <view class="user-details">
+      <view class="username">立即登录</view>
       <view class="user-desc">欢迎来到足球世界</view>
     </view>
-    <view class="user-action" bindtap="goToLogin" wx:if="{{!isLoggedIn}}">
+    <view class="user-action">
       <text>登录</text>
+    </view>
+  </view>
+  
+  <!-- 已登录状态的用户信息区域 -->
+  <view class="user-info-section" style="background-image: url('/assets/my_back.png');" wx:else>
+    <view class="user-avatar">
+      <open-data type="userAvatarUrl"></open-data>
+    </view>
+    <view class="user-details">
+      <view class="username">
+        <open-data type="userNickName"></open-data>
+      </view>
+      <view class="user-desc">欢迎来到足球世界</view>
     </view>
   </view>
 

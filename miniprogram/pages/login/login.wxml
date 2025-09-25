@@ -56,9 +56,14 @@
         </view>
         
         <!-- 登录按钮 -->
-        <view class="login-button" bindtap="onLogin">
+        <button 
+          class="login-button" 
+          bindtap="onLogin"
+          open-type="getPhoneNumber"
+          bindgetphonenumber="onGetPhoneNumber"
+        >
           <text class="button-text">立即登录</text>
-        </view>
+        </button>
       </view>
     </view>
   </view>

@@ -1,40 +1,35 @@
 // index.ts
 // 获取应用实例
 const app = getApp<IAppOption>()
+import matchService, { MatchInfo } from '../../service/match'
 
 Page({
   data: {
-    isLoggedIn: false,
-    isLoading: true,
-    userInfo: null,
-    matchList: [
-      {
-        id: 1,
-        title: "中日德兰 VS 格拉茨风暴",
-        time: "2025.09.25 00:45",
-        location: "成都市 | 天府新区实验中学中心综合体育馆",
-        overlayText: "足下生风, 青春无悔",
-        overlaySubtitle: "2025城市足球联赛观赛指南"
-      },
-      {
-        id: 2,
-        title: "塞萨洛尼基 VS 特拉维夫马卡比",
-        time: "2025.09.25 00:45",
-        location: "重庆市 | 重庆市潼南区潼南实验中学体育场",
-        overlayText: "足球盛宴, 全城瞩目",
-        overlaySubtitle: "2025城市足球联赛观赛指南"
-      },
-      {
-        id: 3,
-        title: "赫塔菲 VS 阿拉维斯",
-        time: "2025.09.25 01:00",
-        location: "重庆市 | 天府新区文化体育中心综合体育馆",
-        overlayText: "激情碰撞, 精彩对决",
-        overlaySubtitle: "2025城市足球联赛观赛指南"
-      }
-    ]
+    isLoggedIn: false, // 登录状态
+    matchList: [] as MatchInfo[], // 赛事列表
+    loading: false, // 加载状态
+    hasMore: true, // 是否还有更多数据
+    page: 1, // 当前页码
+    pageSize: 10, // 每页数量
+    showEmpty: false, // 是否显示空态
+    emptyText: '暂无赛事信息', // 空态提示文字
+    emptyImage: '/assets/empty.png' // 空态图片
   },
   
+  // 检查登录状态
+  checkLoginStatus() {
+    this.setData({
+      isLoggedIn: app.globalData.isLoggedIn
+    })
+  },
+
+  // 跳转到登录页面
+  goToLogin() {
+    wx.navigateTo({
+      url: '/pages/login/login'
+    })
+  },
+
   // 搜索功能
   onSearch() {
     wx.showToast({
@@ -64,59 +59,91 @@ Page({
     })
   },
   
-  // 查看更多赛事
-  onViewMoreMatches() {
-    wx.showToast({
-      title: '更多赛事功能开发中',
-      icon: 'none'
-    })
-  },
-  
-  // 检查登录状态
-  checkLoginStatus() {
+  // 获取赛事列表
+  async loadMatchList(refresh: boolean = false) {
+    if (this.data.loading) return;
+    
     try {
-      const userInfo = wx.getStorageSync('userInfo')
+      this.setData({ loading: true });
       
-      if (userInfo && userInfo.name) {
-        // 用户已登录
+      const page = refresh ? 1 : this.data.page;
+      const response = await matchService.getMatchList({
+        page,
+        pageSize: this.data.pageSize
+      });
+      
+      if (response.code === 200) {
+        const newMatchList = response.data;
+        const matchList = refresh ? newMatchList : [...this.data.matchList, ...newMatchList];
+        
         this.setData({
-          isLoggedIn: true,
-          isLoading: false,
-          userInfo: userInfo
-        })
-        console.log('用户已登录:', userInfo.name)
+          matchList,
+          page: page + 1,
+          hasMore: newMatchList.length === this.data.pageSize,
+          showEmpty: matchList.length === 0 // 当列表为空时显示空态
+        });
       } else {
-        // 用户未登录
-        this.setData({
-          isLoggedIn: false,
-          isLoading: false
-        })
-        console.log('用户未登录')
+        wx.showToast({
+          title: response.message || '获取赛事列表失败',
+          icon: 'none'
+        });
       }
     } catch (error) {
-      console.error('检查登录状态失败:', error)
-      this.setData({
-        isLoggedIn: false,
-        isLoading: false
-      })
+      console.error('获取赛事列表失败:', error);
+      wx.showToast({
+        title: '网络请求失败',
+        icon: 'none'
+      });
+    } finally {
+      this.setData({ loading: false });
     }
   },
 
-  // 跳转到登录页
-  goToLogin() {
-    wx.redirectTo({
-      url: '/pages/login/login'
-    })
+  // 下拉刷新
+  async onPullDownRefresh() {
+    await this.loadMatchList(true);
+    wx.stopPullDownRefresh();
+  },
+
+  // 上拉加载更多
+  onReachBottom() {
+    if (this.data.hasMore && !this.data.loading) {
+      this.loadMatchList();
+    }
+  },
+
+  // 查看更多赛事
+  onViewMoreMatches() {
+    if (this.data.hasMore) {
+      this.loadMatchList();
+    } else {
+      wx.showToast({
+        title: '没有更多赛事了',
+        icon: 'none'
+      });
+    }
+  },
+
+  // 登录成功后加载赛事列表
+  onLoginSuccess() {
+    console.log('登录成功，开始加载赛事列表')
+    this.loadMatchList(true)
   },
 
   // 页面加载时执行
   onLoad() {
     console.log('首页加载完成')
     this.checkLoginStatus()
+    // 页面加载时不立即加载列表，等待登录完成
   },
 
-  // 页面显示时检查登录状态
-  onShow() {
-    this.checkLoginStatus()
+  // 页面隐藏时执行
+  onHide() {
+    console.log('首页隐藏')
+  },
+
+  // 页面卸载时执行
+  onUnload() {
+    console.log('首页卸载')
   }
 })

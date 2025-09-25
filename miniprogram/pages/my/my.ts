@@ -1,10 +1,9 @@
 // pages/my/my.ts
-const app = getApp<IAppOption>()
-
 Page({
   data: {
     isLoggedIn: false,
     userInfo: null,
+    needRegister: false, // 是否需要注册
     activeTab: 'order', // 默认显示订单tab
     ticketList: [
       {
@@ -24,29 +23,11 @@ Page({
 
   // 检查登录状态
   checkLoginStatus() {
-    // 使用微信原生能力，简化登录状态检查
-    // open-data组件会自动处理用户信息的显示
-    try {
-      // 可以检查是否有用户授权信息
-      wx.getSetting({
-        success: (res) => {
-          if (res.authSetting['scope.userInfo']) {
-            this.setData({
-              isLoggedIn: true
-            })
-          } else {
-            this.setData({
-              isLoggedIn: false
-            })
-          }
-        }
-      })
-    } catch (error) {
-      console.error('检查登录状态失败:', error)
-      this.setData({
-        isLoggedIn: false
-      })
-    }
+    const app = getApp<IAppOption>()
+    this.setData({
+      isLoggedIn: app.globalData.isLoggedIn,
+      needRegister: app.globalData.needRegister || false
+    })
   },
 
   // 跳转到登录页
@@ -86,5 +67,12 @@ Page({
   // 页面显示时检查登录状态
   onShow() {
     this.checkLoginStatus()
+    
+    // 检查是否需要重定向到登录页面
+    const app = getApp<IAppOption>()
+    if (!app.checkAndHandleLoginStatus()) {
+      // 如果需要重定向，则不需要继续执行后续逻辑
+      return
+    }
   }
 })

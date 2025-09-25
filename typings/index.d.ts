@@ -4,12 +4,17 @@ interface IAppOption {
   globalData: {
     userInfo?: WechatMiniprogram.UserInfo,
     isLoggedIn: boolean,
-    loginUserInfo: any
+    loginUserInfo: any,
+    needRegister: boolean,
+    loginData: any,
+    isLoggingIn: boolean
   }
-  userInfoReadyCallback?: WechatMiniprogram.GetUserInfoSuccessCallback,
+  autoLogin(): Promise<void>,
   checkLoginStatus(): void,
-  redirectToLogin(): void,
-  clearLoginInfo(): void,
   setLoginStatus(userInfo: any): void,
-  getLoginStatus(): { isLoggedIn: boolean, userInfo: any }
+  redirectToLogin(): void,
+  checkAndHandleLoginStatus(): boolean,
+  forceCheckLoginStatus(): Promise<void>,
+  clearLoginStatus(): void,
+  notifyLoginSuccess(): void
 }

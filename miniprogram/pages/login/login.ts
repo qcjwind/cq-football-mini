@@ -1,4 +1,6 @@
 // login.ts
+import authService from '../../service/auth'
+
 Page({
   data: {
     formData: {
@@ -6,6 +8,8 @@ Page({
       idType: '',
       idNumber: ''
     },
+    phoneData: null as {encryptedData: string, iv: string} | null, // 存储手机号加密数据
+    loginData: null as {openid: string, sessionKey: string} | null, // 存储login接口返回的数据
     idTypeOptions: [
       { label: '身份证', value: '身份证' },
       { label: '护照', value: '护照' },
@@ -19,6 +23,44 @@ Page({
   onLoad() {
     // 页面加载时的初始化逻辑
     console.log('登录页面加载完成');
+  },
+
+  // 获取login接口数据
+  async getLoginData() {
+    try {
+      const app = getApp<IAppOption>();
+      
+      // 优先使用全局的login数据
+      if (app.globalData.loginData) {
+        console.log('使用全局login数据');
+        this.setData({
+          loginData: {
+            openid: app.globalData.loginData.data.openid,
+            sessionKey: app.globalData.loginData.data.sessionKey
+          }
+        });
+        console.log('获取login数据成功:', this.data.loginData);
+        return;
+      }
+      
+      // 如果全局没有数据，说明app.ts的login调用可能失败了，需要重新调用
+      console.log('全局没有login数据，重新调用login接口...');
+      const response = await authService.login();
+      if (response.code === 200) {
+        this.setData({
+          loginData: {
+            openid: response.data.openid,
+            sessionKey: response.data.openid // 暂时使用openid，如果接口有专门的sessionKey字段需要调整
+          }
+        });
+        console.log('获取login数据成功:', this.data.loginData);
+        console.log('Login响应数据:', response.data);
+      } else {
+        console.error('获取login数据失败:', response.message);
+      }
+    } catch (error) {
+      console.error('获取login数据异常:', error);
+    }
   },
 
   // 姓名输入处理
@@ -55,7 +97,7 @@ Page({
     });
   },
 
-  // 登录处理
+  // 登录按钮点击事件
   onLogin() {
     const { name, idType, idNumber } = this.data.formData;
     
@@ -97,43 +139,208 @@ Page({
       return;
     }
 
-    // 显示加载状态
-    wx.showLoading({
-      title: '登录中...',
-      mask: true
-    });
-
-    // 模拟登录请求
-    setTimeout(() => {
-      wx.hideLoading();
-      
-      // 登录成功
+    // 检查是否已登录
+    const app = getApp<IAppOption>();
+    if (app.globalData.isLoggedIn) {
       wx.showToast({
-        title: '登录成功',
-        icon: 'success',
+        title: '您已登录，无需重复注册',
+        icon: 'none'
+      });
+      return;
+    }
+
+    // 如果已经有手机号数据，直接执行登录
+    if (this.data.phoneData) {
+      this.performLogin();
+    }
+    // 否则等待用户点击按钮获取手机号
+  },
+
+  // 获取手机号回调
+  onGetPhoneNumber(e: any) {
+    console.log('获取手机号结果:', e.detail);
+    if (e.detail.encryptedData) {
+      this.setData({
+        phoneData: {
+          encryptedData: e.detail.encryptedData,
+          iv: e.detail.iv
+        }
+      });
+      // 获取手机号成功后，继续执行登录逻辑
+      this.performLogin();
+    } else {
+      wx.showToast({
+        title: '获取手机号失败',
+        icon: 'none'
+      });
+    }
+  },
+
+  // 执行登录逻辑
+  async performLogin() {
+    const { name, idType, idNumber } = this.data.formData;
+    
+    // 表单验证
+    if (!name.trim()) {
+      wx.showToast({
+        title: '请输入姓名',
+        icon: 'none',
         duration: 2000
       });
+      return;
+    }
 
-      // 保存登录信息到本地存储
-      const userInfo = {
-        name: name,
-        idType: idType,
-        idNumber: idNumber
+    if (!idType) {
+      wx.showToast({
+        title: '请选择证件类型',
+        icon: 'none',
+        duration: 2000
+      });
+      return;
+    }
+
+    if (!idNumber.trim()) {
+      wx.showToast({
+        title: '请输入证件号',
+        icon: 'none',
+        duration: 2000
+      });
+      return;
+    }
+
+    // 证件号格式验证
+    if (idType === '身份证' && !this.validateIdCard(idNumber)) {
+      wx.showToast({
+        title: '请输入正确的身份证号',
+        icon: 'none',
+        duration: 2000
+      });
+      return;
+    }
+
+    // 检查是否已获取手机号
+    if (!this.data.phoneData) {
+      wx.showToast({
+        title: '请先获取手机号',
+        icon: 'none'
+      });
+      return;
+    }
+
+    // 检查是否已获取login数据，如果没有则先获取
+    if (!this.data.loginData) {
+      console.log('需要获取login数据');
+      wx.showLoading({
+        title: '获取登录信息...',
+        mask: true
+      });
+      
+      try {
+        await this.getLoginData();
+        
+        // 再次检查是否获取成功
+        if (!this.data.loginData) {
+          wx.hideLoading();
+          wx.showToast({
+            title: '获取登录信息失败，请重试',
+            icon: 'none'
+          });
+          return;
+        }
+        wx.hideLoading();
+      } catch (error) {
+        wx.hideLoading();
+        wx.showToast({
+          title: '获取登录信息失败，请重试',
+          icon: 'none'
+        });
+        return;
+      }
+    }
+
+    // 调用注册接口
+    try {
+      // 证件类型映射
+      const idTypeMap: {[key: string]: 'ID_CARD' | 'GAT_JM_JZZ' | 'GA_JM_LWND_TXZ' | 'TW_JM_LWDL_TXZ' | 'PASSPORT' | 'WGR_YJJL_SFZ' | 'WL_GG_TXZ'} = {
+        '身份证': 'ID_CARD',
+        '护照': 'PASSPORT',
+        '军官证': 'GAT_JM_JZZ',
+        '港澳通行证': 'GA_JM_LWND_TXZ',
+        '台胞证': 'TW_JM_LWDL_TXZ',
+        '外国人居留证': 'WGR_YJJL_SFZ',
+        '往来港澳通行证': 'WL_GG_TXZ'
       };
-      wx.setStorageSync('userInfo', userInfo);
 
-      // 更新全局登录状态
-      const app = getApp<IAppOption>();
-      app.setLoginStatus(userInfo);
+      // 调用注册接口
+      console.log('注册参数:', {
+        name,
+        idType: idTypeMap[idType] || 'ID_CARD',
+        idNo: idNumber,
+        openid: this.data.loginData.openid,
+        encryptedData: this.data.phoneData.encryptedData,
+        iv: this.data.phoneData.iv,
+        sessionKey: this.data.loginData.sessionKey
+      });
 
-      // 跳转到首页
-      setTimeout(() => {
+      const response = await authService.register({
+        name,
+        idType: idTypeMap[idType] || 'ID_CARD',
+        idNo: idNumber,
+        openid: this.data.loginData.openid,
+        encryptedData: this.data.phoneData.encryptedData,
+        iv: this.data.phoneData.iv,
+        sessionKey: this.data.loginData.sessionKey
+      });
+
+      if (response.code === 200) {
+        // 注册成功
+        wx.showToast({
+          title: '注册成功',
+          icon: 'success',
+          duration: 2000
+        });
+
+        // 保存登录信息到本地存储
+        const userInfo = {
+          ...response.data.userDO,
+          // 覆盖表单中的信息
+          name: name,
+          idType: idType,
+          idNumber: idNumber
+        };
+        wx.setStorageSync('userInfo', userInfo);
+
+        // 更新全局登录状态
+        const app = getApp<IAppOption>();
+        app.setLoginStatus(userInfo);
+
+        // 验证token和userInfo都已正确保存
+        console.log('注册成功，状态验证:', {
+          hasToken: authService.isLoggedIn(),
+          globalIsLoggedIn: app.globalData.isLoggedIn,
+          userInfo: app.globalData.loginUserInfo
+        });
+
+        // 跳转到首页
         wx.switchTab({
           url: '/pages/index/index'
         });
-      }, 1500);
-
-    }, 2000);
+      } else {
+        // 注册失败
+        wx.showToast({
+          title: response.message || '注册失败',
+          icon: 'none',
+          duration: 2000
+        });
+      }
+    } catch (error) {
+      console.error('注册请求失败:', error);
+      wx.showToast({
+        title: '网络请求失败，请重试',
+        icon: 'none',
+        duration: 2000
+      });
+    }
   },
 
   // 身份证号验证
