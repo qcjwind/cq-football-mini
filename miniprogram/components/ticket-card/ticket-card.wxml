@@ -1,0 +1,16 @@
+<!--components/ticket-card/ticket-card.wxml-->
+<view class="ticket-card" bindtap="onCardTap">
+  <view class="card-content">
+    <view class="cover-image">
+      <image src="{{coverImage}}" mode="aspectFill" wx:if="{{coverImage}}"></image>
+      <text wx:else>封面</text>
+    </view>
+    <view class="card-info">
+      <text class="match-title">{{matchTitle}}</text>
+      <view class="order-time">
+        <text class="time-label">下单时间：</text>
+        <text class="time-value">{{orderTime}}</text>
+      </view>
+    </view>
+  </view>
+</view>

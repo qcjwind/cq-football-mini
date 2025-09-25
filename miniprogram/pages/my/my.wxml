@@ -1,0 +1,56 @@
+<!--pages/my/my.wxml-->
+<view class="my-container">
+  <!-- 顶部用户信息区域 -->
+  <view class="user-info-section" style="background-image: url('/assets/my_back.png');">
+    <view class="user-avatar">
+      <open-data type="userAvatarUrl" wx:if="{{isLoggedIn}}"></open-data>
+      <image src="/assets/default-avatar.png" mode="aspectFill" wx:else></image>
+    </view>
+    <view class="user-details">
+      <view class="username" wx:if="{{isLoggedIn}}">
+        <open-data type="userNickName"></open-data>
+      </view>
+      <view class="username" wx:else>未登录</view>
+      <view class="user-desc">欢迎来到足球世界</view>
+    </view>
+    <view class="user-action" bindtap="goToLogin" wx:if="{{!isLoggedIn}}">
+      <text>登录</text>
+    </view>
+  </view>
+
+  <!-- Tab切换区域 -->
+  <view class="tab-section">
+    <view class="tab-bar">
+      <view class="tab-item {{activeTab === 'order' ? 'active' : ''}}" bindtap="switchTab" data-tab="order">
+        <text class="tab-text">订单</text>
+      </view>
+      <view class="tab-item {{activeTab === 'ticket' ? 'active' : ''}}" bindtap="switchTab" data-tab="ticket">
+        <text class="tab-text">票夹</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 内容区域 -->
+  <view class="content-section">
+    <!-- 订单内容 -->
+    <view class="tab-content" wx:if="{{activeTab === 'order'}}">
+      <view class="empty-state">
+        <text class="empty-text">暂无订单</text>
+      </view>
+    </view>
+
+    <!-- 票夹内容 -->
+    <view class="tab-content" wx:if="{{activeTab === 'ticket'}}">
+      <view class="ticket-list">
+        <ticket-card 
+          wx:for="{{ticketList}}" 
+          wx:key="id"
+          match-title="{{item.matchTitle}}"
+          cover-image="{{item.coverImage}}"
+          order-time="{{item.orderTime}}"
+          bind:cardtap="onTicketCardTap">
+        </ticket-card>
+      </view>
+    </view>
+  </view>
+</view>
