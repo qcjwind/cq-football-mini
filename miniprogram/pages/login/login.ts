@@ -115,12 +115,16 @@ Page({
       });
 
       // 保存登录信息到本地存储
-      wx.setStorageSync('userInfo', {
+      const userInfo = {
         name: name,
         idType: idType,
-        idNumber: idNumber,
-        loginTime: new Date().getTime()
-      });
+        idNumber: idNumber
+      };
+      wx.setStorageSync('userInfo', userInfo);
+
+      // 更新全局登录状态
+      const app = getApp<IAppOption>();
+      app.setLoginStatus(userInfo);
 
       // 跳转到首页
       setTimeout(() => {

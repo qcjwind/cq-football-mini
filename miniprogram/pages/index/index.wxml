@@ -1,44 +1,65 @@
 <!--index.wxml-->
 <view class="page">
-  <!-- 横幅区域 -->
-  <view class="banner-section">
-    <view class="banner-image">
-      <image class="banner-bg" src="../../assets/home_back.png" mode="aspectFill"></image>
-      <!-- 搜索栏覆盖在背景图上 -->
-      <view class="search-bar">
-        <view class="location-btn" bindtap="onLocationSelect">
-          <text class="location-text">成都</text>
-          <image class="arrow-icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDFMNiA2TDExIDEiIHN0cm9rZT0iIzMzMzMzMyIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+" mode="aspectFit"></image>
-        </view>
-        <view class="search-input" bindtap="onSearch">
-          <text class="placeholder">请输入所搜内容</text>
-        </view>
-        <view class="search-icon">
-        <image class="search-icon-image" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iOSIgY3k9IjkiIHI9IjciIHN0cm9rZT0iIzMzMzMzMyIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxwYXRoIGQ9Im0xNyAxNyA0IDQiIHN0cm9rZT0iIzMzMzMzMyIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+" mode="aspectFit"></image>
-        </view>
+  <!-- 加载状态 -->
+  <view wx:if="{{isLoading}}" class="loading-container">
+    <view class="loading-content">
+      <text class="loading-text">加载中...</text>
+    </view>
+  </view>
+
+  <!-- 未登录状态 -->
+  <view wx:elif="{{!isLoggedIn}}" class="login-required-container">
+    <view class="login-required-content">
+      <text class="login-title">请先登录</text>
+      <text class="login-desc">登录后即可查看赛事信息</text>
+      <view class="login-btn" bindtap="goToLogin">
+        <text class="login-btn-text">立即登录</text>
       </view>
     </view>
   </view>
 
-  <!-- 赛事列表 -->
-  <view class="match-list-section">
-    <view class="section-header" bindtap="onViewMoreMatches">
-      <text class="section-title">赛事列表</text>
-      <image class="arrow-right" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQuNSA5TDcuNSA2TDQuNSAzIiBzdHJva2U9IiM5OTk5OTkiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPg==" mode="aspectFit"></image>
-    </view>
-    
-    <view class="match-cards">
-      <view class="match-card" wx:for="{{matchList}}" wx:key="id" bindtap="onMatchDetail" data-id="{{item.id}}">
-        <view class="card-image">
-          <view class="image-overlay">
-            <text class="overlay-text">{{item.overlayText}}</text>
-            <text class="overlay-subtitle">{{item.overlaySubtitle}}</text>
+  <!-- 已登录状态 - 显示首页内容 -->
+  <view wx:else>
+    <!-- 横幅区域 -->
+    <view class="banner-section">
+      <view class="banner-image">
+        <image class="banner-bg" src="../../assets/home_back.png" mode="aspectFill"></image>
+        <!-- 搜索栏覆盖在背景图上 -->
+        <view class="search-bar">
+          <view class="location-btn" bindtap="onLocationSelect">
+            <text class="location-text">成都</text>
+            <image class="arrow-icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDFMNiA2TDExIDEiIHN0cm9rZT0iIzMzMzMzMyIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+" mode="aspectFit"></image>
+          </view>
+          <view class="search-input" bindtap="onSearch">
+            <text class="placeholder">请输入所搜内容</text>
+          </view>
+          <view class="search-icon">
+          <image class="search-icon-image" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iOSIgY3k9IjkiIHI9IjciIHN0cm9rZT0iIzMzMzMzMyIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxwYXRoIGQ9Im0xNyAxNyA4IDQiIHN0cm9rZT0iIzMzMzMzMyIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+" mode="aspectFit"></image>
           </view>
         </view>
-        <view class="card-content">
-          <text class="match-title">{{item.title}}</text>
-          <text class="match-time">{{item.time}}</text>
-          <text class="match-location">{{item.location}}</text>
+      </view>
+    </view>
+
+    <!-- 赛事列表 -->
+    <view class="match-list-section">
+      <view class="section-header" bindtap="onViewMoreMatches">
+        <text class="section-title">赛事列表</text>
+        <image class="arrow-right" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQuNSA5TDcuNSA2TDQuNSAzIiBzdHJva2U9IiM5OTk5OTkiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPg==" mode="aspectFit"></image>
+      </view>
+      
+      <view class="match-cards">
+        <view class="match-card" wx:for="{{matchList}}" wx:key="id" bindtap="onMatchDetail" data-id="{{item.id}}">
+          <view class="card-image">
+            <view class="image-overlay">
+              <text class="overlay-text">{{item.overlayText}}</text>
+              <text class="overlay-subtitle">{{item.overlaySubtitle}}</text>
+            </view>
+          </view>
+          <view class="card-content">
+            <text class="match-title">{{item.title}}</text>
+            <text class="match-time">{{item.time}}</text>
+            <text class="match-location">{{item.location}}</text>
+          </view>
         </view>
       </view>
     </view>

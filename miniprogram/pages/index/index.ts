@@ -4,6 +4,9 @@ const app = getApp<IAppOption>()
 
 Page({
   data: {
+    isLoggedIn: false,
+    isLoading: true,
+    userInfo: null,
     matchList: [
       {
         id: 1,
@@ -69,8 +72,51 @@ Page({
     })
   },
   
+  // 检查登录状态
+  checkLoginStatus() {
+    try {
+      const userInfo = wx.getStorageSync('userInfo')
+      
+      if (userInfo && userInfo.name) {
+        // 用户已登录
+        this.setData({
+          isLoggedIn: true,
+          isLoading: false,
+          userInfo: userInfo
+        })
+        console.log('用户已登录:', userInfo.name)
+      } else {
+        // 用户未登录
+        this.setData({
+          isLoggedIn: false,
+          isLoading: false
+        })
+        console.log('用户未登录')
+      }
+    } catch (error) {
+      console.error('检查登录状态失败:', error)
+      this.setData({
+        isLoggedIn: false,
+        isLoading: false
+      })
+    }
+  },
+
+  // 跳转到登录页
+  goToLogin() {
+    wx.redirectTo({
+      url: '/pages/login/login'
+    })
+  },
+
   // 页面加载时执行
   onLoad() {
     console.log('首页加载完成')
+    this.checkLoginStatus()
+  },
+
+  // 页面显示时检查登录状态
+  onShow() {
+    this.checkLoginStatus()
   }
 })
