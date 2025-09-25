@@ -27,7 +27,7 @@ App<IAppOption>({
         })
       } else {
         // 未登录，跳转到登录页
-        this.redirectToLogin()
+        // this.redirectToLogin()
       }
     } catch (error) {
       console.error('检查登录状态失败:', error)

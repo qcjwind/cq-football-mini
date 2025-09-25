@@ -1,0 +1,223 @@
+.order-detail-container {
+  width: 100%;
+  height: 100vh;
+  overflow-y: auto;
+  background: rgba(249, 249, 249, 1);
+  padding: 20px;
+
+  .match-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    height: 140px;
+    border-radius: 10px;
+    /* img - draopShadow */
+    box-shadow: 0px 20px 35px 0px rgba(0, 0, 0, 0.05);
+    background: rgba(255, 255, 255, 1);
+
+    .match-info-left {
+      display: block;
+      flex-shrink: 0;
+      width: 100px;
+      height: 120px;
+      margin-right: 8px;
+      border-radius: 10px;
+    }
+
+    .match-info-right {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex: 1;
+      height: 100%;
+      padding: 5px 0;
+
+      .match-info-right-top {
+        color: rgba(10, 12, 44, 1);
+        font-family: Source Han Sans CN;
+        font-size: 14px;
+        font-weight: 400;
+        letter-spacing: 1px;
+      }
+
+      .match-info-right-bottom {
+        display: inline-flex;
+        flex-direction: column;
+        justify-content: space-between;
+        font-size: 12px;
+        color: rgba(10, 12, 44, 0.5);
+        letter-spacing: 1px;
+
+        .match-info-right-bottom-time {
+          color: rgba(10, 12, 44, 1);
+          margin-bottom: 4px;
+        }
+      }
+    }
+  }
+
+  .order-info {
+    margin-top: 15px;
+    border-radius: 10px 10px 0px 0px;
+    /* img - draopShadow */
+    box-shadow: 0px 20px 35px 0px rgba(0, 0, 0, 0.05);
+    background: #fff;
+    padding: 0 20px 30px 20px;
+    overflow: hidden;
+
+    .order-info-tip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: rgba(55, 55, 55, 1);
+      width: 100px;
+      height: 26px;
+      background-color: rgba(245, 249, 254, 1);
+      border-radius: 0px 0px 10px 10px;
+      margin: 0 auto;
+    }
+    .info-title {
+      display: block;
+      color: rgba(20, 20, 20, 1);
+      font-family: Source Han Sans CN;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 20px;
+      letter-spacing: 5%;
+      margin: 24px 0;
+      text-align: center;
+    }
+
+    .bill-list {
+      width: 255px;
+      border-radius: 10px;
+      box-shadow: 0px 15px 80px 0px rgba(0, 0, 0, 0.07),
+        0px 0.9975153207778931px 5.32008171081543px 0px rgba(0, 0, 0, 0.01);
+      background: rgba(255, 255, 255, 1);
+      margin: 0 auto;
+      padding: 16px 0;
+      text-align: center;
+
+      .bill-swiper {
+        height: 250px;
+      }
+
+      .bill-item {
+        position: relative;
+        padding: 0 16px;
+
+        .ic-card {
+          width: 100%;
+        }
+
+        .name {
+          display: inline-block;
+          font-size: 16px;
+          color: rgba(20, 20, 20, 1);
+          font-weight: 500;
+          letter-spacing: 1px;
+          margin-top: 15px;
+        }
+
+        .id-number {
+          display: block;
+          color: rgba(112, 112, 112, 1);
+          font-size: 12px;
+          letter-spacing: 1px;
+          margin-top: 5px;
+          text-align: center;
+        }
+
+        .seat-no {
+          display: block;
+          color: rgba(0, 0, 0, 1);
+          font-family: Source Han Sans CN;
+          font-size: 16px;
+          font-weight: 500;
+          line-height: 24px;
+          margin-top: 16px;
+          text-align: center;
+        }
+      }
+    }
+    .info-tip {
+      display: block;
+      color: rgba(10, 12, 44, 1);
+      font-family: Source Han Sans CN;
+      font-size: 14px;
+      font-weight: 400;
+      margin-top: 20px;
+    }
+
+    .tip-desc {
+      padding: 15px 15px 10px 15px;
+      border-radius: 10px;
+      background: rgba(255, 244, 242, 1);
+      margin-top: 15px;
+
+      .tip-desc-title {
+        color: rgba(0, 0, 0, 1);
+        font-family: Source Han Sans CN;
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .tip-desc-content {
+        display: block;
+        color: rgba(0, 0, 0, 1);
+        font-family: Source Han Sans CN;
+        font-size: 10px;
+        font-weight: 400;
+        line-height: 18px;
+        letter-spacing: 6%;
+        margin-top: 5px;
+      }
+    }
+  }
+
+  .order-address {
+    margin-top: 20px;
+    padding: 24px 0;
+    border-top: 2rpx solid rgba(232, 232, 232, 1);
+    border-bottom: 2rpx solid rgba(232, 232, 232, 1);
+
+    .address-info {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: rgba(0, 0, 0, 1);
+      font-family: Source Han Sans CN;
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 5%;
+
+      .address-info-right {
+        width: 20px;
+      }
+    }
+
+    .address-detail {
+      display: block;
+      margin-top: 5px;
+      color: rgba(112, 112, 112, 1);
+      font-family: Source Han Sans CN;
+      font-size: 12px;
+      font-weight: 400;
+      line-height: 20px;
+      letter-spacing: 5%;
+    }
+  }
+  
+  .order-info-item {
+    display: block;
+    color: rgba(138, 138, 138, 1);
+    font-family: Source Han Sans CN;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 20px;
+    letter-spacing: 1%;
+    margin-top: 15px;
+  }
+}

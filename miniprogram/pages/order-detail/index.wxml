@@ -1,0 +1,54 @@
+<view class="order-detail-container">
+    <view class="match-info">
+        <image class="match-info-left" src="https://pic.rmb.bdstatic.com/bjh/250911/beautify/ef72b62080e3219acccbb37615257c12.jpeg" />
+        <view class="match-info-right">
+            <view class="match-info-right-top">
+                <text class="match-info-right-top-title">中日德兰 VS 格拉茨风暴</text>
+            </view>
+            <view class="match-info-right-bottom">
+                <text class="match-info-right-bottom-time">2025.08.22 17:20</text>
+                <text class="match-info-right-bottom-address">成都市天府新区文化体育中心综合体育馆</text>
+            </view>
+        </view>
+    </view>
+    <view class="order-info">
+        <view class="order-info-tip">{{currentIndex + 1}} / {{billList.length}}</view>
+        <text class="info-title">凭本人有效身份证原件入场</text>
+        <view class="bill-list">
+            <swiper class="bill-swiper" circular bindchange="onSwiperChange">
+                <swiper-item>
+                    <view class="bill-item">
+                        <image class="ic-card" src="../../assets/id-card.png" mode="widthFix" />
+                        <text class="name">唐x年</text>
+                        <text class="id-number">5101221xxxxxx03070019</text>
+                        <text class="seat-no">二层看台·103区·21排·32号</text>
+                    </view>
+                </swiper-item>
+                <swiper-item>
+                    <view class="bill-item">
+                        <image class="ic-card" src="../../assets/id-card.png" mode="widthFix" />
+                        <text class="name">唐x年</text>
+                        <text class="id-number">5101221xxxxxx03070019</text>
+                        <text class="seat-no">二层看台·103区·21排·32号</text>
+                    </view>
+                </swiper-item>
+            </swiper>
+        </view>
+        <text class="info-tip">温馨提示</text>
+        <view class="tip-desc">
+            <text class="tip-desc-title">禁止携带物品</text>
+            <text class="tip-desc-content">由于安保和版权的原因，大多数演出、展览及比赛场所禁止携带食品、饮料、专业摄像设备、打火机等物品。</text>
+        </view>
+        <text class="info-tip">不支持退·比赛时长，以现场为准</text>
+        <view class="order-address">
+            <view class="address-info">
+                <text>成都市天府新区文化体育中心综合体育馆</text>
+                <image class="address-info-right" src="../../assets/arrow-right.png" mode="widthFix" />
+            </view>
+            <text class="address-detail">天府新区文化体路888号</text>
+        </view>
+        <text class="info-tip">订单信息</text>
+        <text class="order-info-item">订单编号：475862146132484798501</text>
+        <text class="order-info-item">场景时间：2025-08-22  15:35:41</text>
+    </view>
+</view>
