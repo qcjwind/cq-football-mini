@@ -59,6 +59,43 @@ Page({
     })
   },
   
+  // 格式化赛事数据
+  formatMatchData(matchList: MatchInfo[]): MatchInfo[] {
+    return matchList.map(match => ({
+      ...match,
+      // 格式化时间显示
+      // startTime: this.formatDateTime(match.startTime),
+      // // 格式化销售状态
+      // saleStatus: this.formatSaleStatus(match.saleStatus)
+    }));
+  },
+
+  // 格式化日期时间
+  formatDateTime(dateTimeStr: string): string {
+    if (!dateTimeStr) return '';
+    try {
+      const date = new Date(dateTimeStr);
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const day = date.getDate().toString().padStart(2, '0');
+      const hours = date.getHours().toString().padStart(2, '0');
+      const minutes = date.getMinutes().toString().padStart(2, '0');
+      return `${month}-${day} ${hours}:${minutes}`;
+    } catch (error) {
+      return dateTimeStr;
+    }
+  },
+
+  // 格式化销售状态
+  formatSaleStatus(status: string): string {
+    const statusMap: Record<string, string> = {
+      'ON_SALE': '售票中',
+      'SOLD_OUT': '已售罄',
+      'NOT_ON_SALE': '未开售',
+      'CANCELLED': '已取消'
+    };
+    return statusMap[status] || status;
+  },
+
   // 获取赛事列表
   async loadMatchList(refresh: boolean = false) {
     if (this.data.loading) return;
@@ -73,13 +110,13 @@ Page({
       });
       
       if (response.code === 200) {
-        const newMatchList = response.data;
+        const newMatchList = this.formatMatchData(response.data);
         const matchList = refresh ? newMatchList : [...this.data.matchList, ...newMatchList];
         
         this.setData({
           matchList,
           page: page + 1,
-          hasMore: newMatchList.length === this.data.pageSize,
+          hasMore: response.data.length === this.data.pageSize,
           showEmpty: matchList.length === 0 // 当列表为空时显示空态
         });
       } else {

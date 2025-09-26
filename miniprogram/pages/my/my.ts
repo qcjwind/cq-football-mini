@@ -57,6 +57,13 @@ Page({
     })
   },
 
+  // 跳转到首页
+  goToHome() {
+    wx.switchTab({
+      url: '/pages/index/index'
+    })
+  },
+
 
   // 页面加载时执行
   onLoad() {

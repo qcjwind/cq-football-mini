@@ -28,11 +28,50 @@ interface MatchListResponse {
   pageSize: number;
 }
 
+// 场馆信息接口
+interface ArenaInfo {
+  areaCode: string; 
+  areaName: string;
+  cityCode: string;
+  cityName: string;
+  detail: string;
+  giftSkuInfo: string;
+  gmtCreate: string;
+  gmtModify: string;
+  id: number;
+  name: string;
+  provinceCode: string;
+  provinceName: string;
+  saleSkuInfo: string;
+  venueAddress: string;
+  venueLat: string;
+  venueLng: string;
+}
+
+// 赛事SKU信息接口
+interface SkuInfo {
+  area: string;
+  gmtCreate: string;
+  gmtModify: string;
+  id: number;
+  matchId: number;
+  price: number;
+  skuName: string;
+  skuType: string;
+  stockTicket: number;
+  totalTicket: number;
+  venueId: number;
+}
+
 // 赛事详情响应接口
 interface MatchDetailResponse {
   code: number;
   message: string;
-  data: MatchInfo;
+  data: {
+    match: MatchInfo;
+    arena: ArenaInfo;
+    skuList: SkuInfo[];
+  };
 }
 
 // 获取赛事列表参数接口
@@ -59,24 +98,6 @@ class MatchService extends BaseService {
       return response;
     } catch (error) {
       console.error('获取赛事列表失败:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * 获取赛事详情
-   * @param matchId 赛事ID
-   * @returns Promise<MatchDetailResponse>
-   */
-  async getMatchDetail(matchId: number): Promise<MatchDetailResponse> {
-    try {
-      const response = await this.get(`/app/match/detail/${matchId}`, {}, {
-        showLoading: true,
-        loadingText: '加载赛事详情中...'
-      });
-      return response;
-    } catch (error) {
-      console.error('获取赛事详情失败:', error);
       throw error;
     }
   }
@@ -117,6 +138,24 @@ class MatchService extends BaseService {
       return response;
     } catch (error) {
       console.error('搜索赛事失败:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * 获取赛事详情信息
+   * @param matchId 赛事ID
+   * @returns Promise<MatchDetailResponse>
+   */
+  async getMatchInfo(matchId: number): Promise<MatchDetailResponse> {
+    try {
+      const response = await this.post('/app/match/info', { matchId }, {
+        showLoading: true,
+        loadingText: '加载赛事信息中...'
+      });
+      return response;
+    } catch (error) {
+      console.error('获取赛事信息失败:', error);
       throw error;
     }
   }
