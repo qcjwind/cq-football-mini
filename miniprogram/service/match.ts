@@ -80,6 +80,7 @@ interface MatchListParams {
   pageSize?: number;
   status?: 'upcoming' | 'live' | 'finished';
   keyword?: string;
+  matchName?: string;
 }
 
 class MatchService extends BaseService {
@@ -98,23 +99,6 @@ class MatchService extends BaseService {
       return response;
     } catch (error) {
       console.error('获取赛事列表失败:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * 获取热门赛事
-   * @param limit 限制数量，默认5
-   * @returns Promise<MatchListResponse>
-   */
-  async getHotMatches(limit: number = 5): Promise<MatchListResponse> {
-    try {
-      const response = await this.get('/app/match/hot', { limit }, {
-        showLoading: false // 热门赛事不显示loading
-      });
-      return response;
-    } catch (error) {
-      console.error('获取热门赛事失败:', error);
       throw error;
     }
   }

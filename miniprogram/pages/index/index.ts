@@ -13,7 +13,9 @@ Page({
     pageSize: 10, // 每页数量
     showEmpty: false, // 是否显示空态
     emptyText: '暂无赛事信息', // 空态提示文字
-    emptyImage: '/assets/empty.png' // 空态图片
+    emptyImage: '/assets/empty.png', // 空态图片
+    // 搜索相关状态
+    searchKeyword: '' // 搜索关键词
   },
   
   // 检查登录状态
@@ -32,18 +34,40 @@ Page({
 
   // 搜索功能
   onSearch() {
-    wx.showToast({
-      title: '搜索功能开发中',
-      icon: 'none'
+    wx.showModal({
+      title: '搜索赛事',
+      editable: true,
+      placeholderText: '请输入比赛名称',
+      content: this.data.searchKeyword || '', // 回显当前搜索关键词
+      success: (res) => {
+        if (res.confirm) {
+          const keyword = res.content ? res.content.trim() : '';
+          this.performSearch(keyword);
+        }
+      }
     })
   },
+
+  // 执行搜索
+  async performSearch(keyword: string) {
+    // 设置搜索关键词并重新加载列表
+    this.setData({
+      searchKeyword: keyword,
+      page: 1, // 重置页码
+      hasMore: true
+    });
+    
+    // 调用loadMatchList方法，它会自动使用searchKeyword
+    this.loadMatchList(true);
+  },
+
   
   // 选择城市
   onLocationSelect() {
     wx.showActionSheet({
-      itemList: ['成都', '重庆', '北京', '上海', '广州'],
+      itemList: ['重庆'], // 暂时只支持重庆
       success: (res) => {
-        const cities = ['成都', '重庆', '北京', '上海', '广州']
+        const cities = ['重庆'] // 暂时只支持重庆
         const selectedCity = cities[res.tapIndex]
         // 这里可以更新页面上的城市显示
         console.log('选择城市:', selectedCity)
@@ -104,9 +128,12 @@ Page({
       this.setData({ loading: true });
       
       const page = refresh ? 1 : this.data.page;
+      
+      // 调用列表接口，如果有搜索关键词则携带matchName参数
       const response = await matchService.getMatchList({
         page,
-        pageSize: this.data.pageSize
+        pageSize: this.data.pageSize,
+        matchName: this.data.searchKeyword || undefined
       });
       
       if (response.code === 200) {
