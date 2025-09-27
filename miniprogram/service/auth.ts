@@ -69,6 +69,27 @@ interface RegisterResponse {
   };
 }
 
+// 更新用户请求参数接口
+interface UpdateUserParams {
+  /**
+   * 用户头像URL
+   */
+  avatarUrl?: string;
+  
+  /**
+   * 用户昵称
+   */
+  nickname?: string;
+}
+
+// 更新用户响应接口
+interface UpdateUserResponse {
+  code: number;
+  message: string;
+  data: {
+  };
+}
+
 class AuthService extends BaseService {
   
   /**
@@ -135,6 +156,28 @@ class AuthService extends BaseService {
   }
 
   /**
+   * 更新用户信息
+   * @param params 更新参数
+   * @returns Promise<UpdateUserResponse>
+   */
+  async updateUser(params: UpdateUserParams): Promise<UpdateUserResponse> {
+    try {
+      const response = await this.request<UpdateUserResponse['data']>({
+        url: '/app/user/update',
+        method: 'POST',
+        data: params,
+        showLoading: true,
+        errorToast: false
+      });
+
+      return response;
+    } catch (error) {
+      console.error('更新用户信息失败:', error);
+      throw error;
+    }
+  }
+
+  /**
    * 登出
    */
   logout(): void {
@@ -147,4 +190,4 @@ class AuthService extends BaseService {
 const authService = new AuthService();
 
 export default authService;
-export { LoginResponse, RegisterParams, RegisterResponse };
+export { LoginResponse, RegisterParams, RegisterResponse, UpdateUserParams, UpdateUserResponse };

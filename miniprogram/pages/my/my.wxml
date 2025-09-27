@@ -31,13 +31,13 @@
   <!-- 已登录状态的用户信息区域 -->
   <view class="user-info-section" style="background-image: url('/assets/my_back.png');" wx:else>
     <view class="user-avatar">
-      <open-data type="userAvatarUrl"></open-data>
+      <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+        <image class="avatar" src="{{userInfo.avatarUrl || '/assets/default-avatar.png'}}"></image>
+      </button>
     </view>
     <view class="user-details">
-      <view class="username">
-        <open-data type="userNickName"></open-data>
-      </view>
-      <view class="user-desc">欢迎来到足球世界</view>
+      <input type="nickname" class="nickname-input" placeholder="请输入昵称" value="{{userInfo.nickname || ''}}" disabled="{{!!userInfo.nickname}}" bind:change="onInputChange" />
+      <view class="user-desc">欢迎您，祝你愉快</view>
     </view>
   </view>
 
@@ -57,7 +57,34 @@
   <view class="content-section">
     <!-- 订单内容 -->
     <view class="tab-content" wx:if="{{activeTab === 'order'}}">
-      <view class="empty-state">
+      <!-- 加载状态 -->
+      <view wx:if="{{orderLoading}}" class="loading-container">
+        <text>加载中...</text>
+      </view>
+      
+      <!-- 订单列表 -->
+      <view wx:elif="{{orderList.length > 0}}" class="order-list">
+        <view class="order-card" wx:for="{{orderList}}" wx:key="id" bindtap="onOrderCardTap" data-id="{{item.id}}">
+          <view class="order-header">
+            <text class="order-no">订单号：{{item.orderNo}}</text>
+            <text class="order-time">{{item.gmtCreate}}</text>
+          </view>
+          <view class="order-content">
+            <text class="order-title">赛事ID：{{item.matchId}}</text>
+            <view class="order-details">
+              <text class="order-sku">SKU ID：{{item.skuId}}</text>
+              <text class="order-quantity">数量：{{item.buyNum}}</text>
+            </view>
+            <view class="order-price">
+              <text class="price-label">总价：</text>
+              <text class="price-value">¥{{item.totalPrice}}</text>
+            </view>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 空状态 -->
+      <view wx:else class="empty-state">
         <image src="/assets/no-order.png" class="empty-image" mode="aspectFit"></image>
         <view class="empty-title">暂无订单</view>
         <view class="empty-desc">快去购买门票观看精彩比赛吧</view>
@@ -67,15 +94,27 @@
 
     <!-- 票夹内容 -->
     <view class="tab-content" wx:if="{{activeTab === 'ticket'}}">
-      <view class="ticket-list">
+      <!-- 加载状态 -->
+      <view wx:if="{{ticketLoading}}" class="loading-container">
+        <text>加载中...</text>
+      </view>
+      
+      <!-- 票务列表 -->
+      <view wx:elif="{{ticketList.length > 0}}" class="ticket-list">
         <ticket-card 
           wx:for="{{ticketList}}" 
           wx:key="id"
-          match-title="{{item.matchTitle}}"
-          cover-image="{{item.coverImage}}"
-          order-time="{{item.orderTime}}"
+          ticket-info="{{item}}"
           bind:cardtap="onTicketCardTap">
         </ticket-card>
+      </view>
+      
+      <!-- 空状态 -->
+      <view wx:else class="empty-state">
+        <image src="/assets/no-order.png" class="empty-image" mode="aspectFit"></image>
+        <view class="empty-title">暂无票务</view>
+        <view class="empty-desc">快去购买门票观看精彩比赛吧</view>
+        <button class="buy-button" bindtap="goToHome">去购买</button>
       </view>
     </view>
   </view>

@@ -11,75 +11,112 @@
   background-color: #f5f5f5;
 }
 
-/* 搜索栏样式 */
-.search-bar {
+/* 导航栏搜索容器样式 */
+.nav-search-container {
   display: flex;
   align-items: center;
-  height: 80rpx;
-  padding: 0;
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(3rpx);
-  border-radius: 20rpx;
-  border: 1rpx solid rgba(255, 255, 255, 0.7);
-}
-
-.location-btn {
-  display: flex;
-  align-items: center;
-  padding: 10rpx 20rpx;
-  border-radius: 15rpx;
-  margin-right: 20rpx;
-}
-
-.location-text {
-  color: rgba(255, 255, 255, 1);
-  font-size: 28rpx;
-  font-weight: 500;
-  margin-right: 10rpx;
-}
-
-.arrow-icon {
-  width: 20rpx;
-  height: 12rpx;
-  filter: brightness(0) invert(1);
-}
-
-.search-input {
-  flex: 1;
-  padding: 20rpx;
-  background: transparent;
-}
-
-.placeholder {
-  color: #999;
-  font-size: 28rpx;
-}
-
-.search-icon {
-  width: 120rpx;
+  pointer-events: auto;
+  position: relative;
+  z-index: 10;
   height: 100%;
-  background: #fff;
-  border-radius: 8rpx;
-  display: flex;
-  align-items: center;
   justify-content: center;
 }
 
-.search-icon-image {
-  width: 40rpx;
-  height: 40rpx;
-  filter: brightness(0) saturate(100%) invert(20%) sepia(95%) saturate(2000%) hue-rotate(225deg) brightness(100%) contrast(100%);
+/* 统一搜索栏样式 */
+.unified-search-bar {
+  display: flex;
+  align-items: center;
+  height: 60rpx;
+  background: #ffffff;
+  border-radius: 30rpx;
+  border: 1rpx solid #e5e5e5;
+  box-shadow: 0 1rpx 3rpx rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  pointer-events: auto;
+  position: relative;
+  z-index: 10;
+}
+
+/* 地区选择区域 */
+.location-section {
+  display: flex;
+  align-items: center;
+  // padding: 0 15rpx;
+  margin: 0 0 0 30rpx;
+  white-space: nowrap;
+}
+
+.location-text {
+  color: #333333;
+  font-size: 26rpx;
+  font-weight: 400;
+  margin-right: 6rpx;
+}
+
+.arrow-icon {
+  width: 16rpx;
+  height: 10rpx;
+}
+
+/* 分隔线 */
+.divider {
+  width: 1rpx;
+  height: 30rpx;
+  background: #e5e5e5;
+  margin: 0 8rpx 0 20rpx;
+}
+
+/* 搜索输入框区域 */
+.search-input-section {
+  flex: 1;
+  height: 100%;
+  width: 200rpx;
+  display: flex;
+  align-items: center;
+  padding: 0 15rpx;
+}
+
+.search-input {
+  width: 100%;
+  height: 100%;
+  font-size: 26rpx;
+  color: #333333;
+  background: transparent;
+  border: none;
+  outline: none;
+}
+
+/* 搜索按钮 */
+.search-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80rpx;
+  background: #3461FD;
+  border-radius: 45rpx;
+  cursor: pointer;
+  pointer-events: auto;
+  position: relative;
+  z-index: 10;
+  margin: 0 6rpx;
+  height: 48rpx;
+}
+
+.search-btn .search-icon {
+  width: 28rpx;
+  height: 28rpx;
 }
 
 /* 横幅区域样式 */
 .banner-section {
-  margin: 0;
+  margin: 14rpx 40rpx 0;
   overflow: hidden;
   position: relative;
+  border-radius: 20rpx;
 }
 
 .banner-image {
-  height: 480rpx;
+  height: 400rpx;
   position: relative;
   overflow: hidden;
 }
@@ -89,19 +126,11 @@
   height: 100%;
 }
 
-.search-bar {
-  position: absolute;
-  top: 160rpx;
-  left: 30rpx;
-  right: 30rpx;
-  z-index: 10;
-}
-
 /* 赛事列表样式 */
 .match-list-section {
   background: #f5f5f5;
   // border-radius: 20rpx;
-  padding: 30rpx;
+  padding: 30rpx 40rpx;
   // box-shadow: 0 10rpx 30rpx rgba(0, 0, 0, 0.1);
 }
 

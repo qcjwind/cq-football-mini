@@ -323,7 +323,12 @@ Page({
 
         // 跳转到首页
         wx.switchTab({
-          url: '/pages/index/index'
+          url: '/pages/index/index',
+          success: () => {
+            console.log('跳转首页成功，调用notifyLoginSuccess');
+            // 直接调用app的notifyLoginSuccess方法，确保逻辑统一
+            app.notifyLoginSuccess();
+          }
         });
       } else {
         // 注册失败

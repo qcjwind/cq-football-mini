@@ -145,10 +145,30 @@ App<IAppOption>({
     }
   },
 
+
   // 设置登录状态
   setLoginStatus(userInfo: any) {
     this.globalData.isLoggedIn = true
-    this.globalData.loginUserInfo = userInfo
+    
+    // 清理用户数据中的无效值
+    if (userInfo) {
+      const cleanValue = (value: any) => {
+        if (value === undefined || value === null || value === 'undefined' || value === 'null') {
+          return '';
+        }
+        return value;
+      };
+      
+      this.globalData.loginUserInfo = {
+        ...userInfo,
+        name: cleanValue(userInfo.name),
+        nickname: cleanValue(userInfo.nickname),
+        avatarUrl: cleanValue(userInfo.avatarUrl)
+      };
+    } else {
+      this.globalData.loginUserInfo = {};
+    }
+    
     this.globalData.needRegister = false
     this.globalData.loginData = null // 登录成功后清除login数据
     
@@ -165,17 +185,37 @@ App<IAppOption>({
 
   // 通知登录成功
   notifyLoginSuccess() {
-    // 获取当前页面栈
-    const pages = getCurrentPages();
-    const currentPage = pages[pages.length - 1];
-    
-    // 如果当前页面是首页，通知其加载赛事列表
-    if (currentPage && currentPage.route === 'pages/index/index') {
-      console.log('通知首页加载赛事列表');
-      if (typeof currentPage.onLoginSuccess === 'function') {
-        currentPage.onLoginSuccess();
+    // 延迟通知，确保页面切换完成
+    setTimeout(() => {
+      // 获取当前页面栈
+      const pages = getCurrentPages();
+      const currentPage = pages[pages.length - 1];
+      
+      console.log('notifyLoginSuccess - 当前页面路由:', currentPage?.route);
+      
+      // 如果当前页面是首页，通知其加载赛事列表
+      if (currentPage && currentPage.route === 'pages/index/index') {
+        console.log('通知首页加载赛事列表');
+        if (typeof currentPage.onLoginSuccess === 'function') {
+          currentPage.onLoginSuccess();
+        }
+      } else {
+        console.log('当前页面不是首页，等待页面切换完成...');
+        // 如果当前页面不是首页，可能是正在切换中，再等待一下
+        setTimeout(() => {
+          const pages = getCurrentPages();
+          const currentPage = pages[pages.length - 1];
+          console.log('延迟检查 - 当前页面路由:', currentPage?.route);
+          
+          if (currentPage && currentPage.route === 'pages/index/index') {
+            console.log('延迟通知首页加载赛事列表');
+            if (typeof currentPage.onLoginSuccess === 'function') {
+              currentPage.onLoginSuccess();
+            }
+          }
+        }, 300);
       }
-    }
+    }, 100);
   },
 
   // 重定向到登录页面

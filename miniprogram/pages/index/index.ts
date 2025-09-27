@@ -32,20 +32,25 @@ Page({
     })
   },
 
-  // 搜索功能
-  onSearch() {
-    wx.showModal({
-      title: '搜索赛事',
-      editable: true,
-      placeholderText: '请输入比赛名称',
-      content: this.data.searchKeyword || '', // 回显当前搜索关键词
-      success: (res) => {
-        if (res.confirm) {
-          const keyword = res.content ? res.content.trim() : '';
-          this.performSearch(keyword);
-        }
-      }
-    })
+  // 搜索输入框输入事件
+  onSearchInput(e: any) {
+    const keyword = e.detail.value;
+    this.setData({
+      searchKeyword: keyword
+    });
+  },
+
+  // 搜索输入框确认事件
+  onSearchConfirm(e: any) {
+    const keyword = e.detail.value ? e.detail.value.trim() : '';
+    this.performSearch(keyword);
+  },
+
+  // 搜索按钮点击事件
+  onSearchBtnClick() {
+    const keyword = this.data.searchKeyword ? this.data.searchKeyword.trim() : '';
+
+    this.performSearch(keyword);
   },
 
   // 执行搜索
@@ -129,12 +134,20 @@ Page({
       
       const page = refresh ? 1 : this.data.page;
       
+      console.log('调用赛事列表接口，参数:', {
+        page,
+        pageSize: this.data.pageSize,
+        matchName: this.data.searchKeyword || undefined
+      });
+      
       // 调用列表接口，如果有搜索关键词则携带matchName参数
       const response = await matchService.getMatchList({
         page,
         pageSize: this.data.pageSize,
         matchName: this.data.searchKeyword || undefined
       });
+      
+      console.log('接口响应:', response);
       
       if (response.code === 200) {
         const newMatchList = this.formatMatchData(response.data);

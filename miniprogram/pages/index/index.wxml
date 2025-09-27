@@ -1,31 +1,54 @@
 <!--index.wxml-->
 <view class="page">
+  <!-- 导航栏 -->
+  <navigation-bar 
+    background="#f5f5f5"
+    color="#333333"
+    back="{{false}}"
+    homeButton="{{false}}"
+  >
+    <!-- 左侧搜索输入框 -->
+    <view slot="left" class="nav-search-container">
+      <!-- 统一搜索栏 -->
+      <view class="unified-search-bar">
+        <!-- 地区选择 -->
+        <view class="location-section">
+          <text class="location-text">重庆</text>
+          <image class="arrow-icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDFMNiA2TDExIDEiIHN0cm9rZT0iIzMzMzMzMyIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+" mode="aspectFit"></image>
+        </view>
+        <!-- 分隔线 -->
+        <view class="divider"></view>
+        <!-- 搜索输入框 -->
+        <view class="search-input-section">
+          <input 
+            class="search-input" 
+            placeholder="请输入所搜内容" 
+            value="{{searchKeyword}}"
+            bindinput="onSearchInput"
+            bindconfirm="onSearchConfirm"
+            confirm-type="search"
+          />
+        </view>
+        <!-- 搜索按钮 -->
+        <view class="search-btn" bindtap="onSearchBtnClick">
+          <image class="search-icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iOSIgY3k9IjkiIHI9IjciIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxwYXRoIGQ9Im0xNyAxNyA4IDQiIHN0cm9rZT0iI2ZmZmZmZiIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+" mode="aspectFit"></image>
+        </view>
+      </view>
+    </view>
+  </navigation-bar>
+
   <!-- 已登录状态显示内容 -->
   <view wx:if="{{isLoggedIn}}">
     <!-- 横幅区域 -->
     <view class="banner-section">
       <view class="banner-image">
         <image class="banner-bg" src="../../assets/home_back.png" mode="aspectFill"></image>
-        <!-- 搜索栏覆盖在背景图上 -->
-        <view class="search-bar">
-          <view class="location-btn" bindtap="onLocationSelect">
-            <text class="location-text">重庆</text>
-            <image class="arrow-icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iOCIgdmlld0JveD0iMCAwIDEyIDgiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik0xIDFMNiA2TDExIDEiIHN0cm9rZT0iIzMzMzMzMyIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiLz4KPC9zdmc+" mode="aspectFit"></image>
-          </view>
-          <view class="search-input" bindtap="onSearch">
-            <text class="placeholder" wx:if="{{!searchKeyword}}">请输入所搜内容</text>
-            <text class="search-keyword" wx:else>{{searchKeyword}}</text>
-          </view>
-          <view class="search-icon" bindtap="onSearch">
-            <image class="search-icon-image" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGNpcmNsZSBjeD0iOSIgY3k9IjkiIHI9IjciIHN0cm9rZT0iIzMzMzMzMyIgc3Ryb2tlLXdpZHRoPSIyIi8+CjxwYXRoIGQ9Im0xNyAxNyA4IDQiIHN0cm9rZT0iIzMzMzMzMyIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz4KPC9zdmc+" mode="aspectFit"></image>
-          </view>
-        </view>
       </view>
     </view>
 
     <!-- 赛事列表 -->
     <view class="match-list-section">
-      <view class="section-header" bindtap="onViewMoreMatches">
+      <view class="section-header">
         <text class="section-title">赛事列表</text>
         <image class="arrow-right" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQuNSA5TDcuNSA2TDQuNSAzIiBzdHJva2U9IiM5OTk5OTkiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPg==" mode="aspectFit"></image>
       </view>

@@ -4,6 +4,11 @@ Component({
    * 组件的属性列表
    */
   properties: {
+    ticketInfo: {
+      type: Object,
+      value: {}
+    },
+    // 兼容旧版本属性
     matchTitle: {
       type: String,
       value: ''
@@ -31,7 +36,8 @@ Component({
   methods: {
     onCardTap() {
       this.triggerEvent('cardtap', {
-        matchTitle: this.data.matchTitle
+        id: this.data.ticketInfo.id || null,
+        matchTitle: this.data.ticketInfo.name || this.data.matchTitle
       })
     }
   }

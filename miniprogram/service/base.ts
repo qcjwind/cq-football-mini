@@ -12,6 +12,7 @@ interface RequestConfig {
   header?: Record<string, string>;
   showLoading?: boolean;
   loadingText?: string;
+  errorToast?: boolean;
 }
 
 class BaseService {
@@ -56,7 +57,7 @@ class BaseService {
 
   // 通用请求方法
   protected async request<T = any>(config: RequestConfig): Promise<ApiResponse<T>> {
-    const { url, method = 'GET', data, header = {}, showLoading = false, loadingText = '加载中...' } = config;
+    const { url, method = 'GET', data, header = {}, showLoading = false, loadingText = '加载中...', errorToast = true } = config;
 
     // 显示加载提示
     if (showLoading) {
@@ -117,10 +118,12 @@ class BaseService {
                 });
               }, 1500);
             } else {
-              wx.showToast({
-                title: response.message || '请求失败',
-                icon: 'none'
-              });
+              if (errorToast) {
+                wx.showToast({
+                  title: response.message || '请求失败',
+                  icon: 'none'
+                });
+              }
             }
             reject(response);
             return;

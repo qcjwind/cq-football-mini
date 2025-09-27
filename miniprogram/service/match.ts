@@ -134,7 +134,7 @@ class MatchService extends BaseService {
   async getMatchInfo(matchId: number): Promise<MatchDetailResponse> {
     try {
       const response = await this.post('/app/match/info', { matchId }, {
-        showLoading: true,
+        showLoading: false,
         loadingText: '加载赛事信息中...'
       });
       return response;
