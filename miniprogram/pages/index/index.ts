@@ -134,18 +134,20 @@ Page({
       
       const page = refresh ? 1 : this.data.page;
       
-      console.log('调用赛事列表接口，参数:', {
-        page,
-        pageSize: this.data.pageSize,
-        matchName: this.data.searchKeyword || undefined
-      });
-      
       // 调用列表接口，如果有搜索关键词则携带matchName参数
-      const response = await matchService.getMatchList({
+      const params: any = {
         page,
-        pageSize: this.data.pageSize,
-        matchName: this.data.searchKeyword || undefined
-      });
+        pageSize: this.data.pageSize
+      };
+      
+      // 只有当searchKeyword不为空时才传递matchName参数
+      if (this.data.searchKeyword && this.data.searchKeyword.trim()) {
+        params.matchName = this.data.searchKeyword.trim();
+      }
+      
+      console.log('调用赛事列表接口，参数:', params);
+      
+      const response = await matchService.getMatchList(params);
       
       console.log('接口响应:', response);
       

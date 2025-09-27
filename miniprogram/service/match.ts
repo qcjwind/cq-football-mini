@@ -57,7 +57,7 @@ interface SkuInfo {
   matchId: number;
   price: number;
   skuName: string;
-  skuType: string;
+  skuType: 'SALE_TICKET' | 'GIFT_TICKET';
   stockTicket: number;
   totalTicket: number;
   venueId: number;
@@ -69,7 +69,7 @@ interface MatchDetailResponse {
   message: string;
   data: {
     match: MatchInfo;
-    arena: ArenaInfo;
+    venue: ArenaInfo;
     skuList: SkuInfo[];
   };
 }

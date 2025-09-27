@@ -1,0 +1,290 @@
+/* ticket-select.less */
+.page {
+  height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 140rpx; /* 为底部按钮留出空间 */
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+.loading-container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  color: #999;
+}
+
+
+/* 赛事信息卡片 */
+.match-info-card {
+  background: #fff;
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: none;
+  display: flex;
+  padding: 48rpx 40rpx 30rpx;
+}
+
+.match-image {
+  width: 170rpx;
+  height: 206rpx;
+  position: relative;
+  overflow: hidden;
+  border-radius: 15rpx;
+  flex-shrink: 0;
+}
+
+.match-bg {
+  width: 100%;
+  height: 100%;
+}
+
+.match-details {
+  flex: 1;
+  padding-left: 30rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.match-title-section {
+  display: flex;
+  align-items: flex-start;
+}
+
+.match-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+}
+
+.match-time-section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.match-time {
+  font-size: 28rpx;
+  color: #666;
+  margin-bottom: 10rpx;
+  display: block;
+}
+
+.match-disclaimer {
+  font-size: 24rpx;
+  color: #999;
+  display: block;
+}
+
+
+/* 场次选择区域 */
+.session-section {
+  background: #fff;
+  margin-top: 20rpx;
+  padding: 40rpx;
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.section-desc {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.session-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.session-item {
+  padding: 30rpx 40rpx;
+  border: 2rpx solid #e5e5e5;
+  border-radius: 15rpx;
+  background: #fff;
+  transition: all 0.3s ease;
+}
+
+.session-item.selected {
+  border-color: #3461FD;
+  background: #f8f9ff;
+}
+
+.session-text {
+  font-size: 28rpx;
+  color: #333;
+}
+
+/* 区域选择区域 */
+.area-section {
+  background: #fff;
+  margin-top: 20rpx;
+  padding: 40rpx;
+  padding-bottom: 20rpx;
+}
+
+.area-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20rpx;
+}
+
+.area-item {
+  position: relative;
+  padding: 30rpx 20rpx;
+  border: 2rpx solid #e5e5e5;
+  border-radius: 15rpx;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 120rpx;
+  transition: all 0.3s ease;
+}
+
+.area-item.selected {
+  border-color: #3461FD;
+  background: #f8f9ff;
+}
+
+.area-item.outofstock {
+  border-color: #ccc;
+  background: #f5f5f5;
+  opacity: 0.6;
+}
+
+.area-item.soldout {
+  border-color: #ff4444;
+  background: #fff5f5;
+  opacity: 0.6;
+}
+
+.area-item.full {
+  border-color: #ffa500;
+  background: #fff8f0;
+  opacity: 0.6;
+}
+
+.area-name {
+  font-size: 28rpx;
+  color: #333;
+  text-align: center;
+}
+
+.status-tag {
+  position: absolute;
+  top: -8rpx;
+  right: -8rpx;
+  padding: 8rpx 12rpx;
+  border-radius: 20rpx;
+  font-size: 20rpx;
+}
+
+.status-tag.outofstock {
+  background: #ccc;
+  color: #fff;
+}
+
+.status-tag.soldout {
+  background: #ff4444;
+  color: #fff;
+}
+
+.status-tag.full {
+  background: #ffa500;
+  color: #fff;
+}
+
+.status-text {
+  font-size: 20rpx;
+  font-weight: 500;
+}
+
+/* 底部购买栏 */
+.bottom-purchase-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #fff;
+  padding: 30rpx 40rpx;
+  display: flex;
+  align-items: center;
+  gap: 30rpx;
+  box-shadow: 0 -4rpx 20rpx rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+.price-info {
+  display: flex;
+  align-items: baseline;
+  gap: 6rpx;
+}
+
+.price-symbol {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.price-number {
+  font-size: 48rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.limit-info {
+  flex: 1;
+}
+
+.limit-text {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.buy-button {
+  background: #3461FD;
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: bold;
+  padding: 24rpx 60rpx;
+  border-radius: 50rpx;
+  border: none;
+  min-width: 200rpx;
+}
+
+.buy-button::after {
+  border: none;
+}
+
+/* 响应式调整 */
+@media (max-width: 750rpx) {
+  .area-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .bottom-purchase-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 20rpx;
+  }
+  
+  .buy-button {
+    width: 100%;
+    min-width: auto;
+  }
+}

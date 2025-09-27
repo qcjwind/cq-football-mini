@@ -59,8 +59,10 @@
           <image class="match-cover" src="{{item.cover}}" mode="aspectFill" wx:if="{{item.cover}}"></image>
           <view class="card-content">
             <text class="match-title">{{item.name}}</text>
-            <text class="match-matinee" wx:if="{{item.matineeName}}">{{item.matineeName}}</text>
-            <text class="match-time">{{item.startTime}}</text>
+            <view class="match-time-section">
+              <text class="match-time">{{item.startTime}}</text>
+              <text class="match-matinee" wx:if="{{item.venueAddress}}">{{item.venueAddress}}</text>
+            </view>
           </view>
         </view>
       </view>

@@ -130,9 +130,10 @@ Page({
     }
 
     // 证件号格式验证
-    if (idType === '身份证' && !this.validateIdCard(idNumber)) {
+    if (!this.validateIdNumber(idType, idNumber)) {
+      const errorMessage = this.getIdNumberErrorMessage(idType, idNumber);
       wx.showToast({
-        title: '请输入正确的身份证号',
+        title: errorMessage,
         icon: 'none',
         duration: 2000
       });
@@ -209,9 +210,10 @@ Page({
     }
 
     // 证件号格式验证
-    if (idType === '身份证' && !this.validateIdCard(idNumber)) {
+    if (!this.validateIdNumber(idType, idNumber)) {
+      const errorMessage = this.getIdNumberErrorMessage(idType, idNumber);
       wx.showToast({
-        title: '请输入正确的身份证号',
+        title: errorMessage,
         icon: 'none',
         duration: 2000
       });
@@ -353,5 +355,73 @@ Page({
     // 简单的身份证号格式验证
     const reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
     return reg.test(idCard);
+  },
+
+  // 其他证件类型长度验证
+  validateOtherIdNumber(idType: string, idNumber: string): boolean {
+    const trimmedNumber = idNumber.trim();
+    
+    // 定义各种证件类型的长度要求
+    const lengthRules: {[key: string]: {min: number, max: number}} = {
+      '护照': { min: 6, max: 20 },        // 护照号长度6-20位
+      '军官证': { min: 6, max: 18 },      // 军官证长度6-18位
+      '港澳通行证': { min: 8, max: 12 },  // 港澳通行证长度8-12位
+      '台胞证': { min: 8, max: 12 }       // 台胞证长度8-12位
+    };
+
+    const rule = lengthRules[idType];
+    if (!rule) {
+      return true; // 未知证件类型，不进行校验
+    }
+
+    const length = trimmedNumber.length;
+    return length >= rule.min && length <= rule.max;
+  },
+
+  // 通用证件号验证
+  validateIdNumber(idType: string, idNumber: string): boolean {
+    const trimmedNumber = idNumber.trim();
+    
+    if (!trimmedNumber) {
+      return false;
+    }
+
+    // 身份证特殊处理
+    if (idType === '身份证') {
+      return this.validateIdCard(trimmedNumber);
+    }
+
+    // 其他证件类型进行长度校验
+    return this.validateOtherIdNumber(idType, trimmedNumber);
+  },
+
+  // 获取证件号校验错误信息
+  getIdNumberErrorMessage(idType: string, idNumber: string): string {
+    const trimmedNumber = idNumber.trim();
+    
+    if (!trimmedNumber) {
+      return '请输入证件号';
+    }
+
+    if (idType === '身份证') {
+      if (!this.validateIdCard(trimmedNumber)) {
+        return '请输入正确的身份证号';
+      }
+    } else {
+      if (!this.validateOtherIdNumber(idType, trimmedNumber)) {
+        const lengthRules: {[key: string]: {min: number, max: number}} = {
+          '护照': { min: 6, max: 20 },
+          '军官证': { min: 6, max: 18 },
+          '港澳通行证': { min: 8, max: 12 },
+          '台胞证': { min: 8, max: 12 }
+        };
+        const rule = lengthRules[idType];
+        if (rule) {
+          return `${idType}号码长度为${rule.min}-${rule.max}位`;
+        }
+      }
+    }
+
+    return '';
   },
 });

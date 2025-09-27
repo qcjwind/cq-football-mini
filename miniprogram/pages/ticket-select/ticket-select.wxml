@@ -1,0 +1,84 @@
+<!-- ticket-select.wxml -->
+<view class="page">
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <text>加载中...</text>
+  </view>
+  
+  <!-- 主要内容 -->
+  <view wx:else class="content">
+    <!-- 赛事信息卡片 -->
+    <view class="match-info-card">
+      <view class="match-image">
+        <image class="match-bg" src="{{matchInfo.cover || '../../assets/home_back.png'}}" mode="aspectFill"></image>
+      </view>
+      <view class="match-details">
+        <view class="match-title-section">
+          <text class="match-title">{{matchInfo.name}}</text>
+        </view>
+        <view class="match-time-section">
+          <text class="match-time">{{matchInfo.startTime}}</text>
+          <text class="match-disclaimer">以现场为准</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 场次选择区域 -->
+    <view class="session-section">
+      <view class="section-header">
+        <text class="section-title">场次</text>
+        <text class="section-desc">场次时间均为演出当地时间</text>
+      </view>
+      <view class="session-list">
+        <view 
+          wx:for="{{sessionList}}" 
+          wx:key="id"
+          class="session-item {{item.selected ? 'selected' : ''}}"
+          data-id="{{item.id}}"
+          bindtap="onSessionSelect"
+        >
+          <text class="session-text">{{item.date}} {{item.time}} {{item.name}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 区域选择区域 -->
+    <view class="area-section">
+      <view class="section-header">
+        <text class="section-title">区域</text>
+      </view>
+      <view class="area-grid">
+        <view 
+          wx:for="{{areaList}}" 
+          wx:key="id"
+          class="area-item {{item.selected ? 'selected' : ''}} {{item.status}}"
+          data-id="{{item.id}}"
+          bindtap="onAreaSelect"
+        >
+          <text class="area-name">{{item.name}}</text>
+          <view wx:if="{{item.status === 'outofstock'}}" class="status-tag outofstock">
+            <text class="status-text">缺货</text>
+          </view>
+          <view wx:elif="{{item.status === 'soldout'}}" class="status-tag soldout">
+            <text class="status-text">售罄</text>
+          </view>
+          <view wx:elif="{{item.status === 'full'}}" class="status-tag full">
+            <text class="status-text">已满</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 底部购买栏 -->
+  <view wx:if="{{!loading}}" class="bottom-purchase-bar">
+    <view class="price-info">
+      <text class="price-symbol">¥</text>
+      <text class="price-number">{{totalPrice}}</text>
+    </view>
+    <view class="limit-info">
+      <text class="limit-text">{{limitText}}</text>
+    </view>
+    <button class="buy-button" bindtap="onBuyNow">立即购买</button>
+  </view>
+</view>

@@ -29,7 +29,7 @@
         <text class="price-suffix">起</text>
       </view>
       <view class="venue-info">
-        <view class="venue-name">
+        <view class="venue-name" bindtap="onAddressTap">
           <text class="venue-text">{{arenaInfo.name}}</text>
           <image class="arrow-icon" src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQuNSA5TDcuNSA2TDQuNSAzIiBzdHJva2U9IiM5OTk5OTkiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIi8+Cjwvc3ZnPg==" mode="aspectFit"></image>
         </view>

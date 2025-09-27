@@ -3,6 +3,7 @@
     "pages/index/index",
     "pages/login/login",
     "pages/match-detail/match-detail",
+    "pages/ticket-select/ticket-select",
     "pages/my/my",
     "pages/order-detail/index"
   ],
