@@ -1,9 +1,9 @@
 <!--pages/my/my.wxml-->
 <view class="my-container">
   <!-- 需要注册的用户信息区域 -->
-  <view class="user-info-section" style="background-image: url('/assets/my_back.png');" bindtap="goToLogin" wx:if="{{!isLoggedIn && needRegister}}">
+  <view class="user-info-section" bindtap="goToLogin" wx:if="{{!isLoggedIn && needRegister}}">
     <view class="user-avatar">
-      <image src="/assets/default-avatar.png" mode="aspectFill" class="default-avatar"></image>
+      <image class="avatar" src="{{'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132'}}"></image>
     </view>
     <view class="user-details">
       <view class="username">立即注册</view>
@@ -15,9 +15,10 @@
   </view>
 
   <!-- 需要登录的用户信息区域 -->
-  <view class="user-info-section" style="background-image: url('/assets/my_back.png');" bindtap="goToLogin" wx:elif="{{!isLoggedIn}}">
+  <view class="user-info-section" bindtap="goToLogin" wx:elif="{{!isLoggedIn}}">
+    <image class="background-image" src="../../assets/my_back.png" mode="aspectFill"></image>
     <view class="user-avatar">
-      <image src="/assets/default-avatar.png" mode="aspectFill" class="default-avatar"></image>
+      <image class="avatar" src="{{'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132'}}"></image>
     </view>
     <view class="user-details">
       <view class="username">立即登录</view>
@@ -29,14 +30,13 @@
   </view>
   
   <!-- 已登录状态的用户信息区域 -->
-  <view class="user-info-section" style="background-image: url('/assets/my_back.png');" wx:else>
+  <view class="user-info-section" wx:else>
+    <image class="background-image" src="../../assets/my_back.png" mode="aspectFill"></image>
     <view class="user-avatar">
-      <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-        <image class="avatar" src="{{userInfo.avatarUrl || '/assets/default-avatar.png'}}"></image>
-      </button>
+      <image class="avatar" src="{{'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132'}}"></image>
     </view>
     <view class="user-details">
-      <input type="nickname" class="nickname-input" placeholder="请输入昵称" value="{{userInfo.nickname || ''}}" disabled="{{!!userInfo.nickname}}" bind:change="onInputChange" />
+      <view class="user-name">{{userInfo.maskName || ''}}</view>
       <view class="user-desc">欢迎您，祝你愉快</view>
     </view>
   </view>

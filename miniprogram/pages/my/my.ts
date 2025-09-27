@@ -1,15 +1,12 @@
 // pages/my/my.ts
 import ticketService, { TicketInfo } from '../../service/ticket';
 import orderService, { OrderInfo } from '../../service/order';
-import authService from '../../service/auth';
 
 Page({
   data: {
     isLoggedIn: false,
     userInfo: {
-      name: '',
-      nickname: '',
-      avatarUrl: ''
+      maskName: ''
     },
     needRegister: false, // 是否需要注册
     activeTab: 'order', // 默认显示订单tab
@@ -43,9 +40,7 @@ Page({
       isLoggedIn: app.globalData.isLoggedIn,
       needRegister: app.globalData.needRegister || false,
       userInfo: {
-        name: getValidValue(loginUserInfo.name),
-        nickname: getValidValue(loginUserInfo.nickname),
-        avatarUrl: getValidValue(loginUserInfo.avatarUrl)
+        maskName: getValidValue(loginUserInfo.maskName)
       }
     })
   },
@@ -55,97 +50,6 @@ Page({
     wx.navigateTo({
       url: '/pages/login/login'
     })
-  },
-
-  // 选择头像
-  async onChooseAvatar(e: any) {
-    const { avatarUrl } = e.detail;
-    
-    try {
-      // 先更新本地显示
-      this.setData({
-        "userInfo.avatarUrl": avatarUrl
-      });
-      
-      // 调用更新用户信息接口
-      const response = await authService.updateUser({
-        avatarUrl: avatarUrl
-      });
-      
-      if (response.code === 200) {
-        // 更新全局用户信息缓存
-        const app = getApp<IAppOption>();
-        const updatedUserInfo = {
-          ...app.globalData.loginUserInfo,
-          avatarUrl: avatarUrl
-        };
-        
-        // 更新全局状态
-        app.globalData.loginUserInfo = updatedUserInfo;
-        
-        // 更新本地存储
-        wx.setStorageSync('userInfo', updatedUserInfo);
-      } else {
-        // 更新失败，恢复原头像
-        const app = getApp<IAppOption>();
-        this.setData({
-          "userInfo.avatarUrl": app.globalData.loginUserInfo?.avatarUrl || ''
-        });
-      }
-    } catch (error) {
-      console.error('更新头像失败:', error);
-      
-      // 恢复原头像
-      const app = getApp<IAppOption>();
-      this.setData({
-        "userInfo.avatarUrl": app.globalData.loginUserInfo?.avatarUrl || ''
-      });
-    }
-  },
-
-  // 昵称输入变化
-  async onInputChange(e: any) {
-    const nickName = e.detail.value;
-    
-    if (!nickName.trim()) {
-      return; // 空昵称不处理
-    }
-    
-    try {
-      // 先更新本地显示
-      this.setData({
-        "userInfo.nickname": nickName,
-      });
-      
-      // 调用更新用户信息接口
-      const response = await authService.updateUser({
-        nickname: nickName
-      });
-      
-      if (response.code === 200) {
-        // 更新全局用户信息缓存
-        const app = getApp<IAppOption>();
-        const updatedUserInfo = {
-          ...app.globalData.loginUserInfo,
-          nickname: nickName
-        };
-
-        // 更新全局状态
-        app.globalData.loginUserInfo = updatedUserInfo;
-        
-        // 更新本地存储
-        wx.setStorageSync('userInfo', updatedUserInfo);
-        
-        wx.showToast({
-          title: '昵称更新成功',
-          icon: 'success',
-          duration: 2000
-        });
-      } else {
-      }
-    } catch (error) {
-      console.error('更新昵称失败:', error);
-    }
   },
 
 
@@ -305,9 +209,7 @@ Page({
     
     this.setData({
       userInfo: {
-        name: getValidValue(loginUserInfo.name),
-        nickname: getValidValue(loginUserInfo.nickname),
-        avatarUrl: getValidValue(loginUserInfo.avatarUrl)
+        maskName: getValidValue(loginUserInfo.maskName)
       }
     })
     
