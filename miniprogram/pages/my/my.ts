@@ -129,7 +129,7 @@ Page({
           ...app.globalData.loginUserInfo,
           nickname: nickName
         };
-        
+
         // 更新全局状态
         app.globalData.loginUserInfo = updatedUserInfo;
         
@@ -156,11 +156,11 @@ Page({
       activeTab: tab
     })
     
-    // 根据tab类型加载对应数据
-    if (tab === 'order' && this.data.orderList.length === 0) {
-      this.loadOrderList()
-    } else if (tab === 'ticket' && this.data.ticketList.length === 0) {
-      this.loadTicketList()
+    // 根据tab类型重新加载数据
+    if (tab === 'order') {
+      this.loadOrderList(true) // 强制刷新
+    } else if (tab === 'ticket') {
+      this.loadTicketList(true) // 强制刷新
     }
   },
 
@@ -254,25 +254,23 @@ Page({
 
   // 订单卡片点击事件
   onOrderCardTap(e: any) {
-    const orderId = e.currentTarget.dataset.id
+    const { orderId } = e.detail
     console.log('点击订单卡片:', orderId)
     
-    // 这里可以跳转到订单详情页
-    wx.showToast({
-      title: '查看订单详情',
-      icon: 'none'
+    // 跳转到订单详情页
+    wx.navigateTo({
+      url: `/pages/order-detail/index?orderId=${orderId}`
     })
   },
 
   // 票夹卡片点击事件
   onTicketCardTap(e: any) {
-    const ticketId = e.detail.id
-    console.log('点击票夹卡片:', ticketId)
+    const { matchId } = e.detail
+    console.log('点击票夹卡片:', matchId)
     
-    // 这里可以跳转到票夹详情页
-    wx.showToast({
-      title: '查看票夹详情',
-      icon: 'none'
+    // 跳转到订单详情页
+    wx.navigateTo({
+      url: `/pages/order-detail/index?matchId=${matchId}`
     })
   },
 

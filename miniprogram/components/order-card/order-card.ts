@@ -1,12 +1,14 @@
-// components/ticket-card/ticket-card.ts
+// components/order-card/order-card.ts
+import { OrderInfo } from '../../service/order';
+
 Component({
   /**
    * 组件的属性列表
    */
   properties: {
-    ticketInfo: {
+    orderInfo: {
       type: Object,
-      value: {}
+      value: {} as OrderInfo
     },
   },
 
@@ -23,7 +25,7 @@ Component({
   methods: {
     onCardTap() {
       this.triggerEvent('cardtap', {
-        matchId: this.data.ticketInfo.matchId || null,
+        orderId: this.data.orderInfo.orderNo || null
       })
     }
   }

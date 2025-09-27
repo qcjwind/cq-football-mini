@@ -1,6 +1,7 @@
 {
   "usingComponents": {
-    "ticket-card": "/components/ticket-card/ticket-card"
+    "ticket-card": "/components/ticket-card/ticket-card",
+    "order-card": "/components/order-card/order-card"
   },
   "navigationBarTitleText": "我的"
 }

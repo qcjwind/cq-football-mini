@@ -64,23 +64,12 @@
       
       <!-- 订单列表 -->
       <view wx:elif="{{orderList.length > 0}}" class="order-list">
-        <view class="order-card" wx:for="{{orderList}}" wx:key="id" bindtap="onOrderCardTap" data-id="{{item.id}}">
-          <view class="order-header">
-            <text class="order-no">订单号：{{item.orderNo}}</text>
-            <text class="order-time">{{item.gmtCreate}}</text>
-          </view>
-          <view class="order-content">
-            <text class="order-title">赛事ID：{{item.matchId}}</text>
-            <view class="order-details">
-              <text class="order-sku">SKU ID：{{item.skuId}}</text>
-              <text class="order-quantity">数量：{{item.buyNum}}</text>
-            </view>
-            <view class="order-price">
-              <text class="price-label">总价：</text>
-              <text class="price-value">¥{{item.totalPrice}}</text>
-            </view>
-          </view>
-        </view>
+        <order-card 
+          wx:for="{{orderList}}" 
+          wx:key="id"
+          order-info="{{item}}"
+          bind:cardtap="onOrderCardTap">
+        </order-card>
       </view>
       
       <!-- 空状态 -->
