@@ -31,6 +31,38 @@ interface OrderListParams {
   pageSize?: number;
 }
 
+// 购票参数接口
+interface BuyTicketParams {
+  // list: {
+  //   idNo: string;
+  //   idType: string;
+  //   mobile: string;
+  //   name: string;
+  // }[];
+  listJsonStr: string;
+  // 幂等，前端生成UUID
+  requestNo: string;
+  skuId: number;
+}
+
+// 购票响应接口
+interface BuyTicketResponse {
+  code: number;
+  message: string;
+  data: {
+    buyNum: number;
+    gmtCreate: string;
+    gmtModify: string;
+    id: number;
+    matchId: number;
+    orderNo: string;
+    skuId: number;
+    totalPrice: number;
+    userId: number;
+    venueId: number;
+  };
+}
+
 class OrderService extends BaseService {
 
   /**
@@ -44,7 +76,7 @@ class OrderService extends BaseService {
         showLoading: false,
         // loadingText: '加载订单列表中...'
       });
-      return response;
+      return response as OrderListResponse;
     } catch (error) {
       console.error('获取订单列表失败:', error);
       throw error;
@@ -69,23 +101,6 @@ class OrderService extends BaseService {
     }
   }
 
-  /**
-   * 取消订单
-   * @param orderId 订单ID
-   * @returns Promise<any>
-   */
-  async cancelOrder(orderId: number): Promise<any> {
-    try {
-      const response = await this.post(`/app/order/cancel/${orderId}`, {}, {
-        showLoading: true,
-        loadingText: '取消订单中...'
-      });
-      return response;
-    } catch (error) {
-      console.error('取消订单失败:', error);
-      throw error;
-    }
-  }
 
   /**
    * 支付订单
@@ -106,40 +121,20 @@ class OrderService extends BaseService {
   }
 
   /**
-   * 申请退款
-   * @param orderId 订单ID
-   * @param reason 退款原因
-   * @returns Promise<any>
+   * 购票接口
+   * @param params 购票参数
+   * @returns Promise<BuyTicketResponse>
    */
-  async refundOrder(orderId: number, reason: string): Promise<any> {
+  async buySaleTicket(params: BuyTicketParams): Promise<BuyTicketResponse> {
     try {
-      const response = await this.post(`/app/order/refund/${orderId}`, {
-        reason
-      }, {
+      console.log('购票参数:', params);
+      const response = await this.post('/app/order/buySaleTicket', params, {
         showLoading: true,
-        loadingText: '申请退款中...'
+        loadingText: '正在购票...'
       });
       return response;
     } catch (error) {
-      console.error('申请退款失败:', error);
-      throw error;
-    }
-  }
-
-  /**
-   * 确认收货
-   * @param orderId 订单ID
-   * @returns Promise<any>
-   */
-  async confirmOrder(orderId: number): Promise<any> {
-    try {
-      const response = await this.post(`/app/order/confirm/${orderId}`, {}, {
-        showLoading: true,
-        loadingText: '确认收货中...'
-      });
-      return response;
-    } catch (error) {
-      console.error('确认收货失败:', error);
+      console.error('购票失败:', error);
       throw error;
     }
   }
@@ -149,4 +144,4 @@ class OrderService extends BaseService {
 const orderService = new OrderService();
 
 export default orderService;
-export { OrderInfo, OrderListResponse, OrderListParams };
+export { OrderInfo, OrderListResponse, OrderListParams, BuyTicketParams, BuyTicketResponse };

@@ -16,8 +16,8 @@ interface RequestConfig {
 }
 
 class BaseService {
-  // protected baseURL = 'http://yuchao2025.zszlchina.com';
-  protected baseURL = 'http://10.113.1.26:80';
+  protected baseURL = 'http://yuchao2025.zszlchina.com';
+  // protected baseURL = 'http://10.113.1.26:80';
   protected token = '';
 
   constructor() {
@@ -60,6 +60,7 @@ class BaseService {
   protected async request<T = any>(config: RequestConfig): Promise<ApiResponse<T>> {
     const { url, method = 'GET', data, header = {}, showLoading = false, loadingText = '加载中...', errorToast = true } = config;
 
+    console.log('config:', config);
     // 显示加载提示
     if (showLoading) {
       wx.showLoading({
@@ -84,10 +85,12 @@ class BaseService {
 
     // 处理POST请求的数据格式
     let requestData = data;
-    if (method === 'POST' && data && typeof data === 'object') {
-      // 将对象转换为URL编码格式
-      requestData = this.objectToUrlEncoded(data);
-    }
+    // if (method === 'POST' && data && typeof data === 'object') {
+    //   // 使用URL编码格式，数组直接JSON字符串化
+    //   requestHeader['Content-Type'] = 'application/x-www-form-urlencoded';
+    //   requestData = this.objectToUrlEncoded(data);
+    //   console.log('requestData:', requestData);
+    // }
 
     return new Promise((resolve, reject) => {
       wx.request({
@@ -193,12 +196,18 @@ class BaseService {
     });
   }
 
+
   // 将对象转换为URL编码格式
   private objectToUrlEncoded(obj: any): string {
     const params: string[] = [];
     for (const key in obj) {
       if (obj.hasOwnProperty(key)) {
-        params.push(encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]));
+        let value = obj[key];
+        // 如果是对象或数组，先转换为JSON字符串
+        if (typeof value === 'object' && value !== null) {
+          value = JSON.stringify(value);
+        }
+        params.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
       }
     }
     return params.join('&');

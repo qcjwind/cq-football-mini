@@ -1,0 +1,214 @@
+// order-confirm.less
+.order-confirm-container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+  padding-bottom: 120rpx; // 为底部购买栏留出空间
+}
+
+// 赛事信息
+.match-info {
+  background-color: #fff;
+  padding: 30rpx 30rpx;
+  margin-bottom: 20rpx;
+
+  .match-title {
+    font-size: 36rpx;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20rpx;
+  }
+
+  .match-time {
+    font-size: 28rpx;
+    color: #666;
+    margin-bottom: 16rpx;
+  }
+
+  .match-location {
+    font-size: 28rpx;
+    color: #666;
+  }
+}
+
+// 购票规则
+.purchase-rules {
+  background-color: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+
+  .rules-text {
+    font-size: 28rpx;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 30rpx;
+  }
+
+  .rules-icons {
+    display: flex;
+    gap: 40rpx;
+
+    .rule-item {
+      display: flex;
+      align-items: center;
+      gap: 12rpx;
+
+      .rule-icon {
+        width: 40rpx;
+        height: 40rpx;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24rpx;
+        font-weight: bold;
+
+        &.no-refund {
+          background-color: #3461FD;
+          color: #fff;
+        }
+
+        &.real-name {
+          background-color: #ff9500;
+          color: #fff;
+        }
+
+        &.e-ticket {
+          background-color: #3461FD;
+          color: #fff;
+        }
+      }
+
+      .rule-text {
+        font-size: 24rpx;
+        color: #666;
+      }
+    }
+  }
+}
+
+// 观赛人信息
+.attendee-section {
+  background-color: #fff;
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+
+  .attendee-list {
+    .attendee-item {
+      display: flex;
+      align-items: center;
+      padding: 24rpx 0;
+      border-bottom: 1rpx solid #f0f0f0;
+
+      &:last-child {
+        border-bottom: none;
+      }
+
+      .attendee-remove {
+        width: 60rpx;
+        height: 60rpx;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 24rpx;
+
+        .remove-icon {
+          width: 40rpx;
+          height: 40rpx;
+          background-color: #3461FD;
+          color: #fff;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 32rpx;
+          font-weight: bold;
+        }
+      }
+
+      .attendee-info {
+        flex: 1;
+
+        .attendee-name {
+          font-size: 32rpx;
+          color: #333;
+          margin-bottom: 8rpx;
+        }
+
+        .attendee-id {
+          font-size: 26rpx;
+          color: #999;
+        }
+      }
+    }
+  }
+
+  .add-attendee {
+    display: flex;
+    align-items: center;
+    gap: 16rpx;
+    padding: 24rpx 0;
+    margin-top: 20rpx;
+
+    .add-icon {
+      width: 40rpx;
+      height: 40rpx;
+      background-color: #3461FD;
+      color: #fff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32rpx;
+      font-weight: bold;
+    }
+
+    .add-text {
+      font-size: 28rpx;
+      color: #3461FD;
+    }
+  }
+}
+
+// 底部购买栏
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120rpx;
+  background-color: #fff;
+  border-top: 1rpx solid #e0e0e0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30rpx;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.1);
+
+  .price-info {
+    display: flex;
+    align-items: baseline;
+
+    .price-label {
+      font-size: 28rpx;
+      color: #ff4757;
+      margin-right: 8rpx;
+    }
+
+    .price-value {
+      font-size: 48rpx;
+      color: #ff4757;
+      font-weight: bold;
+    }
+  }
+
+  .buy-button {
+    background-color: #3461FD;
+    color: #fff;
+    padding: 24rpx 60rpx;
+    border-radius: 50rpx;
+    font-size: 32rpx;
+    font-weight: bold;
+    text-align: center;
+    min-width: 200rpx;
+  }
+}

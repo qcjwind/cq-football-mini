@@ -4,6 +4,7 @@
     "pages/login/login",
     "pages/match-detail/match-detail",
     "pages/ticket-select/ticket-select",
+    "pages/order-confirm/order-confirm",
     "pages/my/my",
     "pages/order-detail/index"
   ],

@@ -1,0 +1,60 @@
+<!--order-confirm.wxml-->
+<view class="order-confirm-container">
+  <!-- 赛事信息 -->
+  <view class="match-info">
+    <view class="match-title">{{matchInfo.name || '中日德兰 VS 格拉茨风暴'}}</view>
+    <view class="match-time">{{matchTimeStr}}</view>
+    <view class="match-location">{{matchInfo.location || '天府新区文化体路888号'}}</view>
+  </view>
+
+  <!-- 购票规则 -->
+  <view class="purchase-rules">
+    <view class="rules-text">
+      每个账号限购8张,按付款顺序配票,优先连坐配票。若无连坐,则随机分配座位。
+    </view>
+    <view class="rules-icons">
+      <view class="rule-item">
+        <view class="rule-icon no-refund">×</view>
+        <text class="rule-text">不支持退</text>
+      </view>
+      <view class="rule-item">
+        <view class="rule-icon real-name">⚙</view>
+        <text class="rule-text">实名制购票和入场</text>
+      </view>
+      <view class="rule-item">
+        <view class="rule-icon e-ticket">🎫</view>
+        <text class="rule-text">电子票</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 观赛人信息 -->
+  <view class="attendee-section">
+    <view class="attendee-list">
+      <view class="attendee-item" wx:for="{{attendeeList}}" wx:key="index">
+        <view class="attendee-remove" bindtap="removeAttendee" data-index="{{index}}">
+          <view class="remove-icon">−</view>
+        </view>
+        <view class="attendee-info">
+          <view class="attendee-name">{{item.name}}</view>
+          <view class="attendee-id">证件号 {{item.idNumber}}</view>
+        </view>
+      </view>
+    </view>
+    <view class="add-attendee" bindtap="addAttendee">
+      <view class="add-icon">+</view>
+      <text class="add-text">新增</text>
+    </view>
+  </view>
+
+  <!-- 底部购买区域 -->
+  <view class="bottom-bar">
+    <view class="price-info">
+      <text class="price-label">¥</text>
+      <text class="price-value">{{totalPrice}}</text>
+    </view>
+    <view class="buy-button" bindtap="confirmPurchase">
+      立即购买
+    </view>
+  </view>
+</view>

@@ -58,6 +58,7 @@ interface SkuInfo {
   price: number;
   skuName: string;
   skuType: 'SALE_TICKET' | 'GIFT_TICKET';
+  // 剩余票数
   stockTicket: number;
   totalTicket: number;
   venueId: number;

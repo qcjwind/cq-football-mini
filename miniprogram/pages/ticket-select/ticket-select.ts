@@ -113,15 +113,15 @@ Page({
     }
     
     return skuList.map((sku, index) => {
-      // 根据库存状态确定区域状态
+      // 根据剩余票数确定区域状态
       let status: 'available' | 'soldout' | 'outofstock' | 'full' = 'available'
       
       if (sku.stockTicket === 0) {
-        status = 'soldout'
+        status = 'soldout'  // 售罄
       } else if (sku.stockTicket < 10) {
-        status = 'outofstock'
-      } else if (sku.stockTicket === sku.totalTicket) {
-        status = 'full'
+        status = 'outofstock'  // 库存不足
+      } else {
+        status = 'available'  // 可购买
       }
       
       return {
@@ -182,7 +182,7 @@ Page({
 
     // 跳转到订单确认页面
     wx.navigateTo({
-      url: `/pages/order-confirm/order-confirm?matchId=${this.data.matchInfo.id}&areaId=${this.data.selectedArea.id}&sessionId=${this.data.selectedSession?.id}&price=${this.data.totalPrice}`
+      url: `/pages/order-confirm/order-confirm?matchId=${this.data.matchInfo.id}&skuId=${this.data.selectedArea.id}`
     })
   },
 
