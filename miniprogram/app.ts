@@ -32,9 +32,11 @@ App<IAppOption>({
       }
 
       console.log('开始调用login接口检查用户状态...')
+      wx.showLoading({
+        title: 'Loading...'
+      })
       const response = await authService.login()
       this.globalData.isLoggingIn = true
-      
       console.log('login接口返回结果:', {
         code: response.code,
         reg: response.data?.reg,
@@ -91,6 +93,7 @@ App<IAppOption>({
       this.globalData.loginData = null
     } finally {
       this.globalData.isLoggingIn = false
+      wx.hideLoading()
     }
   },
 

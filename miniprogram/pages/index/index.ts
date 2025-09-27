@@ -131,7 +131,7 @@ Page({
     
     try {
       this.setData({ loading: true });
-      
+      wx.showLoading({ title: "loading..." });
       const page = refresh ? 1 : this.data.page;
       
       // 调用列表接口，如果有搜索关键词则携带matchName参数
@@ -150,7 +150,7 @@ Page({
       const response = await matchService.getMatchList(params);
       
       console.log('接口响应:', response);
-      
+      wx.hideLoading();
       if (response.code === 200) {
         const newMatchList = this.formatMatchData(response.data);
         const matchList = refresh ? newMatchList : [...this.data.matchList, ...newMatchList];
@@ -175,6 +175,7 @@ Page({
       });
     } finally {
       this.setData({ loading: false });
+      wx.hideLoading();
     }
   },
 

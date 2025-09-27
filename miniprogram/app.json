@@ -27,8 +27,9 @@
     ]
   },
   "window": {
-    "navigationBarTextStyle": "black",
-    "navigationStyle": "custom"
+    "navigationBarTextStyle": "white",
+    "navigationStyle": "custom",
+    "backgroundColor": "#ffffff"
   },
   "style": "v2",
   "rendererOptions": {

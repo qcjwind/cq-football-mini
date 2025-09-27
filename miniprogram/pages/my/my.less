@@ -11,7 +11,7 @@
   align-items: center;
   position: relative;
   overflow: hidden;
- 
+
   .background-image {
     position: absolute;
     top: 0;
@@ -20,7 +20,7 @@
     height: 100%;
     z-index: 1;
   }
- 
+
   /* 确保内容在背景图之上 */
   .user-avatar,
   .user-details,
@@ -36,7 +36,7 @@
   border-radius: 60rpx;
   overflow: hidden;
   border: 4rpx solid rgba(255, 255, 255, 0.3);
-  
+
   .avatar-wrapper {
     width: 100%;
     height: 100%;
@@ -46,18 +46,18 @@
     margin: 0;
     border-radius: 60rpx;
     overflow: hidden;
-    
+
     &::after {
       border: none;
     }
   }
-  
+
   .avatar {
     width: 100%;
     height: 100%;
     border-radius: 60rpx;
   }
-  
+
   .default-avatar {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
@@ -66,14 +66,14 @@
     border-radius: 60rpx;
     width: 100%;
     height: 100%;
-    
+
     .avatar-text {
       color: #fff;
       font-size: 48rpx;
       font-weight: 500;
     }
   }
-  
+
   /* open-data组件样式 */
   open-data {
     width: 100%;
@@ -109,7 +109,7 @@
   background-color: rgba(255, 255, 255, 0.2);
   padding: 20rpx 30rpx;
   border-radius: 30rpx;
-  
+
   text {
     color: white;
     font-size: 28rpx;
@@ -117,44 +117,39 @@
 }
 
 /* Tab切换区域 */
-.tab-section {
-  background-color: white;
-  margin: 20rpx 0;
-  border-radius: 20rpx;
-  overflow: hidden;
-}
 
 .tab-bar {
   display: flex;
-  background-color: #f8f9fa;
-  border-radius: 20rpx 20rpx 0 0;
+  margin: 26rpx 0 20px 0;
+  padding: 0 20px;
+  overflow: hidden;
+  font-size: 14px;
 }
 
 .tab-item {
-  flex: 1;
-  text-align: center;
-  padding: 30rpx 0;
   position: relative;
-  
+  margin-right: 30px;
+
   &.active {
-    background-color: white;
-    border-radius: 20rpx 20rpx 0 0;
-    
     .tab-text {
-      color: #3461FD;
+      position: relative;
+      z-index: 2;
+      color: rgba(10, 12, 44, 1);
+      font-size: 16px;
       font-weight: bold;
     }
-    
+
     &::after {
-      content: '';
+      content: "";
       position: absolute;
-      bottom: 0;
+      bottom: 4rpx;
       left: 50%;
       transform: translateX(-50%);
-      width: 60rpx;
-      height: 4rpx;
-      background-color: #3461FD;
-      border-radius: 2rpx;
+      width: 100%;
+      height: 12rpx;
+      background-color: #3461fd;
+      border-radius: 12rpx;
+      z-index: 1;
     }
   }
 }
@@ -205,7 +200,7 @@
 }
 
 .buy-button {
-  background-color: #3461FD;
+  background-color: #3461fd;
   color: white;
   border: none;
   border-radius: 40rpx;
@@ -213,11 +208,11 @@
   font-size: 28rpx;
   font-weight: bold;
   box-shadow: 0 6rpx 16rpx rgba(52, 97, 253, 0.3);
-  
+
   &::after {
     border: none;
   }
-  
+
   &:active {
     background-color: #2c4fd1;
     transform: translateY(2rpx);

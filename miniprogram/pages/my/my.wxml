@@ -33,7 +33,7 @@
   <view class="user-info-section" wx:else>
     <image class="background-image" src="../../assets/my_back.png" mode="aspectFill"></image>
     <view class="user-avatar">
-      <image class="avatar" src="{{'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132'}}"></image>
+      <image class="avatar" src="../../assets/avatar.png"></image>
     </view>
     <view class="user-details">
       <view class="user-name">{{userInfo.maskName || ''}}</view>
@@ -42,14 +42,12 @@
   </view>
 
   <!-- Tab切换区域 -->
-  <view class="tab-section">
-    <view class="tab-bar">
-      <view class="tab-item {{activeTab === 'order' ? 'active' : ''}}" bindtap="switchTab" data-tab="order">
-        <text class="tab-text">订单</text>
-      </view>
-      <view class="tab-item {{activeTab === 'ticket' ? 'active' : ''}}" bindtap="switchTab" data-tab="ticket">
-        <text class="tab-text">票夹</text>
-      </view>
+  <view class="tab-bar">
+    <view class="tab-item {{activeTab === 'order' ? 'active' : ''}}" bindtap="switchTab" data-tab="order">
+      <text class="tab-text">订单</text>
+    </view>
+    <view class="tab-item {{activeTab === 'ticket' ? 'active' : ''}}" bindtap="switchTab" data-tab="ticket">
+      <text class="tab-text">票夹</text>
     </view>
   </view>
 
@@ -57,13 +55,8 @@
   <view class="content-section">
     <!-- 订单内容 -->
     <view class="tab-content" wx:if="{{activeTab === 'order'}}">
-      <!-- 加载状态 -->
-      <view wx:if="{{orderLoading}}" class="loading-container">
-        <text>加载中...</text>
-      </view>
-      
       <!-- 订单列表 -->
-      <view wx:elif="{{orderList.length > 0}}" class="order-list">
+      <view wx:if="{{orderList.length > 0}}" class="order-list">
         <order-card 
           wx:for="{{orderList}}" 
           wx:key="id"
@@ -83,13 +76,8 @@
 
     <!-- 票夹内容 -->
     <view class="tab-content" wx:if="{{activeTab === 'ticket'}}">
-      <!-- 加载状态 -->
-      <view wx:if="{{ticketLoading}}" class="loading-container">
-        <text>加载中...</text>
-      </view>
-      
       <!-- 票务列表 -->
-      <view wx:elif="{{ticketList.length > 0}}" class="ticket-list">
+      <view wx:if="{{ticketList.length > 0}}" class="ticket-list">
         <ticket-card 
           wx:for="{{ticketList}}" 
           wx:key="id"

@@ -1,5 +1,6 @@
 <!--index.wxml-->
 <view class="page">
+  <image class="background-image" src="../../assets/my_back.png" mode="widthFix"></image>
   <!-- 导航栏 -->
   <navigation-bar 
     background="#f5f5f5"
