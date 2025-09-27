@@ -68,9 +68,9 @@ class TicketService extends BaseService {
      * @param ticketId 票务ID
      * @returns Promise<any>
      */
-    async getTicketDetail(ticketId: number): Promise<any> {
+    async getTicketDetail(ticketId: string): Promise<any> {
         try {
-            const response = await this.get(`/app/ticket/detail/${ticketId}`, {}, {
+            const response = await this.post(`/app/ticket/info`, { ticketId }, {
                 showLoading: true,
                 loadingText: '加载票务详情中...'
             });

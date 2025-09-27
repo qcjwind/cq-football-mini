@@ -2,14 +2,14 @@
 <view class="ticket-card" bindtap="onCardTap">
   <view class="card-content">
     <view class="cover-image">
-      <image src="{{ticketInfo.matchCover}}" mode="aspectFill" wx:if="{{ticketInfo.matchCover}}"></image>
+      <image src="{{orderInfo.matchCover}}" mode="aspectFill" wx:if="{{orderInfo.matchCover}}"></image>
       <text wx:else>封面</text>
     </view>
     <view class="card-info">
-      <text class="match-title">{{ticketInfo.matchName}}</text>
+      <text class="match-title">{{orderInfo.matchName}}</text>
       <view class="order-time">
         <text class="time-label">下单时间：</text>
-        <text class="time-value">{{ticketInfo.gmtModify}}</text>
+        <text class="time-value">{{orderInfo.gmtModify}}</text>
       </view>
     </view>
   </view>

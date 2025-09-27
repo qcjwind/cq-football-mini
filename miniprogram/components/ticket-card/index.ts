@@ -6,7 +6,7 @@ Component({
    * 组件的属性列表
    */
   properties: {
-    orderInfo: {
+    ticketInfo: {
       type: Object,
       value: {} as OrderInfo
     },
@@ -25,7 +25,8 @@ Component({
   methods: {
     onCardTap() {
       this.triggerEvent('cardtap', {
-        orderId: this.data.orderInfo.orderNo || null
+        orderId: this.data.ticketInfo.orderNo || null,
+        type: 'ticket'
       })
     }
   }

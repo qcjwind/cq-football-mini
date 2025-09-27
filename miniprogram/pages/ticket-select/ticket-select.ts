@@ -180,14 +180,10 @@ Page({
       return
     }
 
-    wx.showToast({
-      title: '暂未开放购票',
-      icon: 'none'
-    })
     // 跳转到订单确认页面
-    // wx.navigateTo({
-    //   url: `/pages/order-confirm/order-confirm?matchId=${this.data.matchInfo.id}&skuId=${this.data.selectedArea.id}`
-    // })
+    wx.navigateTo({
+      url: `/pages/order-confirm/order-confirm?matchId=${this.data.matchInfo.id}&skuId=${this.data.selectedArea.id}`
+    })
   },
 
 })

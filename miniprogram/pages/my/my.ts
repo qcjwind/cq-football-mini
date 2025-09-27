@@ -170,12 +170,12 @@ Page({
 
   // 订单卡片点击事件
   onOrderCardTap(e: any) {
-    const { orderId } = e.detail;
+    const { orderId, type } = e.detail;
     console.log("点击订单卡片:", orderId);
 
     // 跳转到订单详情页
     wx.navigateTo({
-      url: `/pages/order-detail/index?orderId=${orderId}`,
+      url: `/pages/order-detail/index?orderId=${orderId}&type=${type}`,
     });
   },
 
