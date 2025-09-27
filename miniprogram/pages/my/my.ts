@@ -181,12 +181,11 @@ Page({
 
   // 票夹卡片点击事件
   onTicketCardTap(e: any) {
-    const { matchId } = e.detail;
-    console.log("点击票夹卡片:", matchId);
+    const { orderId, type } = e.detail;
 
     // 跳转到订单详情页
     wx.navigateTo({
-      url: `/pages/order-detail/index?matchId=${matchId}`,
+      url: `/pages/order-detail/index?orderId=${orderId}&type=${type}`,
     });
   },
 

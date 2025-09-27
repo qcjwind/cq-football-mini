@@ -24,10 +24,10 @@ Page({
   data: {
     matchInfo: null as any,
     attendeeList: [] as AttendeeInfo[],
-    totalPrice: 80,
+    totalPrice: 0,
     matchId: '',
     skuId: '',
-    ticketPrice: 80,
+    ticketPrice: 0,
     ticketCount: 1,
     matchTimeStr: '2025.08.22 周六 17:20'
   } as OrderConfirmData,
@@ -41,9 +41,9 @@ Page({
     this.setData({
       matchId: matchId || '',
       skuId: skuId || '',
-      ticketPrice: 80, // 默认价格，后续从接口获取
+      ticketPrice: 0, // 默认价格，后续从接口获取
       ticketCount: 1,  // 默认购买1张票
-      totalPrice: 80   // 默认总价
+      totalPrice: 0   // 默认总价
     });
 
     // 加载用户信息作为观赛人

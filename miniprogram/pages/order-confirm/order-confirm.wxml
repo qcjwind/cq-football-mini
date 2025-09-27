@@ -10,7 +10,7 @@
   <!-- 购票规则 -->
   <view class="purchase-rules">
     <view class="rules-text">
-      每个账号限购8张,按付款顺序配票,优先连坐配票。若无连坐,则随机分配座位。
+      每个账号限购2张,按付款顺序配票,优先连坐配票。若无连坐,则随机分配座位。
     </view>
     <view class="rules-icons">
       <view class="rule-item">

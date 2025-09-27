@@ -57,13 +57,12 @@
         height: 40rpx;
         border-radius: 50%;
         display: flex;
-        align-items: center;
         justify-content: center;
         font-size: 24rpx;
         font-weight: bold;
 
         &.no-refund {
-          background-color: #3461FD;
+          background-color: #3461fd;
           color: #fff;
         }
 
@@ -73,7 +72,7 @@
         }
 
         &.e-ticket {
-          background-color: #3461FD;
+          background-color: #3461fd;
           color: #fff;
         }
       }
@@ -89,8 +88,11 @@
 // 观赛人信息
 .attendee-section {
   background-color: #fff;
-  padding: 30rpx;
-  margin-bottom: 20rpx;
+  padding: 30rpx 30rpx 0 30rpx;
+  margin: 40rpx;
+  border-radius: 20rpx;
+  /* img - draopShadow */
+  box-shadow: 0px 40rpx 70rpx 0px rgba(0, 0, 0, 0.05);
 
   .attendee-list {
     .attendee-item {
@@ -114,7 +116,7 @@
         .remove-icon {
           width: 40rpx;
           height: 40rpx;
-          background-color: #3461FD;
+          background-color: #3461fd;
           color: #fff;
           border-radius: 50%;
           display: flex;
@@ -145,14 +147,16 @@
   .add-attendee {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 16rpx;
     padding: 24rpx 0;
     margin-top: 20rpx;
+    border-top: 1px solid rgba(231, 231, 231, 1);
 
     .add-icon {
       width: 40rpx;
       height: 40rpx;
-      background-color: #3461FD;
+      background-color: #3461fd;
       color: #fff;
       border-radius: 50%;
       display: flex;
@@ -164,7 +168,7 @@
 
     .add-text {
       font-size: 28rpx;
-      color: #3461FD;
+      color: #3461fd;
     }
   }
 }
@@ -175,14 +179,14 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 120rpx;
+  padding-left: 40rpx;
+  padding-right: 40rpx;
+  padding-top: 30rpx;
+  padding-bottom: calc(30rpx + env(safe-area-inset-bottom));
   background-color: #fff;
-  border-top: 1rpx solid #e0e0e0;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 30rpx;
-  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.1);
 
   .price-info {
     display: flex;
@@ -202,7 +206,7 @@
   }
 
   .buy-button {
-    background-color: #3461FD;
+    background-color: #3461fd;
     color: #fff;
     padding: 24rpx 60rpx;
     border-radius: 50rpx;

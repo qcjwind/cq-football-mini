@@ -1,13 +1,13 @@
 <view class="order-detail-container">
     <view class="match-info">
-        <image class="match-info-left" src="https://pic.rmb.bdstatic.com/bjh/250911/beautify/ef72b62080e3219acccbb37615257c12.jpeg" />
+        <image class="match-info-left" src="{{detailInfo.match.cover}}" />
         <view class="match-info-right">
             <view class="match-info-right-top">
-                <text class="match-info-right-top-title">中日德兰 VS 格拉茨风暴</text>
+                <text class="match-info-right-top-title">{{detailInfo.match.name}}</text>
             </view>
             <view class="match-info-right-bottom">
-                <text class="match-info-right-bottom-time">2025.08.22 17:20</text>
-                <text class="match-info-right-bottom-address">成都市天府新区文化体育中心综合体育馆</text>
+                <text class="match-info-right-bottom-time">{{detailInfo.match.startTime}}</text>
+                <text class="match-info-right-bottom-address">{{detailInfo.match.venueAddress}}</text>
             </view>
         </view>
     </view>

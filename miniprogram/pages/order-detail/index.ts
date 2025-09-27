@@ -4,6 +4,7 @@ Page({
   data: {
     billList: [{}, {}],
     currentIndex: 0,
+    detailInfo: {},
   },
   onLoad(options: any) {
     const { orderId, type } = options;
@@ -30,7 +31,9 @@ Page({
       title: "Loading...",
     });
     ticketService.getTicketDetail(ticketId).then((res) => {
-      console.log("res==", res);
+      this.setData({
+        detailInfo: res.data,
+      });
     });
   },
   getOrderDetail(orderId: string) {
@@ -40,7 +43,9 @@ Page({
     orderService
       .getOrderDetail(orderId)
       .then((res) => {
-        console.log("res==", res);
+        this.setData({
+          detailInfo: res.data,
+        });
       })
       .finally(() => {
         wx.hideLoading();

@@ -90,7 +90,7 @@ class OrderService extends BaseService {
    */
   async getOrderDetail(orderId: string): Promise<any> {
     try {
-      const response = await this.post(`/app/order/info`, { orderId }, {
+      const response = await this.post(`/app/order/myInfo`, { orderId }, {
         showLoading: true,
         loadingText: '加载订单详情中...'
       });

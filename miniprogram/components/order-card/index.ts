@@ -23,7 +23,7 @@ Component({
   methods: {
     onCardTap() {
       this.triggerEvent('cardtap', {
-        orderId: this.data.orderInfo.orderNo || null,
+        orderId: this.data.orderInfo.id || null,
         type: 'order'
       })
     }
