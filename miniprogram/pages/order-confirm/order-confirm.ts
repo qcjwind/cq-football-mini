@@ -18,6 +18,10 @@ interface OrderConfirmData {
   ticketPrice: number;
   ticketCount: number;
   matchTimeStr: string;
+  showAddModal: boolean;
+  newAttendee: AttendeeInfo;
+  idTypeOptions: {label: string, value: string}[];
+  idTypeValues: string[];
 }
 
 Page({
@@ -29,7 +33,22 @@ Page({
     skuId: '',
     ticketPrice: 0,
     ticketCount: 1,
-    matchTimeStr: '2025.08.22 周六 17:20'
+    matchTimeStr: '2025.08.22 周六 17:20',
+    showAddModal: false,
+    newAttendee: {
+      name: '',
+      idNumber: '',
+      phone: '',
+      idType: '身份证'
+    } as AttendeeInfo,
+    idTypeOptions: [
+      { label: '身份证', value: '身份证' },
+      { label: '护照', value: '护照' },
+      { label: '军官证', value: '军官证' },
+      { label: '港澳通行证', value: '港澳通行证' },
+      { label: '台胞证', value: '台胞证' }
+    ],
+    idTypeValues: ['身份证', '护照', '军官证', '港澳通行证', '台胞证']
   } as OrderConfirmData,
 
   onLoad(options: any) {
@@ -197,10 +216,17 @@ Page({
       return;
     }
 
-    // 跳转到添加观赛人页面
-    wx.navigateTo({
-      url: `/pages/add-attendee/add-attendee?matchId=${this.data.matchId}&skuId=${this.data.skuId}`
+    // 重置表单数据
+    this.setData({
+      showAddModal: true,
+      newAttendee: {
+        name: '',
+        idNumber: '',
+        phone: '',
+        idType: '身份证'
+      }
     });
+    
   },
 
   // 确认购买
@@ -263,7 +289,7 @@ Page({
     } catch (error) {
       console.error('购票失败:', error);
       wx.showToast({
-        title: error?.msg || '购票失败，请重试',
+        title: (error as any)?.msg || '购票失败，请重试',
         icon: 'none'
       });
     }
@@ -276,6 +302,179 @@ Page({
       const v = c === 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
     });
+  },
+
+  // 关闭弹窗
+  closeModal() {
+    this.setData({
+      showAddModal: false
+    });
+  },
+
+  // 阻止弹窗内容区域的事件冒泡
+  preventClose() {
+    // 空方法，用于阻止事件冒泡
+  },
+
+  // 输入框变化处理
+  onInputChange(e: any) {
+    const { field } = e.currentTarget.dataset;
+    const { value } = e.detail;
+    
+    
+    this.setData({
+      [`newAttendee.${field}`]: value
+    });
+  },
+
+  // 证件类型选择
+  onIdTypeChange(e: any) {
+    const { value } = e.detail;
+    const idTypeValues = this.data.idTypeValues;
+    this.setData({
+      'newAttendee.idType': idTypeValues[value] || '身份证'
+    });
+  },
+
+  // 确认添加观赛人
+  confirmAddAttendee() {
+    const { newAttendee } = this.data;
+    
+    
+    // 验证表单
+    if (!newAttendee.name.trim()) {
+      wx.showToast({
+        title: '请输入姓名',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    if (!newAttendee.idNumber.trim()) {
+      wx.showToast({
+        title: '请输入证件号',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    if (!newAttendee.phone || !newAttendee.phone.trim()) {
+      wx.showToast({
+        title: '请输入电话号码',
+        icon: 'none'
+      });
+      return;
+    }
+
+    // 验证手机号格式
+    const phoneRegex = /^1[3-9]\d{9}$/;
+    if (newAttendee.phone && !phoneRegex.test(newAttendee.phone)) {
+      wx.showToast({
+        title: '请输入正确的手机号',
+        icon: 'none'
+      });
+      return;
+    }
+
+    // 验证证件号格式
+    if (!this.validateIdNumber(newAttendee.idType || '身份证', newAttendee.idNumber)) {
+      const errorMessage = this.getIdNumberErrorMessage(newAttendee.idType || '身份证', newAttendee.idNumber);
+      wx.showToast({
+        title: errorMessage,
+        icon: 'none'
+      });
+      return;
+    }
+
+    // 添加到观赛人列表
+    const attendeeList = [...this.data.attendeeList, { ...newAttendee }];
+    
+    this.setData({
+      attendeeList,
+      ticketCount: attendeeList.length,
+      totalPrice: this.data.ticketPrice * attendeeList.length,
+      showAddModal: false
+    });
+
+    wx.showToast({
+      title: '添加成功',
+      icon: 'success'
+    });
+  },
+
+  // 身份证号验证
+  validateIdCard(idCard: string): boolean {
+    // 简单的身份证号格式验证
+    const reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+    return reg.test(idCard);
+  },
+
+  // 其他证件类型长度验证
+  validateOtherIdNumber(idType: string, idNumber: string): boolean {
+    const trimmedNumber = idNumber.trim();
+    
+    // 定义各种证件类型的长度要求
+    const lengthRules: {[key: string]: {min: number, max: number}} = {
+      '护照': { min: 6, max: 20 },        // 护照号长度6-20位
+      '军官证': { min: 6, max: 18 },      // 军官证长度6-18位
+      '港澳通行证': { min: 8, max: 12 },  // 港澳通行证长度8-12位
+      '台胞证': { min: 8, max: 12 }       // 台胞证长度8-12位
+    };
+
+    const rule = lengthRules[idType];
+    if (!rule) {
+      return true; // 未知证件类型，不进行校验
+    }
+
+    const length = trimmedNumber.length;
+    return length >= rule.min && length <= rule.max;
+  },
+
+  // 通用证件号验证
+  validateIdNumber(idType: string, idNumber: string): boolean {
+    const trimmedNumber = idNumber.trim();
+    
+    if (!trimmedNumber) {
+      return false;
+    }
+
+    // 身份证特殊处理
+    if (idType === '身份证') {
+      return this.validateIdCard(trimmedNumber);
+    }
+
+    // 其他证件类型进行长度校验
+    return this.validateOtherIdNumber(idType, trimmedNumber);
+  },
+
+  // 获取证件号校验错误信息
+  getIdNumberErrorMessage(idType: string, idNumber: string): string {
+    const trimmedNumber = idNumber.trim();
+    
+    if (!trimmedNumber) {
+      return '请输入证件号';
+    }
+
+    if (idType === '身份证') {
+      if (!this.validateIdCard(trimmedNumber)) {
+        return '请输入正确的身份证号';
+      }
+    } else {
+      if (!this.validateOtherIdNumber(idType, trimmedNumber)) {
+        const lengthRules: {[key: string]: {min: number, max: number}} = {
+          '护照': { min: 6, max: 20 },
+          '军官证': { min: 6, max: 18 },
+          '港澳通行证': { min: 8, max: 12 },
+          '台胞证': { min: 8, max: 12 }
+        };
+        const rule = lengthRules[idType];
+        if (rule) {
+          return `${idType}号码长度为${rule.min}-${rule.max}位`;
+        }
+      }
+    }
+
+    return '';
   },
 
   // 页面显示时刷新数据

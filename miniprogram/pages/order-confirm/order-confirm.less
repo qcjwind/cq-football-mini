@@ -30,6 +30,34 @@
   }
 }
 
+.policy-list {
+  display: flex;
+  flex-direction: row;
+  padding-top: 30rpx;
+  border-top: 1rpx solid #e5e5e5;
+}
+
+.policy-item {
+  display: flex;
+  align-items: center;
+  margin-right: 20rpx;
+}
+
+.policy-item:last-child {
+  margin-right: 0;
+}
+
+.policy-icon {
+  width: 24rpx;
+  height: 24rpx;
+  margin-right: 6rpx;
+}
+
+.policy-text {
+  font-size: 26rpx;
+  color: #666;
+}
+
 // 购票规则
 .purchase-rules {
   background-color: #fff;
@@ -41,47 +69,6 @@
     color: #666;
     line-height: 1.6;
     margin-bottom: 30rpx;
-  }
-
-  .rules-icons {
-    display: flex;
-    gap: 40rpx;
-
-    .rule-item {
-      display: flex;
-      align-items: center;
-      gap: 12rpx;
-
-      .rule-icon {
-        width: 40rpx;
-        height: 40rpx;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        font-size: 24rpx;
-        font-weight: bold;
-
-        &.no-refund {
-          background-color: #3461fd;
-          color: #fff;
-        }
-
-        &.real-name {
-          background-color: #ff9500;
-          color: #fff;
-        }
-
-        &.e-ticket {
-          background-color: #3461fd;
-          color: #fff;
-        }
-      }
-
-      .rule-text {
-        font-size: 24rpx;
-        color: #666;
-      }
-    }
   }
 }
 
@@ -114,16 +101,8 @@
         margin-right: 24rpx;
 
         .remove-icon {
-          width: 40rpx;
-          height: 40rpx;
-          background-color: #3461fd;
-          color: #fff;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 32rpx;
-          font-weight: bold;
+          width: 30rpx;
+          height: 30rpx;
         }
       }
 
@@ -154,16 +133,8 @@
     border-top: 1px solid rgba(231, 231, 231, 1);
 
     .add-icon {
-      width: 40rpx;
-      height: 40rpx;
-      background-color: #3461fd;
-      color: #fff;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 32rpx;
-      font-weight: bold;
+      width: 30rpx;
+      height: 30rpx;
     }
 
     .add-text {
@@ -214,5 +185,138 @@
     font-weight: bold;
     text-align: center;
     min-width: 200rpx;
+  }
+}
+
+// 弹窗样式
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 20rpx;
+  width: 640rpx;
+  max-height: 80vh;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx 40rpx 20rpx 40rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+
+  .modal-title {
+    font-size: 36rpx;
+    font-weight: bold;
+    color: #333;
+  }
+}
+
+.form-content {
+  padding: 40rpx;
+}
+
+.form-item {
+  margin-bottom: 40rpx;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 28rpx;
+    color: #333;
+    margin-bottom: 16rpx;
+    font-weight: 500;
+  }
+
+  .form-input {
+    width: 100%;
+    height: 80rpx;
+    background-color: #f8f8f8;
+    border: 1rpx solid #e5e5e5;
+    border-radius: 12rpx;
+    padding: 0 24rpx;
+    font-size: 28rpx;
+    color: #333;
+    box-sizing: border-box;
+
+    &:focus {
+      border-color: #3461fd;
+      background-color: #fff;
+    }
+  }
+
+  .form-picker {
+    width: 100%;
+    height: 80rpx;
+    background-color: #f8f8f8;
+    border: 1rpx solid #e5e5e5;
+    border-radius: 12rpx;
+    display: flex;
+    align-items: center;
+    padding: 0 24rpx;
+    box-sizing: border-box;
+    cursor: pointer;
+
+    .picker-content {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .picker-text {
+        font-size: 28rpx;
+        color: #333;
+        flex: 1;
+      }
+
+      .picker-arrow {
+        font-size: 24rpx;
+        color: #999;
+        transform: rotate(90deg);
+        margin-left: 16rpx;
+      }
+    }
+  }
+}
+
+.modal-footer {
+  display: flex;
+  padding: 20rpx 40rpx 40rpx 40rpx;
+  gap: 24rpx;
+}
+
+.modal-btn {
+  flex: 1;
+  height: 80rpx;
+  border-radius: 12rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  font-weight: bold;
+
+  &.cancel-btn {
+    background-color: #f5f5f5;
+    color: #666;
+  }
+
+  &.confirm-btn {
+    background-color: #3461fd;
+    color: #fff;
   }
 }

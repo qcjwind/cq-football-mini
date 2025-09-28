@@ -2,6 +2,7 @@
 <view class="my-container">
   <!-- 需要注册的用户信息区域 -->
   <view class="user-info-section" bindtap="goToLogin" wx:if="{{!isLoggedIn && needRegister}}">
+    <image class="background-image" src="../../assets/my_back.png" mode="aspectFill"></image>
     <view class="user-avatar">
       <image class="avatar" src="{{'https://thirdwx.qlogo.cn/mmopen/vi_32/POgEwh4mIHO4nibH0KlMECNjjGxQUq24ZEaGT4poC6icRiccVGKSyXwibcPq4BWmiaIGuG1icwxaQX6grC9VemZoJ8rg/132'}}"></image>
     </view>
@@ -9,9 +10,9 @@
       <view class="username">立即注册</view>
       <view class="user-desc">完善个人信息，开始足球之旅</view>
     </view>
-    <view class="user-action">
+    <!-- <view class="user-action">
       <text>注册</text>
-    </view>
+    </view> -->
   </view>
 
   <!-- 需要登录的用户信息区域 -->
