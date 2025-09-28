@@ -112,7 +112,7 @@ Page({
       return []
     }
     
-    return skuList.map((sku, index) => {
+    return skuList.filter(sku => sku.skuType === 'SALE_TICKET').map((sku, index) => {
       // 根据剩余票数确定区域状态
       let status: 'available' | 'soldout' | 'outofstock' | 'full' = 'available'
       
