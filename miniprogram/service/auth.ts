@@ -90,6 +90,34 @@ interface UpdateUserResponse {
   };
 }
 
+// 实名认证请求参数接口
+interface IdNoValidParams {
+  /**
+   * 证件号
+   */
+  idNo: string;
+  
+  /**
+   * 证件类型
+   */
+  idType: 'ID_CARD' | 'GAT_JM_JZZ' | 'GA_JM_LWND_TXZ' | 'TW_JM_LWDL_TXZ' | 'PASSPORT' | 'WGR_YJJL_SFZ' | 'WL_GG_TXZ';
+  
+  /**
+   * 姓名
+   */
+  name: string;
+}
+
+// 实名认证响应接口
+interface IdNoValidResponse {
+  code: number;
+  message: string;
+  data: {
+    valid: boolean; // 是否验证通过
+    message?: string; // 验证结果说明
+  };
+}
+
 class AuthService extends BaseService {
   
   /**
@@ -178,6 +206,29 @@ class AuthService extends BaseService {
   }
 
   /**
+   * 实名认证接口
+   * @param params 认证参数
+   * @returns Promise<IdNoValidResponse>
+   */
+  async idNoValid(params: IdNoValidParams): Promise<IdNoValidResponse> {
+    try {
+      const response = await this.request<IdNoValidResponse['data']>({
+        url: '/app/user/idNoValid',
+        method: 'POST',
+        data: params,
+        showLoading: true,
+        loadingText: '正在验证身份信息...',
+        errorToast: false
+      });
+
+      return response;
+    } catch (error) {
+      console.error('实名认证失败:', error);
+      throw error;
+    }
+  }
+
+  /**
    * 登出
    */
   logout(): void {
@@ -190,4 +241,4 @@ class AuthService extends BaseService {
 const authService = new AuthService();
 
 export default authService;
-export { LoginResponse, RegisterParams, RegisterResponse, UpdateUserParams, UpdateUserResponse };
+export { LoginResponse, RegisterParams, RegisterResponse, UpdateUserParams, UpdateUserResponse, IdNoValidParams, IdNoValidResponse };
