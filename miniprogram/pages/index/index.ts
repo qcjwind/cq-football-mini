@@ -1,11 +1,8 @@
 // index.ts
-// 获取应用实例
-const app = getApp<IAppOption>();
 import matchService, { MatchInfo } from "../../service/match";
 
 Page({
   data: {
-    isLoggedIn: false, // 登录状态
     matchList: [] as MatchInfo[], // 赛事列表
     loading: false, // 加载状态
     hasMore: true, // 是否还有更多数据
@@ -18,21 +15,10 @@ Page({
     searchKeyword: "", // 搜索关键词
   },
 
-  // 检查登录状态
-  checkLoginStatus() {
-    if (app.globalData.isLoggedIn) {
-      this.loadMatchList(true);
-    }
-    this.setData({
-      isLoggedIn: app.globalData.isLoggedIn,
-    });
-  },
-
-  // 跳转到登录页面
-  goToLogin() {
-    wx.navigateTo({
-      url: "/pages/login/login",
-    });
+  // 访客模式初始化
+  initGuestMode() {
+    // 直接加载赛事列表，无需登录检查
+    this.loadMatchList(true);
   },
 
   // 搜索输入框输入事件
@@ -210,17 +196,10 @@ Page({
     }
   },
 
-  // 登录成功后加载赛事列表
-  onLoginSuccess() {
-    console.log("登录成功，开始加载赛事列表");
-    this.loadMatchList(true);
-  },
-
   // 页面加载时执行
   onShow() {
-    console.log("首页加载完成");
-    this.checkLoginStatus();
-    // 页面加载时不立即加载列表，等待登录完成
+    console.log("首页加载完成 - 访客模式");
+    this.initGuestMode();
   },
 
   // 页面隐藏时执行

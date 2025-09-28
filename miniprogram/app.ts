@@ -57,9 +57,9 @@ App<IAppOption>({
           // 不保存token，因为用户还没有完成注册
           
           // 延迟重定向，确保页面加载完成
-          setTimeout(() => {
-            this.redirectToLogin()
-          }, 500)
+          // setTimeout(() => {
+          //   this.redirectToLogin()
+          // }, 500)
         } else if (response.data.token) {
           // 登录成功，更新全局状态
           console.log('自动登录成功')
@@ -76,7 +76,7 @@ App<IAppOption>({
           }
           
           // 通知首页加载赛事列表
-          this.notifyLoginSuccess()
+          // this.notifyLoginSuccess()
         }
       } else {
         console.log('自动登录失败:', response.message)
@@ -183,79 +183,79 @@ App<IAppOption>({
     });
 
     // 通知首页加载赛事列表
-    this.notifyLoginSuccess();
+    // this.notifyLoginSuccess();
   },
 
   // 通知登录成功
-  notifyLoginSuccess() {
-    // 延迟通知，确保页面切换完成
-    setTimeout(() => {
-      // 获取当前页面栈
-      const pages = getCurrentPages();
-      const currentPage = pages[pages.length - 1];
+  // notifyLoginSuccess() {
+  //   // 延迟通知，确保页面切换完成
+  //   setTimeout(() => {
+  //     // 获取当前页面栈
+  //     const pages = getCurrentPages();
+  //     const currentPage = pages[pages.length - 1];
       
-      console.log('notifyLoginSuccess - 当前页面路由:', currentPage?.route);
+  //     console.log('notifyLoginSuccess - 当前页面路由:', currentPage?.route);
       
-      // 如果当前页面是首页，通知其加载赛事列表
-      if (currentPage && currentPage.route === 'pages/index/index') {
-        console.log('通知首页加载赛事列表');
-        if (typeof currentPage.onLoginSuccess === 'function') {
-          currentPage.onLoginSuccess();
-        }
-      } else {
-        console.log('当前页面不是首页，等待页面切换完成...');
-        // 如果当前页面不是首页，可能是正在切换中，再等待一下
-        setTimeout(() => {
-          const pages = getCurrentPages();
-          const currentPage = pages[pages.length - 1];
-          console.log('延迟检查 - 当前页面路由:', currentPage?.route);
+  //     // 如果当前页面是首页，通知其加载赛事列表
+  //     if (currentPage && currentPage.route === 'pages/index/index') {
+  //       console.log('通知首页加载赛事列表');
+  //       if (typeof currentPage.onLoginSuccess === 'function') {
+  //         currentPage.onLoginSuccess();
+  //       }
+  //     } else {
+  //       console.log('当前页面不是首页，等待页面切换完成...');
+  //       // 如果当前页面不是首页，可能是正在切换中，再等待一下
+  //       setTimeout(() => {
+  //         const pages = getCurrentPages();
+  //         const currentPage = pages[pages.length - 1];
+  //         console.log('延迟检查 - 当前页面路由:', currentPage?.route);
           
-          if (currentPage && currentPage.route === 'pages/index/index') {
-            console.log('延迟通知首页加载赛事列表');
-            if (typeof currentPage.onLoginSuccess === 'function') {
-              currentPage.onLoginSuccess();
-            }
-          }
-        }, 300);
-      }
-    }, 100);
-  },
+  //         if (currentPage && currentPage.route === 'pages/index/index') {
+  //           console.log('延迟通知首页加载赛事列表');
+  //           if (typeof currentPage.onLoginSuccess === 'function') {
+  //             currentPage.onLoginSuccess();
+  //           }
+  //         }
+  //       }, 300);
+  //     }
+  //   }, 100);
+  // },
 
   // 重定向到登录页面
-  redirectToLogin() {
-    try {
-      // 获取当前页面栈
-      const pages = getCurrentPages()
-      const currentPage = pages[pages.length - 1]
+  // redirectToLogin() {
+  //   try {
+  //     // 获取当前页面栈
+  //     const pages = getCurrentPages()
+  //     const currentPage = pages[pages.length - 1]
       
-      // 如果当前页面不是登录页面，则跳转到登录页面
-      if (currentPage && !currentPage.route.includes('login')) {
-        console.log('重定向到登录页面')
-        wx.redirectTo({
-          url: '/pages/login/login',
-          fail: (error) => {
-            console.error('跳转登录页面失败:', error)
-            // 如果navigateTo失败，尝试使用switchTab
-            wx.switchTab({
-              url: '/pages/my/my'
-            })
-          }
-        })
-      }
-    } catch (error) {
-      console.error('重定向到登录页面失败:', error)
-    }
-  },
+  //     // 如果当前页面不是登录页面，则跳转到登录页面
+  //     if (currentPage && !currentPage.route.includes('login')) {
+  //       console.log('重定向到登录页面')
+  //       wx.redirectTo({
+  //         url: '/pages/login/login',
+  //         fail: (error) => {
+  //           console.error('跳转登录页面失败:', error)
+  //           // 如果navigateTo失败，尝试使用switchTab
+  //           wx.switchTab({
+  //             url: '/pages/my/my'
+  //           })
+  //         }
+  //       })
+  //     }
+  //   } catch (error) {
+  //     console.error('重定向到登录页面失败:', error)
+  //   }
+  // },
 
   // 检查并处理登录状态（供其他页面调用）
   checkAndHandleLoginStatus() {
     if (this.globalData.needRegister) {
       console.log('检测到用户需要注册，重定向到登录页面')
-      this.redirectToLogin()
+      // this.redirectToLogin()
       return false
     } else if (!this.globalData.isLoggedIn) {
       console.log('用户未登录，重定向到登录页面')
-      this.redirectToLogin()
+      // this.redirectToLogin()
       return false
     }
     return true

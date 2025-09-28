@@ -64,11 +64,14 @@ Page({
       activeTab: tab,
     });
 
-    // 根据tab类型重新加载数据
-    if (tab === "order") {
-      this.loadOrderList(true); // 强制刷新
-    } else if (tab === "ticket") {
-      this.loadTicketList(true); // 强制刷新
+    // 只有登录状态下才加载数据
+    if (this.data.isLoggedIn) {
+      // 根据tab类型重新加载数据
+      if (tab === "order") {
+        this.loadOrderList(true); // 强制刷新
+      } else if (tab === "ticket") {
+        this.loadTicketList(true); // 强制刷新
+      }
     }
   },
 

@@ -12,9 +12,9 @@ interface IAppOption {
   autoLogin(): Promise<void>,
   checkLoginStatus(): void,
   setLoginStatus(userInfo: any): void,
-  redirectToLogin(): void,
+  // redirectToLogin(): void,
   checkAndHandleLoginStatus(): boolean,
   forceCheckLoginStatus(): Promise<void>,
   clearLoginStatus(): void,
-  notifyLoginSuccess(): void
+  // notifyLoginSuccess(): void
 }

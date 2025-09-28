@@ -1,6 +1,9 @@
 // match-detail.ts
 import matchService from '../../service/match';
 
+// 获取应用实例
+const app = getApp<IAppOption>();
+
 Page({
   data: {
     matchInfo: null as any,
@@ -54,10 +57,19 @@ Page({
   },
 
   onBuyTicket() {
-    // 跳转到购票选择页面
+    // 检查登录状态
+    if (!app.globalData.isLoggedIn) {
+      // 未登录，跳转到登录页面
+      wx.navigateTo({
+        url: '/pages/login/login'
+      });
+      return;
+    }
+    
+    // 已登录，跳转到购票选择页面
     wx.navigateTo({
       url: `/pages/ticket-select/ticket-select?id=${this.data.matchInfo.id}`
-    })
+    });
   },
 
   // 点击地址唤起导航
