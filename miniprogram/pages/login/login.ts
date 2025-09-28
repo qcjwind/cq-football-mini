@@ -5,7 +5,7 @@ Page({
   data: {
     formData: {
       name: '',
-      idType: '',
+      idType: '身份证',
       idNumber: ''
     },
     phoneData: null as {encryptedData: string, iv: string} | null, // 存储手机号加密数据

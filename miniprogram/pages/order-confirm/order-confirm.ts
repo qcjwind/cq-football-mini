@@ -90,6 +90,7 @@ Page({
         
         // 生成指定数量的观赛人信息
         const attendeeList: AttendeeInfo[] = Array(this.data.ticketCount).fill(null).map(() => ({ ...attendee }));
+        console.log('attendeeList', attendeeList);
         
         this.setData({
           attendeeList
