@@ -48,7 +48,7 @@ interface BuyTicketParams {
 // 购票响应接口
 interface BuyTicketResponse {
   code: number;
-  message: string;
+  msg: string;
   data: {
     buyNum: number;
     gmtCreate: string;

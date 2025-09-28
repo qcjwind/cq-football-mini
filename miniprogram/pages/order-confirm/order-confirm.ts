@@ -247,23 +247,23 @@ Page({
 
       if (response.code === 200) {
         // 购票成功，跳转到支付页面
-        // wx.navigateTo({
-        //   url: `/pages/payment/payment?orderId=${response.data.id}&amount=${response.data.totalPrice}&orderNo=${response.data.orderNo}`
-        // });
+        wx.reLaunch({
+          url: `/pages/order-detail/index?orderId=${response.data.id}&type=order`
+        });
         wx.showToast({
           title: '购票成功',
           icon: 'success'
         });
       } else {
         wx.showToast({
-          title: response.message || '购票失败',
+          title: response.msg || '购票失败',
           icon: 'none'
         });
       }
     } catch (error) {
       console.error('购票失败:', error);
       wx.showToast({
-        title: '购票失败，请重试',
+        title: error?.msg || '购票失败，请重试',
         icon: 'none'
       });
     }
