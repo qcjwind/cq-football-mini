@@ -12,7 +12,7 @@ interface MatchInfo {
   id: number;
   matineeName: string;
   name: string;
-  saleStatus: string;
+  saleStatus: 'NOT_FINISH' | 'FINISHED';
   startTime: string;
   status: 'ENABLE';
   venueId: number;

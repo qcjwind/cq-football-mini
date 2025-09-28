@@ -55,7 +55,12 @@
     
     <!-- 赛事卡片列表 -->
     <view class="match-cards" wx:if="{{!showEmpty}}">
-      <view class="match-card" wx:for="{{matchList}}" wx:key="id" bindtap="onMatchDetail" data-id="{{item.id}}">
+      <view class="match-card {{item.saleStatus === 'FINISHED' ? 'disabled' : ''}}" 
+            wx:for="{{matchList}}" 
+            wx:key="id" 
+            bindtap="onMatchDetail" 
+            data-id="{{item.id}}" 
+            data-sale-status="{{item.saleStatus}}">
         <image class="match-cover" src="{{item.cover}}" mode="aspectFill" wx:if="{{item.cover}}"></image>
         <view class="card-content">
           <text class="match-title">{{item.name}}</text>

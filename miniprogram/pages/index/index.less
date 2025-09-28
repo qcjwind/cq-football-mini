@@ -179,6 +179,30 @@
   overflow: hidden;
   box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.08);
   border: 1rpx solid #f0f0f0;
+  
+  /* 禁用状态样式 */
+  &.disabled {
+    opacity: 0.6;
+    background: #f8f8f8;
+    border-color: #e0e0e0;
+    box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.05);
+    
+    .match-cover {
+      filter: grayscale(100%);
+    }
+    
+    .match-title {
+      color: #999;
+    }
+    
+    .match-time {
+      color: #ccc;
+    }
+    
+    .match-matinee {
+      color: #ccc;
+    }
+  }
 }
 
 .match-cover {
@@ -243,6 +267,7 @@
   color: #999;
   line-height: 1.4;
 }
+
 
 /* 加载状态样式 */
 .loading-container {

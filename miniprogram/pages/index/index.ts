@@ -73,6 +73,18 @@ Page({
   // 查看赛事详情
   onMatchDetail(e: any) {
     const matchId = e.currentTarget.dataset.id;
+    const saleStatus = e.currentTarget.dataset.saleStatus;
+    
+    // 检查赛事状态，如果是FINISHED则提示比赛已结束
+    if (saleStatus === 'FINISHED') {
+      wx.showToast({
+        title: '比赛已结束',
+        icon: 'none',
+        duration: 2000
+      });
+      return;
+    }
+    
     wx.navigateTo({
       url: `/pages/match-detail/match-detail?id=${matchId}`,
     });
