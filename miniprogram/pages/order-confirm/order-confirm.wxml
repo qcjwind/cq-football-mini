@@ -68,7 +68,7 @@
           <picker range="{{idTypeValues}}" value="{{idTypeValues.indexOf(newAttendee.idType)}}" bindchange="onIdTypeChange">
             <view class="form-picker">
               <view class="picker-content">
-                <text class="picker-text">{{newAttendee.idType || '身份证'}}</text>
+                <text class="picker-text">{{newAttendee.idType}}</text>
                 <text class="picker-arrow">></text>
               </view>
             </view>

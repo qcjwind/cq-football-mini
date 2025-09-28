@@ -4,7 +4,7 @@ import BaseService from './base';
 // 登录响应接口
 interface LoginResponse {
   code: number;
-  message: string;
+  msg: string;
   data: {
     token: string;
     userDO: {
@@ -51,7 +51,7 @@ interface RegisterParams {
 // 注册响应接口
 interface RegisterResponse {
   code: number;
-  message: string;
+  msg: string;
   data: {
     token: string;
     userDO: {
@@ -85,7 +85,7 @@ interface UpdateUserParams {
 // 更新用户响应接口
 interface UpdateUserResponse {
   code: number;
-  message: string;
+  msg: string;
   data: {
   };
 }

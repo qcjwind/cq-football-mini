@@ -56,10 +56,18 @@ Page({
         console.log('获取login数据成功:', this.data.loginData);
         console.log('Login响应数据:', response.data);
       } else {
-        console.error('获取login数据失败:', response.message);
+        console.error('获取login数据失败:', response.msg);
+        wx.showToast({
+          title: response.msg ||'获取登录信息失败，请重试',
+          icon: 'none'
+        });
       }
     } catch (error) {
       console.error('获取login数据异常:', error);
+      wx.showToast({
+        title: error?.msg ||'获取登录信息失败，请重试',
+        icon: 'none'
+      });
     }
   },
 
@@ -243,19 +251,11 @@ Page({
         // 再次检查是否获取成功
         if (!this.data.loginData) {
           wx.hideLoading();
-          wx.showToast({
-            title: '获取登录信息失败，请重试',
-            icon: 'none'
-          });
           return;
         }
         wx.hideLoading();
       } catch (error) {
         wx.hideLoading();
-        wx.showToast({
-          title: '获取登录信息失败，请重试',
-          icon: 'none'
-        });
         return;
       }
     }
