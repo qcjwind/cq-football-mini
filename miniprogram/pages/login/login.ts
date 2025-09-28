@@ -20,9 +20,7 @@ Page({
     idTypeOptions: [
       { label: "身份证", value: "身份证" },
       { label: "护照", value: "护照" },
-      { label: "军官证", value: "军官证" },
       { label: "港澳通行证", value: "港澳通行证" },
-      { label: "台胞证", value: "台胞证" },
     ],
     backgroundImage: "/assets/login_back.png", // 使用本地背景图片
   },
@@ -277,20 +275,12 @@ Page({
       const idTypeMap: {
         [key: string]:
           | "ID_CARD"
-          | "GAT_JM_JZZ"
           | "GA_JM_LWND_TXZ"
-          | "TW_JM_LWDL_TXZ"
-          | "PASSPORT"
-          | "WGR_YJJL_SFZ"
-          | "WL_GG_TXZ";
+          | "PASSPORT";
       } = {
         身份证: "ID_CARD",
         护照: "PASSPORT",
-        军官证: "GAT_JM_JZZ",
         港澳通行证: "GA_JM_LWND_TXZ",
-        台胞证: "TW_JM_LWDL_TXZ",
-        外国人居留证: "WGR_YJJL_SFZ",
-        往来港澳通行证: "WL_GG_TXZ",
       };
 
       // 调用注册接口

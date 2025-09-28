@@ -2,9 +2,9 @@
 <view class="order-confirm-container">
   <!-- 赛事信息 -->
   <view class="match-info">
-    <view class="match-title">{{matchInfo.name || '中日德兰 VS 格拉茨风暴'}}</view>
+    <view class="match-title">{{matchInfo.name}}</view>
     <view class="match-time">{{matchTimeStr}}</view>
-    <view class="match-location">{{matchInfo.location || '天府新区文化体路888号'}}</view>
+    <view class="match-location">{{matchInfo.location}}</view>
   </view>
   <!-- 购票规则 -->
   <view class="purchase-rules">

@@ -24,7 +24,7 @@ Page({
       console.log("加载赛事详情:", matchId);
 
       // 调用真实的API接口
-      const response = await matchService.getMatchInfo(Number(matchId));
+      const response = await matchService.getMatchInfo({ matchId: Number(matchId) });
 
       if (response.code === 200 && response.data) {
         const { match, venue, skuList } = response.data;

@@ -51,11 +51,9 @@ Page({
     idTypeOptions: [
       { label: '身份证', value: 'ID_CARD' },
       { label: '护照', value: 'PASSPORT' },
-      { label: '军官证', value: 'GAT_JM_JZZ' },
       { label: '港澳通行证', value: 'GA_JM_LWND_TXZ' },
-      { label: '台胞证', value: 'TW_JM_LWDL_TXZ' }
     ],
-    idTypeValues: ['ID_CARD', 'PASSPORT', 'GAT_JM_JZZ', 'GA_JM_LWND_TXZ', 'TW_JM_LWDL_TXZ'],
+    idTypeValues: ['ID_CARD', 'PASSPORT', 'GA_JM_LWND_TXZ'],
     currentIdTypeIndex: 0,
     isPurchasing: false // 防抖标志
   } as OrderConfirmData,
