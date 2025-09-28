@@ -10,11 +10,13 @@ App<IAppOption>({
     isLoggingIn: false // 防止重复调用login接口
   },
 
-  onLaunch() {
+  onLaunch(query) {
     // 应用启动时检查登录状态
     this.checkLoginStatus()
     // 自动调用登录接口
-    this.autoLogin()
+    if(query?.path !== 'pages/login/login') {
+      this.autoLogin()
+    }
   },
 
   onShow() {

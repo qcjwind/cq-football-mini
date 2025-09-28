@@ -27,11 +27,26 @@ Page({
 
   onLoad(query: LoginQuery) {
     // 页面加载时的初始化逻辑
-    console.log("登录页面加载完成", JSON.stringify(query || '{}'));
+    const q = decodeURIComponent(query?.q)
+    const params = this.getUrlParams(q);
     this.setData({
-      ticketBid: query?.ticketBid,
-      type: query?.type,
+      ticketBid: params?.ticketBid,
+      type: params?.type,
     });
+    
+    this.getLoginData();
+  },
+
+  getUrlParams(url: string) {
+    // 解析url查询参数 微信不支持URLSearchParams
+    const params = url.split('?')[1].split('&').map(item => {
+      const [key, value] = item.split('=');
+      return {
+        [key]: value,
+      };
+    });
+    console.log('params', params);
+    return params;
   },
 
   // 获取login接口数据
@@ -64,6 +79,9 @@ Page({
         });
         console.log("获取login数据成功:", this.data.loginData);
         console.log("Login响应数据:", response.data);
+        wx.switchTab({
+          url: "/pages/index/index",
+        });
       } else {
         console.error("获取login数据失败:", response.msg);
         wx.showToast({
