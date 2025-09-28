@@ -156,6 +156,14 @@ Page({
     }))
     const selectedArea = areaList.find(item => item.selected) || null
     
+    if(selectedArea?.status !== 'available'){
+      wx.showToast({
+        title: '该区域不可选',
+        icon: 'none'
+      })
+      return
+    }
+
     this.setData({
       areaList,
       selectedArea,
@@ -164,7 +172,7 @@ Page({
   },
 
   onBuyNow() {
-    if (!this.data.selectedArea) {
+    if (!this.data.selectedArea || !this.data.selectedArea?.selected) {
       wx.showToast({
         title: '请选择区域',
         icon: 'none'

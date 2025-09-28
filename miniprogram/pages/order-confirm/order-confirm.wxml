@@ -8,7 +8,7 @@
   </view>
   <!-- 购票规则 -->
   <view class="purchase-rules">
-    <view class="rules-text">每个账号限购2张,按付款顺序配票,优先连坐配票。若无连坐,则随机分配座位。</view>
+    <view class="rules-text">每个账号限购2张，按付款顺序配票，优先连坐配票。若无连坐，则随机分配座位。</view>
     <view class="policy-list">
       <view class="policy-item">
         <image class="policy-icon" src="../../assets/no_quit.png" mode="aspectFill"></image>
@@ -37,7 +37,7 @@
         </view>
       </view>
     </view>
-    <view class="add-attendee" bindtap="addAttendee">
+    <view wx:if="{{type !== 'gift'}}" class="add-attendee" bindtap="addAttendee">
       <image class="add-icon" src="../../assets/add.png" mode="aspectFit"></image>
       <text class="add-text">新增</text>
     </view>
@@ -69,7 +69,7 @@
             <view class="form-picker">
               <view class="picker-content">
                 <text class="picker-text">{{newAttendee.idType}}</text>
-                <text class="picker-arrow">></text>
+                <image class="picker-arrow" src="../../assets/arrow-right.png" mode="widthFix" />
               </view>
             </view>
           </picker>

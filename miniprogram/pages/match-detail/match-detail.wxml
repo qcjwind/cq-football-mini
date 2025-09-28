@@ -7,7 +7,7 @@
   
   <!-- 赛事信息卡片 -->
   <view wx:else class="match-info-card">
-    <view class="match-image">
+    <view class="match-image" bindtap="previewImage">
       <image class="match-bg" src="{{matchInfo.cover || '../../assets/home_back.png'}}" mode="aspectFill"></image>
     </view>
     <view class="match-details">

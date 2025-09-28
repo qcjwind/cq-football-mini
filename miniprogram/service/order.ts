@@ -138,7 +138,28 @@ class OrderService extends BaseService {
       throw error;
     }
   }
+
+  /**
+   * 赠票接口
+   * @param params 购票参数
+   * @returns Promise<BuyTicketResponse>
+   */
+  async buyGiftTicket(params: {code: string}): Promise<BuyTicketResponse> {
+    try {
+      console.log('购票参数:', params);
+      const response = await this.post('/app/order/buyGiftTicket', params, {
+        showLoading: true,
+        loadingText: '正在购票...'
+      });
+      return response;
+    } catch (error) {
+      console.error('购票失败:', error);
+      throw error;
+    }
+  }
 }
+
+
 
 // 创建单例实例
 const orderService = new OrderService();
