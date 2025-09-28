@@ -48,7 +48,9 @@
       <text class="price-label">¥</text>
       <text class="price-value">{{totalPrice}}</text>
     </view>
-    <view class="buy-button" bindtap="confirmPurchase">立即购买</view>
+    <view class="buy-button {{isPurchasing ? 'buy-button-disabled' : ''}}" bindtap="confirmPurchase">
+      {{isPurchasing ? '处理中...' : '立即购买'}}
+    </view>
   </view>
   <!-- 添加观赛人弹窗 -->
   <view class="modal-overlay" wx:if="{{showAddModal}}" bindtap="closeModal">

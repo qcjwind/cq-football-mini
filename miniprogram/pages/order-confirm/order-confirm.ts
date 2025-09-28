@@ -24,6 +24,7 @@ interface OrderConfirmData {
   idTypeOptions: {label: string, value: string}[];
   idTypeValues: string[];
   currentIdTypeIndex: number;
+  isPurchasing: boolean;
 }
 
 Page({
@@ -51,7 +52,8 @@ Page({
       { label: '台胞证', value: 'TW_JM_LWDL_TXZ' }
     ],
     idTypeValues: ['ID_CARD', 'PASSPORT', 'GAT_JM_JZZ', 'GA_JM_LWND_TXZ', 'TW_JM_LWDL_TXZ'],
-    currentIdTypeIndex: 0
+    currentIdTypeIndex: 0,
+    isPurchasing: false // 防抖标志
   } as OrderConfirmData,
 
   onLoad(options: any) {
@@ -209,6 +211,15 @@ Page({
 
   // 确认购买
   async confirmPurchase() {
+    // 防抖处理：如果正在购买中，直接返回
+    if (this.data.isPurchasing) {
+      wx.showToast({
+        title: '正在处理中，请稍候...',
+        icon: 'none'
+      });
+      return;
+    }
+
     if (this.data.attendeeList.length === 0) {
       wx.showToast({
         title: '请添加观赛人信息',
@@ -227,6 +238,11 @@ Page({
         return;
       }
     }
+
+    // 设置购买状态，防止重复点击
+    this.setData({
+      isPurchasing: true
+    });
 
     try {
       // 生成UUID作为请求ID（幂等性）
@@ -259,6 +275,10 @@ Page({
           icon: 'success'
         });
       } else {
+        // 购票失败，重置状态
+        this.setData({
+          isPurchasing: false
+        });
         wx.showToast({
           title: response.msg || '购票失败',
           icon: 'none'
@@ -266,6 +286,10 @@ Page({
       }
     } catch (error) {
       console.error('购票失败:', error);
+      // 发生错误，重置状态
+      this.setData({
+        isPurchasing: false
+      });
       wx.showToast({
         title: (error as any)?.msg || '购票失败，请重试',
         icon: 'none'
