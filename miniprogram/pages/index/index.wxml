@@ -42,7 +42,7 @@
   <!-- 横幅区域 -->
   <view class="banner-section">
     <view class="banner-image">
-      <image class="banner-bg" src="../../assets/home_back.png" mode="aspectFill"></image>
+      <image class="banner-bg" src="../../assets/home_back.jpg" mode="aspectFill"></image>
     </view>
   </view>
 

@@ -132,9 +132,9 @@ class MatchService extends BaseService {
    * @param matchId 赛事ID
    * @returns Promise<MatchDetailResponse>
    */
-  async getMatchInfo(matchId: number): Promise<MatchDetailResponse> {
+  async getMatchInfo(params: { matchId?: number, ticketBid?: string }): Promise<MatchDetailResponse> {
     try {
-      const response = await this.post('/app/match/info', { matchId }, {
+      const response = await this.post('/app/match/info', params, {
         showLoading: false,
         loadingText: '加载赛事信息中...'
       });

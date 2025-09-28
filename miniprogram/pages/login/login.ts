@@ -4,7 +4,6 @@ import authService from "../../service/auth";
 interface LoginQuery {
   ticketBid?: string;
   type?: string;
-  matchId?: string;
 }
 
 Page({
@@ -16,7 +15,6 @@ Page({
     },
     ticketBid: "",
     type: "",
-    matchId: "",
     phoneData: null as { encryptedData: string; iv: string } | null, // 存储手机号加密数据
     loginData: null as { openid: string; sessionKey: string } | null, // 存储login接口返回的数据
     idTypeOptions: [
@@ -31,11 +29,10 @@ Page({
 
   onLoad(query: LoginQuery) {
     // 页面加载时的初始化逻辑
-    console.log("登录页面加载完成");
+    console.log("登录页面加载完成", JSON.stringify(query || '{}'));
     this.setData({
       ticketBid: query?.ticketBid,
       type: query?.type,
-      matchId: query?.matchId,
     });
   },
 
@@ -349,7 +346,7 @@ Page({
         // 赠票逻辑
         if (this.data.type === "gift") {
           wx.redirectTo({
-            url: `/pages/order-confirm/order-confirm?type=gift&ticketBid=${this.data.ticketBid}&matchId=${this.data.matchId}`,
+            url: `/pages/order-confirm/order-confirm?type=gift&ticketBid=${this.data.ticketBid}`,
           });
           return;
         }

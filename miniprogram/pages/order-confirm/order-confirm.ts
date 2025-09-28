@@ -81,7 +81,7 @@ Page({
 
     // 加载赛事信息
     if (matchId) {
-      this.loadMatchInfo(matchId);
+      this.loadMatchInfo(matchId, type);
     }
   },
 
@@ -116,13 +116,19 @@ Page({
   },
 
   // 加载赛事信息
-  async loadMatchInfo(matchId: string) {
+  async loadMatchInfo(matchId: string, type: string) {
     try {
       wx.showLoading({
         title: "加载赛事信息...",
       });
 
-      const response = await matchService.getMatchInfo(Number(matchId));
+      let params = { matchId: Number(matchId) };
+
+      if (type === "gift") {
+        params = { ticketBid: this.data.ticketBid || "" };
+      }
+
+      const response = await matchService.getMatchInfo(params);
 
       if (response.code === 200 && response.data) {
         const { match, venue } = response.data;
@@ -260,8 +266,15 @@ Page({
       });
       if (response.code === 200) {
         // 购票成功，跳转到支付页面
-        wx.reLaunch({
-          url: `/pages/order-detail/index?orderId=${response.data.id}&type=order`,
+        wx.showToast({
+          title: "购票成功",
+          icon: "success",
+          duration: 1500,
+          success: () => {
+            wx.reLaunch({
+              url: `/pages/order-detail/index?orderId=${response.data.id}&type=order`,
+            });
+          }
         });
       } else {
         wx.showToast({
@@ -296,22 +309,25 @@ Page({
       const response = await orderService.buySaleTicket(buyTicketParams);
 
       if (response.code === 200) {
-        // 购票成功，跳转到支付页面
-        wx.reLaunch({
-          url: `/pages/order-detail/index?orderId=${response.data.id}&type=order`,
-        });
+        // 购票成功
         wx.showToast({
           title: "购票成功",
           icon: "success",
+          duration: 1500,
+          success: () => {
+            wx.reLaunch({
+              url: `/pages/order-detail/index?orderId=${response.data.id}&type=order`,
+            });
+          }
         });
       } else {
-        // 购票失败，重置状态
-        this.setData({
-          isPurchasing: false
-        });
         wx.showToast({
           title: response.msg || "购票失败",
           icon: "none",
+        });
+        // 购票失败，重置状态
+        this.setData({
+          isPurchasing: false
         });
       }
     } catch (error) {
