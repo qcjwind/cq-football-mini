@@ -2,7 +2,7 @@
 .order-confirm-container {
   min-height: 100vh;
   background-color: #f5f5f5;
-  padding-bottom: 120rpx; // 为底部购买栏留出空间
+  padding-bottom: 200rpx; // 为底部购买栏留出更多空间
 }
 
 // 赛事信息
@@ -80,6 +80,8 @@
   border-radius: 20rpx;
   /* img - draopShadow */
   box-shadow: 0px 40rpx 70rpx 0px rgba(0, 0, 0, 0.05);
+  max-height: 60vh; // 限制最大高度
+  overflow-y: auto; // 允许垂直滚动
 
   .attendee-list {
     .attendee-item {
@@ -158,6 +160,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  z-index: 100; // 确保在内容之上
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.1); // 添加阴影效果
 
   .price-info {
     display: flex;

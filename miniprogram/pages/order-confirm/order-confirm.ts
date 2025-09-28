@@ -23,6 +23,7 @@ interface OrderConfirmData {
   newAttendee: AttendeeInfo;
   idTypeOptions: {label: string, value: string}[];
   idTypeValues: string[];
+  currentIdTypeIndex: number;
 }
 
 Page({
@@ -40,16 +41,17 @@ Page({
       name: '',
       idNumber: '',
       phone: '',
-      idType: '身份证'
+      idType: 'ID_CARD'
     } as AttendeeInfo,
     idTypeOptions: [
-      { label: '身份证', value: '身份证' },
-      { label: '护照', value: '护照' },
-      { label: '军官证', value: '军官证' },
-      { label: '港澳通行证', value: '港澳通行证' },
-      { label: '台胞证', value: '台胞证' }
+      { label: '身份证', value: 'ID_CARD' },
+      { label: '护照', value: 'PASSPORT' },
+      { label: '军官证', value: 'GAT_JM_JZZ' },
+      { label: '港澳通行证', value: 'GA_JM_LWND_TXZ' },
+      { label: '台胞证', value: 'TW_JM_LWDL_TXZ' }
     ],
-    idTypeValues: ['身份证', '护照', '军官证', '港澳通行证', '台胞证']
+    idTypeValues: ['ID_CARD', 'PASSPORT', 'GAT_JM_JZZ', 'GA_JM_LWND_TXZ', 'TW_JM_LWDL_TXZ'],
+    currentIdTypeIndex: 0
   } as OrderConfirmData,
 
   onLoad(options: any) {
@@ -96,28 +98,10 @@ Page({
         });
       } else {
         // 如果没有用户信息，使用默认数据
-        this.loadDefaultAttendees();
       }
     } catch (error) {
       console.error('获取用户信息失败:', error);
-      this.loadDefaultAttendees();
     }
-  },
-
-  // 加载默认观赛人信息（备用）
-  loadDefaultAttendees() {
-    const defaultAttendees: AttendeeInfo[] = [
-      {
-        name: '林元购',
-        idNumber: '5110*************932',
-        phone: '138****8888',
-        idType: 'ID_CARD'
-      }
-    ];
-
-    this.setData({
-      attendeeList: defaultAttendees
-    });
   },
 
   // 加载赛事信息
@@ -326,8 +310,13 @@ Page({
   onIdTypeChange(e: any) {
     const { value } = e.detail;
     const idTypeValues = this.data.idTypeValues;
+    const selectedType = idTypeValues[value] || 'ID_CARD';
+    
+    console.log('证件类型选择:', { value, selectedType, idTypeValues });
+    
     this.setData({
-      'newAttendee.idType': idTypeValues[value] || '身份证'
+      'newAttendee.idType': selectedType,
+      currentIdTypeIndex: value
     });
   },
 
@@ -382,7 +371,7 @@ Page({
     }
 
     // 只有身份证类型才进行实名认证
-    if (newAttendee.idType === '身份证') {
+    if (newAttendee.idType === 'ID_CARD') {
       // 调用实名认证接口
       try {
         const validParams: IdNoValidParams = {
@@ -438,7 +427,7 @@ Page({
         name: '',
         idNumber: '',
         phone: '',
-        idType: '身份证'
+        idType: attendee.idType
       }
     });
 

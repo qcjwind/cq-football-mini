@@ -65,10 +65,10 @@
         <!-- 证件类型选择 -->
         <view class="form-item">
           <text class="form-label">证件类型</text>
-          <picker range="{{idTypeValues}}" value="{{idTypeValues.indexOf(newAttendee.idType)}}" bindchange="onIdTypeChange">
+          <picker range="{{idTypeOptions}}" range-key="label" value="{{currentIdTypeIndex}}" bindchange="onIdTypeChange">
             <view class="form-picker">
               <view class="picker-content">
-                <text class="picker-text">{{newAttendee.idType || '身份证'}}</text>
+                <text class="picker-text">{{idTypeOptions[currentIdTypeIndex].label || '身份证'}}</text>
                 <text class="picker-arrow">></text>
               </view>
             </view>
