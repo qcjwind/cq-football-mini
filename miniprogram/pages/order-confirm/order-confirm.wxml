@@ -48,7 +48,9 @@
       <text class="price-label">¥</text>
       <text class="price-value">{{totalPrice}}</text>
     </view>
-    <view class="buy-button" bindtap="confirmPurchase">立即购买</view>
+    <view class="buy-button {{isPurchasing ? 'buy-button-disabled' : ''}}" bindtap="confirmPurchase">
+      {{isPurchasing ? '处理中...' : '立即购买'}}
+    </view>
   </view>
   <!-- 添加观赛人弹窗 -->
   <view class="modal-overlay" wx:if="{{showAddModal}}" bindtap="closeModal">
@@ -65,10 +67,10 @@
         <!-- 证件类型选择 -->
         <view class="form-item">
           <text class="form-label">证件类型</text>
-          <picker range="{{idTypeValues}}" value="{{idTypeValues.indexOf(newAttendee.idType)}}" bindchange="onIdTypeChange">
+          <picker range="{{idTypeOptions}}" range-key="label" value="{{currentIdTypeIndex}}" bindchange="onIdTypeChange">
             <view class="form-picker">
               <view class="picker-content">
-                <text class="picker-text">{{newAttendee.idType}}</text>
+                <text class="picker-text">{{idTypeOptions[currentIdTypeIndex].label || '身份证'}}</text>
                 <image class="picker-arrow" src="../../assets/arrow-right.png" mode="widthFix" />
               </view>
             </view>

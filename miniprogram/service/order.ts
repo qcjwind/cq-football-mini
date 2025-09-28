@@ -144,7 +144,7 @@ class OrderService extends BaseService {
    * @param params 购票参数
    * @returns Promise<BuyTicketResponse>
    */
-  async buyGiftTicket(params: {code: string}): Promise<BuyTicketResponse> {
+  async buyGiftTicket(params: {ticketBid: string}): Promise<BuyTicketResponse> {
     try {
       console.log('购票参数:', params);
       const response = await this.post('/app/order/buyGiftTicket', params, {

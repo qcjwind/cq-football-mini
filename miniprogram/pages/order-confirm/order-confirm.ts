@@ -23,6 +23,8 @@ interface OrderConfirmData {
   newAttendee: AttendeeInfo;
   idTypeOptions: { label: string; value: string }[];
   idTypeValues: string[];
+  currentIdTypeIndex: number;
+  isPurchasing: boolean;
   type?: string;
   ticketBid?: string;
 }
@@ -30,7 +32,7 @@ interface OrderConfirmData {
 Page({
   data: {
     type: "",
-    code: "",
+    ticketBid: "",
     matchInfo: null as any,
     attendeeList: [] as AttendeeInfo[],
     totalPrice: 0,
@@ -41,19 +43,21 @@ Page({
     matchTimeStr: "2025.08.22 周六 17:20",
     showAddModal: false,
     newAttendee: {
-      name: "",
-      idNumber: "",
-      phone: "",
-      idType: "身份证",
+      name: '',
+      idNumber: '',
+      phone: '',
+      idType: 'ID_CARD'
     } as AttendeeInfo,
     idTypeOptions: [
-      { label: "身份证", value: "身份证" },
-      { label: "护照", value: "护照" },
-      { label: "军官证", value: "军官证" },
-      { label: "港澳通行证", value: "港澳通行证" },
-      { label: "台胞证", value: "台胞证" },
+      { label: '身份证', value: 'ID_CARD' },
+      { label: '护照', value: 'PASSPORT' },
+      { label: '军官证', value: 'GAT_JM_JZZ' },
+      { label: '港澳通行证', value: 'GA_JM_LWND_TXZ' },
+      { label: '台胞证', value: 'TW_JM_LWDL_TXZ' }
     ],
-    idTypeValues: ["身份证", "护照", "军官证", "港澳通行证", "台胞证"],
+    idTypeValues: ['ID_CARD', 'PASSPORT', 'GAT_JM_JZZ', 'GA_JM_LWND_TXZ', 'TW_JM_LWDL_TXZ'],
+    currentIdTypeIndex: 0,
+    isPurchasing: false // 防抖标志
   } as OrderConfirmData,
 
   onLoad(options: any) {
@@ -105,28 +109,10 @@ Page({
         });
       } else {
         // 如果没有用户信息，使用默认数据
-        this.loadDefaultAttendees();
       }
     } catch (error) {
-      console.error("获取用户信息失败:", error);
-      this.loadDefaultAttendees();
+      console.error('获取用户信息失败:', error);
     }
-  },
-
-  // 加载默认观赛人信息（备用）
-  loadDefaultAttendees() {
-    const defaultAttendees: AttendeeInfo[] = [
-      {
-        name: "林元购",
-        idNumber: "5110*************932",
-        phone: "138****8888",
-        idType: "ID_CARD",
-      },
-    ];
-
-    this.setData({
-      attendeeList: defaultAttendees,
-    });
   },
 
   // 加载赛事信息
@@ -234,6 +220,15 @@ Page({
 
   // 确认购买
   async confirmPurchase() {
+    // 防抖处理：如果正在购买中，直接返回
+    if (this.data.isPurchasing) {
+      wx.showToast({
+        title: '正在处理中，请稍候...',
+        icon: 'none'
+      });
+      return;
+    }
+
     if (this.data.attendeeList.length === 0) {
       wx.showToast({
         title: "请添加观赛人信息",
@@ -253,8 +248,13 @@ Page({
       }
     }
 
-    // 赠票逻辑
-    if (this.data.type === "gift") {
+    // 设置购买状态，防止重复点击
+    this.setData({
+      isPurchasing: true
+    });
+
+     // 赠票逻辑
+     if (this.data.type === "gift") {
       const response = await orderService.buyGiftTicket({
         ticketBid: this.data.ticketBid || "",
       });
@@ -305,13 +305,21 @@ Page({
           icon: "success",
         });
       } else {
+        // 购票失败，重置状态
+        this.setData({
+          isPurchasing: false
+        });
         wx.showToast({
           title: response.msg || "购票失败",
           icon: "none",
         });
       }
     } catch (error) {
-      console.error("购票失败:", error);
+      console.error('购票失败:', error);
+      // 发生错误，重置状态
+      this.setData({
+        isPurchasing: false
+      });
       wx.showToast({
         title: (error as any)?.msg || "购票失败，请重试",
         icon: "none",
@@ -355,8 +363,13 @@ Page({
   onIdTypeChange(e: any) {
     const { value } = e.detail;
     const idTypeValues = this.data.idTypeValues;
+    const selectedType = idTypeValues[value] || 'ID_CARD';
+    
+    console.log('证件类型选择:', { value, selectedType, idTypeValues });
+    
     this.setData({
-      "newAttendee.idType": idTypeValues[value] || "身份证",
+      'newAttendee.idType': selectedType,
+      currentIdTypeIndex: value
     });
   },
 
@@ -418,7 +431,7 @@ Page({
     }
 
     // 只有身份证类型才进行实名认证
-    if (newAttendee.idType === "身份证") {
+    if (newAttendee.idType === 'ID_CARD') {
       // 调用实名认证接口
       try {
         const validParams: IdNoValidParams = {
@@ -471,11 +484,11 @@ Page({
       showAddModal: false,
       // 成功添加后重置表单数据
       newAttendee: {
-        name: "",
-        idNumber: "",
-        phone: "",
-        idType: "身份证",
-      },
+        name: '',
+        idNumber: '',
+        phone: '',
+        idType: attendee.idType
+      }
     });
 
     wx.showToast({
