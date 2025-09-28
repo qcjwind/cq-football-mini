@@ -381,71 +381,71 @@ Page({
       return;
     }
 
-    // 调用实名认证接口
-    try {
-      // 证件类型映射
-      const idTypeMap: {[key: string]: 'ID_CARD' | 'GAT_JM_JZZ' | 'GA_JM_LWND_TXZ' | 'TW_JM_LWDL_TXZ' | 'PASSPORT' | 'WGR_YJJL_SFZ' | 'WL_GG_TXZ'} = {
-        '身份证': 'ID_CARD',
-        '护照': 'PASSPORT',
-        '军官证': 'GAT_JM_JZZ',
-        '港澳通行证': 'GA_JM_LWND_TXZ',
-        '台胞证': 'TW_JM_LWDL_TXZ',
-        '外国人居留证': 'WGR_YJJL_SFZ',
-        '往来港澳通行证': 'WL_GG_TXZ'
-      };
+    // 只有身份证类型才进行实名认证
+    if (newAttendee.idType === '身份证') {
+      // 调用实名认证接口
+      try {
+        const validParams: IdNoValidParams = {
+          name: newAttendee.name,
+          idNo: newAttendee.idNumber,
+          idType: 'ID_CARD'
+        };
 
-      const validParams: IdNoValidParams = {
-        name: newAttendee.name,
-        idNo: newAttendee.idNumber,
-        idType: idTypeMap[newAttendee.idType || '身份证'] || 'ID_CARD'
-      };
+        const response = await authService.idNoValid(validParams);
 
-      const response = await authService.idNoValid(validParams);
-
-      if (response.code === 200) {
-        if (response.data.valid) {
-          // 实名认证成功，添加到观赛人列表
-          const attendeeList = [...this.data.attendeeList, { ...newAttendee }];
-          
-          this.setData({
-            attendeeList,
-            ticketCount: attendeeList.length,
-            totalPrice: this.data.ticketPrice * attendeeList.length,
-            showAddModal: false,
-            // 成功添加后重置表单数据
-            newAttendee: {
-              name: '',
-              idNumber: '',
-              phone: '',
-              idType: '身份证'
-            }
-          });
-
-          wx.showToast({
-            title: '添加成功',
-            icon: 'success'
-          });
+        if (response.code === 200) {
+          if (response.data.valid) {
+            // 实名认证成功，添加到观赛人列表
+            this.addAttendeeToList(newAttendee);
+          } else {
+            // 实名认证失败
+            wx.showToast({
+              title: response.data.message || '身份信息验证失败',
+              icon: 'none',
+              duration: 3000
+            });
+          }
         } else {
-          // 实名认证失败
           wx.showToast({
-            title: response.data.message || '身份信息验证失败',
-            icon: 'none',
-            duration: 3000
+            title: response.message || '身份验证失败',
+            icon: 'none'
           });
         }
-      } else {
+      } catch (error) {
+        console.error('实名认证失败:', error);
         wx.showToast({
-          title: response.message || '身份验证失败',
+          title: '身份验证失败，请重试',
           icon: 'none'
         });
       }
-    } catch (error) {
-      console.error('实名认证失败:', error);
-      wx.showToast({
-        title: '身份验证失败，请重试',
-        icon: 'none'
-      });
+    } else {
+      // 非身份证类型直接添加，不进行实名认证
+      this.addAttendeeToList(newAttendee);
     }
+  },
+
+  // 添加观赛人到列表
+  addAttendeeToList(attendee: AttendeeInfo) {
+    const attendeeList = [...this.data.attendeeList, { ...attendee }];
+    
+    this.setData({
+      attendeeList,
+      ticketCount: attendeeList.length,
+      totalPrice: this.data.ticketPrice * attendeeList.length,
+      showAddModal: false,
+      // 成功添加后重置表单数据
+      newAttendee: {
+        name: '',
+        idNumber: '',
+        phone: '',
+        idType: '身份证'
+      }
+    });
+
+    wx.showToast({
+      title: '添加成功',
+      icon: 'success'
+    });
   },
 
   // 身份证号验证
