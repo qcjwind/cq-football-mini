@@ -42,6 +42,16 @@
       <text class="add-text">新增</text>
     </view>
   </view>
+  <!-- 购票须知提示 -->
+  <view class="notice-tip">
+    <view class="radio-container">
+      <radio color="#3461fd" class="notice-radio" checked="{{hasReadNotices}}" bindtap="onNoticeRadioChange" />
+      <text class="tip-text">我已阅读</text>
+      <text class="notice-link" bindtap="openPurchaseNotice">《购票须知》</text>
+      <text class="notice-link" bindtap="openSecurityNotice">《安检须知》</text>
+      <text class="notice-link" bindtap="openEntryNotice">《入场须知》</text>
+    </view>
+  </view>
   <!-- 底部购买区域 -->
   <view class="bottom-bar">
     <view class="price-info">

@@ -306,13 +306,13 @@ Page({
 
     // 调用注册接口
     try {
-      // 证件类型映射
+      // 证件类型映射 - 直接使用formData中的idType值
       const idTypeMap: {
         [key: string]: "ID_CARD" | "GA_JM_LWND_TXZ" | "PASSPORT";
       } = {
-        身份证: "ID_CARD",
-        护照: "PASSPORT",
-        港澳通行证: "GA_JM_LWND_TXZ",
+        "ID_CARD": "ID_CARD",
+        "PASSPORT": "PASSPORT", 
+        "GAT_TXZ": "GA_JM_LWND_TXZ",
       };
 
       // 调用注册接口

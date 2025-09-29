@@ -28,6 +28,7 @@ interface OrderConfirmData {
   isPurchasing: boolean;
   type?: string;
   ticketBid?: string;
+  hasReadNotices: boolean;
 }
 
 Page({
@@ -57,6 +58,7 @@ Page({
     idTypeValues: ["ID_CARD", "PASSPORT", "GAT_TXZ"],
     currentIdTypeIndex: 0,
     isPurchasing: false, // 防抖标志
+    hasReadNotices: false, // 是否已阅读须知
   } as OrderConfirmData,
 
   onLoad(options: any) {
@@ -229,6 +231,14 @@ Page({
     if (this.data.isPurchasing) {
       wx.showToast({
         title: "正在处理中，请稍候...",
+        icon: "none",
+      });
+      return;
+    }
+
+    if (!this.data.hasReadNotices) {
+      wx.showToast({
+        title: "请阅读购票须知",
         icon: "none",
       });
       return;
@@ -609,5 +619,33 @@ Page({
       // 从添加观赛人页面返回，刷新观赛人列表
       this.loadUserAttendeeInfo();
     }
+  },
+
+  // 打开购票须知
+  openPurchaseNotice() {
+    wx.navigateTo({
+      url: '/pages/web-view/index?url=https://yuchao2025.zszlchina.com/buyTicket.html'
+    });
+  },
+
+  // 打开安检须知
+  openSecurityNotice() {
+    wx.navigateTo({
+      url: '/pages/web-view/index?url=https://yuchao2025.zszlchina.com/securityCheck.html'
+    });
+  },
+
+  // 打开入场须知
+  openEntryNotice() {
+    wx.navigateTo({
+      url: '/pages/web-view/index?url=https://yuchao2025.zszlchina.com/admissionNoticead.html'
+    });
+  },
+
+  // 处理须知单选框状态变化
+  onNoticeRadioChange() {
+    this.setData({
+      hasReadNotices: !this.data.hasReadNotices,
+    });
   },
 });
