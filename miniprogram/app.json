@@ -2,6 +2,7 @@
   "pages": [
     "pages/index/index",
     "pages/login/login",
+    "pages/web-view/index",
     "pages/match-detail/match-detail",
     "pages/ticket-select/ticket-select",
     "pages/order-confirm/order-confirm",
