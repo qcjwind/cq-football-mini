@@ -1,7 +1,7 @@
 // service/base.ts - API服务基类
 interface ApiResponse<T = any> {
   code: number;
-  message: string;
+  msg: string;
   data: T;
 }
 
@@ -124,7 +124,7 @@ class BaseService {
             } else {
               if (errorToast) {
                 wx.showToast({
-                  title: response.message || '请求失败',
+                  title: response.msg || '请求失败',
                   icon: 'none'
                 });
               }

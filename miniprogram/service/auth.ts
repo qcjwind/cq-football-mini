@@ -1,4 +1,5 @@
 // service/auth.ts - 认证服务
+import { checkGiftSuccess } from '../utils/index';
 import BaseService from './base';
 
 // 登录响应接口
@@ -139,6 +140,8 @@ class AuthService extends BaseService {
       // 登录成功后保存token（只有reg为false时才保存）
       if (response.code === 200 && response.data.token && !response.data.reg) {
         this.saveToken(response.data.token);
+        // 检查赠票逻辑是否走完
+        // checkGiftSuccess()
       }
 
       return response;

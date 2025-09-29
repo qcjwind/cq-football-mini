@@ -27,26 +27,31 @@ Page({
 
   onLoad(query: LoginQuery) {
     // 页面加载时的初始化逻辑
-    const q = decodeURIComponent(query?.q)
+    const q = decodeURIComponent(query?.q);
     const params = this.getUrlParams(q);
+    if (params?.type === "gift") {
+      wx.setStorageSync("giftSuccess", params?.ticketBid);
+    }
     this.setData({
       ticketBid: params?.ticketBid,
       type: params?.type,
     });
-    
+
     this.getLoginData();
   },
 
   getUrlParams(url: string) {
     // 解析url查询参数 微信不支持URLSearchParams
-    const params = url.split('?')[1].split('&').map(item => {
-      const [key, value] = item.split('=');
-      return {
-        [key]: value,
-      };
-    });
-    console.log('params', params);
-    return params;
+    const obj = {};
+    url
+      .split("?")[1]
+      .split("&")
+      .forEach((item) => {
+        const [key, value] = item.split("=");
+        obj[key] = value;
+      });
+    console.log("params", obj);
+    return obj;
   },
 
   // 获取login接口数据
@@ -79,9 +84,11 @@ Page({
         });
         console.log("获取login数据成功:", this.data.loginData);
         console.log("Login响应数据:", response.data);
-        wx.switchTab({
-          url: "/pages/index/index",
-        });
+        if (!response.data.reg) {
+          wx.switchTab({
+            url: "/pages/index/index",
+          });
+        }
       } else {
         console.error("获取login数据失败:", response.msg);
         wx.showToast({
@@ -274,12 +281,6 @@ Page({
 
       try {
         await this.getLoginData();
-
-        // 再次检查是否获取成功
-        if (!this.data.loginData) {
-          wx.hideLoading();
-          return;
-        }
         wx.hideLoading();
       } catch (error) {
         wx.hideLoading();
@@ -291,10 +292,7 @@ Page({
     try {
       // 证件类型映射
       const idTypeMap: {
-        [key: string]:
-          | "ID_CARD"
-          | "GA_JM_LWND_TXZ"
-          | "PASSPORT";
+        [key: string]: "ID_CARD" | "GA_JM_LWND_TXZ" | "PASSPORT";
       } = {
         身份证: "ID_CARD",
         护照: "PASSPORT",

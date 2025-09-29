@@ -2,6 +2,7 @@
 import orderService, { BuyTicketParams } from "../../service/order";
 import matchService from "../../service/match";
 import authService, { IdNoValidParams } from "../../service/auth";
+import { clearGiftSuccess } from "../../utils/index";
 
 interface AttendeeInfo {
   name: string;
@@ -43,19 +44,19 @@ Page({
     matchTimeStr: "2025.08.22 周六 17:20",
     showAddModal: false,
     newAttendee: {
-      name: '',
-      idNumber: '',
-      phone: '',
-      idType: 'ID_CARD'
+      name: "",
+      idNumber: "",
+      phone: "",
+      idType: "ID_CARD",
     } as AttendeeInfo,
     idTypeOptions: [
-      { label: '身份证', value: 'ID_CARD' },
-      { label: '护照', value: 'PASSPORT' },
-      { label: '港澳通行证', value: 'GA_JM_LWND_TXZ' },
+      { label: "身份证", value: "ID_CARD" },
+      { label: "护照", value: "PASSPORT" },
+      { label: "港澳通行证", value: "GA_JM_LWND_TXZ" },
     ],
-    idTypeValues: ['ID_CARD', 'PASSPORT', 'GA_JM_LWND_TXZ'],
+    idTypeValues: ["ID_CARD", "PASSPORT", "GA_JM_LWND_TXZ"],
     currentIdTypeIndex: 0,
-    isPurchasing: false // 防抖标志
+    isPurchasing: false, // 防抖标志
   } as OrderConfirmData,
 
   onLoad(options: any) {
@@ -109,7 +110,7 @@ Page({
         // 如果没有用户信息，使用默认数据
       }
     } catch (error) {
-      console.error('获取用户信息失败:', error);
+      console.error("获取用户信息失败:", error);
     }
   },
 
@@ -227,8 +228,8 @@ Page({
     // 防抖处理：如果正在购买中，直接返回
     if (this.data.isPurchasing) {
       wx.showToast({
-        title: '正在处理中，请稍候...',
-        icon: 'none'
+        title: "正在处理中，请稍候...",
+        icon: "none",
       });
       return;
     }
@@ -254,32 +255,46 @@ Page({
 
     // 设置购买状态，防止重复点击
     this.setData({
-      isPurchasing: true
+      isPurchasing: true,
     });
 
-     // 赠票逻辑
-     if (this.data.type === "gift") {
-      const response = await orderService.buyGiftTicket({
-        ticketBid: this.data.ticketBid || "",
-      });
-      if (response.code === 200) {
-        // 购票成功，跳转到支付页面
-        wx.showToast({
-          title: "购票成功",
-          icon: "success",
-          duration: 1500,
-          success: () => {
-            wx.reLaunch({
-              url: `/pages/order-detail/index?orderId=${response.data.id}&type=order`,
-            });
-          }
+    // 赠票逻辑
+    if (this.data.type === "gift") {
+      try {
+        const response = await orderService.buyGiftTicket({
+          ticketBid: this.data.ticketBid || "",
         });
-      } else {
-        wx.showToast({
-          title: response.msg || "购票失败",
-          icon: "none",
+        if (response.code === 200) {
+          // 购票成功，跳转到支付页面
+          wx.showToast({
+            title: "购票成功",
+            icon: "success",
+            duration: 1500,
+            success: () => {
+              wx.reLaunch({
+                url: `/pages/order-detail/index?orderId=${response.data.id}&type=ticket`,
+              });
+            },
+          });
+          this.setData({
+            isPurchasing: false,
+          });
+          clearGiftSuccess();
+        } else {
+          wx.showToast({
+            title: response.msg || "购票失败",
+            icon: "none",
+          });
+          this.setData({
+            isPurchasing: false,
+          });
+        }
+      } catch (error) {
+        this.setData({
+          isPurchasing: false,
         });
       }
+
       return;
     }
 
@@ -316,7 +331,7 @@ Page({
             wx.reLaunch({
               url: `/pages/order-detail/index?orderId=${response.data.id}&type=order`,
             });
-          }
+          },
         });
       } else {
         wx.showToast({
@@ -325,14 +340,14 @@ Page({
         });
         // 购票失败，重置状态
         this.setData({
-          isPurchasing: false
+          isPurchasing: false,
         });
       }
     } catch (error) {
-      console.error('购票失败:', error);
+      console.error("购票失败:", error);
       // 发生错误，重置状态
       this.setData({
-        isPurchasing: false
+        isPurchasing: false,
       });
       wx.showToast({
         title: (error as any)?.msg || "购票失败，请重试",
@@ -377,13 +392,13 @@ Page({
   onIdTypeChange(e: any) {
     const { value } = e.detail;
     const idTypeValues = this.data.idTypeValues;
-    const selectedType = idTypeValues[value] || 'ID_CARD';
-    
-    console.log('证件类型选择:', { value, selectedType, idTypeValues });
-    
+    const selectedType = idTypeValues[value] || "ID_CARD";
+
+    console.log("证件类型选择:", { value, selectedType, idTypeValues });
+
     this.setData({
-      'newAttendee.idType': selectedType,
-      currentIdTypeIndex: value
+      "newAttendee.idType": selectedType,
+      currentIdTypeIndex: value,
     });
   },
 
@@ -445,7 +460,7 @@ Page({
     }
 
     // 只有身份证类型才进行实名认证
-    if (newAttendee.idType === 'ID_CARD') {
+    if (newAttendee.idType === "ID_CARD") {
       // 调用实名认证接口
       try {
         const validParams: IdNoValidParams = {
@@ -498,11 +513,11 @@ Page({
       showAddModal: false,
       // 成功添加后重置表单数据
       newAttendee: {
-        name: '',
-        idNumber: '',
-        phone: '',
-        idType: attendee.idType
-      }
+        name: "",
+        idNumber: "",
+        phone: "",
+        idType: attendee.idType,
+      },
     });
 
     wx.showToast({

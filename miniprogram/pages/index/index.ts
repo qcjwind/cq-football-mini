@@ -1,5 +1,6 @@
 // index.ts
 import matchService, { MatchInfo } from "../../service/match";
+import { checkGiftSuccess } from "../../utils/index";
 
 Page({
   data: {
@@ -212,6 +213,7 @@ Page({
   onShow() {
     console.log("首页加载完成 - 访客模式");
     this.initGuestMode();
+    // checkGiftSuccess()
   },
 
   // 页面隐藏时执行

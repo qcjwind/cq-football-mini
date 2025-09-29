@@ -34,10 +34,7 @@
           <input class="form-input id-input" type="text" placeholder="请输入证件号" value="{{formData.idNumber}}" bindinput="onIdNumberInput" />
         </view>
         <!-- 登录按钮 -->
-        <button wx:if="{{!loginData}}" class="login-button" open-type="getPhoneNumber" bindgetphonenumber="onGetPhoneNumber">
-          <text class="button-text">立即登录</text>
-        </button>
-        <button wx:else class="login-button" bindtap="onLogin">
+        <button class="login-button" open-type="getPhoneNumber" bindgetphonenumber="onGetPhoneNumber">
           <text class="button-text">立即登录</text>
         </button>
       </view>
