@@ -1,5 +1,6 @@
 <!-- login.wxml -->
 <view class="login-container">
+  <navigation-bar style="position: absolute;width: 100%;top: 0;left: 0;z-index: 99;" back="{{true}}" />
   <!-- 背景图片区域 -->
   <view class="background-section">
     <image class="background-image" src="{{backgroundImage}}" mode="aspectFill" wx:if="{{backgroundImage}}"></image>
