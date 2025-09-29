@@ -2,7 +2,7 @@
 import orderService, { BuyTicketParams } from "../../service/order";
 import matchService from "../../service/match";
 import authService, { IdNoValidParams } from "../../service/auth";
-import { clearGiftSuccess } from "../../utils/index";
+import { sleep } from "../../utils/index";
 
 interface AttendeeInfo {
   name: string;
@@ -52,9 +52,9 @@ Page({
     idTypeOptions: [
       { label: "身份证", value: "ID_CARD" },
       { label: "护照", value: "PASSPORT" },
-      { label: "港澳通行证", value: "GA_JM_LWND_TXZ" },
+      { label: "港澳通行证", value: "GAT_TXZ" },
     ],
-    idTypeValues: ["ID_CARD", "PASSPORT", "GA_JM_LWND_TXZ"],
+    idTypeValues: ["ID_CARD", "PASSPORT", "GAT_TXZ"],
     currentIdTypeIndex: 0,
     isPurchasing: false, // 防抖标志
   } as OrderConfirmData,
@@ -270,16 +270,15 @@ Page({
             title: "购票成功",
             icon: "success",
             duration: 1500,
-            success: () => {
-              wx.reLaunch({
-                url: `/pages/order-detail/index?orderId=${response.data.id}&type=ticket`,
-              });
-            },
           });
+
           this.setData({
             isPurchasing: false,
           });
-          clearGiftSuccess();
+          await sleep(1500);
+          wx.reLaunch({
+            url: `/pages/order-detail/index?orderId=${response.data.id}&type=ticket`,
+          });
         } else {
           wx.showToast({
             title: response.msg || "购票失败",
@@ -327,11 +326,10 @@ Page({
           title: "购票成功",
           icon: "success",
           duration: 1500,
-          success: () => {
-            wx.reLaunch({
-              url: `/pages/order-detail/index?orderId=${response.data.id}&type=order`,
-            });
-          },
+        });
+        await sleep(1500);
+        wx.reLaunch({
+          url: `/pages/order-detail/index?orderId=${response.data.id}&type=order`,
         });
       } else {
         wx.showToast({

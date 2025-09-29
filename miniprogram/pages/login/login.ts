@@ -38,12 +38,15 @@ Page({
   },
 
   getUrlParams(url: string) {
+    if(!url) {
+      return {}
+    }
     // 解析url查询参数 微信不支持URLSearchParams
     const obj = {};
     url
-      .split("?")[1]
-      .split("&")
-      .forEach((item) => {
+      ?.split?.("?")?.[1]
+      ?.split?.("&")
+      ?.forEach?.((item) => {
         const [key, value] = item.split("=");
         obj[key] = value;
       });

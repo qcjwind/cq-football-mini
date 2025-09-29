@@ -10,3 +10,7 @@ export const checkGiftSuccess = () => {
 export const clearGiftSuccess = () => {
   wx.removeStorageSync("giftSuccess");
 };
+
+export const sleep = (ms: number) => {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+};
