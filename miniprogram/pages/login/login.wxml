@@ -23,7 +23,7 @@
           <text class="form-label">证件类型</text>
           <view class="form-select" bindtap="onIdTypeSelect">
             <text class="select-text {{formData.idType ? '' : 'placeholder'}}">
-              {{formData.idType || '请选择证件类型'}}
+              {{idTypeName || '请选择证件类型'}}
             </text>
             <image class="select-arrow" src="../../assets/arrow-right.png" mode="widthFix" />
           </view>

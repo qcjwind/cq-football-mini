@@ -10,17 +10,18 @@ Page({
   data: {
     formData: {
       name: "",
-      idType: "身份证",
+      idType: "ID_CARD",
       idNumber: "",
     },
+    idTypeName: "身份证",
     ticketBid: "",
     type: "",
     phoneData: null as { encryptedData: string; iv: string } | null, // 存储手机号加密数据
     loginData: null as { openid: string; sessionKey: string } | null, // 存储login接口返回的数据
     idTypeOptions: [
-      { label: "身份证", value: "身份证" },
-      { label: "护照", value: "护照" },
-      { label: "港澳通行证", value: "港澳通行证" },
+      { label: "身份证", value: "ID_CARD" },
+      { label: "护照", value: "PASSPORT" },
+      { label: "港澳通行证", value: "GAT_TXZ" },
     ],
     backgroundImage: "/assets/login_back.png", // 使用本地背景图片
   },
@@ -37,9 +38,19 @@ Page({
     this.getLoginData();
   },
 
+  idTypeOptionsByName(type: string) {
+    if (!type) {
+      return;
+    }
+    const obj = this.data.idTypeOptions?.find((item) => item.value === type);
+    this.setData({
+      idTypeName: obj?.label || "",
+    });
+  },
+
   getUrlParams(url: string) {
-    if(!url) {
-      return {}
+    if (!url) {
+      return {};
     }
     // 解析url查询参数 微信不支持URLSearchParams
     const obj = {};
@@ -85,7 +96,7 @@ Page({
         console.log("获取login数据成功:", this.data.loginData);
         console.log("Login响应数据:", response.data);
         if (!response.data.reg) {
-          if(this.data.type === "gift"){
+          if (this.data.type === "gift") {
             this.jumpToGift();
             return;
           }
@@ -128,6 +139,7 @@ Page({
         this.setData({
           "formData.idType": selectedType.value,
         });
+        this.idTypeOptionsByName(selectedType.value);
       },
       fail: (res) => {
         console.log("用户取消选择证件类型", res);
@@ -365,13 +377,13 @@ Page({
           success: () => {
             console.log("跳转首页成功，调用notifyLoginSuccess");
             // 直接调用app的notifyLoginSuccess方法，确保逻辑统一
-            app.notifyLoginSuccess();
+            // app.notifyLoginSuccess();
           },
         });
       } else {
         // 注册失败
         wx.showToast({
-          title: response.message || "注册失败",
+          title: response.msg || "注册失败",
           icon: "none",
           duration: 2000,
         });
@@ -379,7 +391,7 @@ Page({
     } catch (error) {
       console.error("注册请求失败:", error);
       wx.showToast({
-        title: "网络请求失败，请重试",
+        title: error?.msg || "网络请求失败，请重试",
         icon: "none",
         duration: 2000,
       });
