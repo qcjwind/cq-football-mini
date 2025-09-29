@@ -29,9 +29,6 @@ Page({
     // 页面加载时的初始化逻辑
     const q = decodeURIComponent(query?.q);
     const params = this.getUrlParams(q);
-    if (params?.type === "gift") {
-      wx.setStorageSync("giftSuccess", params?.ticketBid);
-    }
     this.setData({
       ticketBid: params?.ticketBid,
       type: params?.type,
@@ -79,12 +76,16 @@ Page({
         this.setData({
           loginData: {
             openid: response.data.openid,
-            sessionKey: response.data.openid, // 暂时使用openid，如果接口有专门的sessionKey字段需要调整
+            sessionKey: response.data.sessionKey, // 暂时使用openid，如果接口有专门的sessionKey字段需要调整
           },
         });
         console.log("获取login数据成功:", this.data.loginData);
         console.log("Login响应数据:", response.data);
         if (!response.data.reg) {
+          if(this.data.type === "gift"){
+            this.jumpToGift();
+            return;
+          }
           wx.switchTab({
             url: "/pages/index/index",
           });
@@ -351,9 +352,7 @@ Page({
 
         // 赠票逻辑
         if (this.data.type === "gift") {
-          wx.redirectTo({
-            url: `/pages/order-confirm/order-confirm?type=gift&ticketBid=${this.data.ticketBid}`,
-          });
+          this.jumpToGift();
           return;
         }
 
@@ -382,6 +381,12 @@ Page({
         duration: 2000,
       });
     }
+  },
+
+  jumpToGift() {
+    wx.redirectTo({
+      url: `/pages/order-confirm/order-confirm?type=gift&ticketBid=${this.data.ticketBid}`,
+    });
   },
 
   // 身份证号验证
