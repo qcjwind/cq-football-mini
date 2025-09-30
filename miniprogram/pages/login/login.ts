@@ -23,6 +23,7 @@ Page({
       { label: "护照", value: "PASSPORT" },
       { label: "港澳通行证", value: "GAT_TXZ" },
     ],
+    hasReadNotices: false,
     backgroundImage: "/assets/login_back.png", // 使用本地背景图片
   },
 
@@ -37,7 +38,16 @@ Page({
 
     this.getLoginData();
   },
-
+  onNoticeRadioChange() {
+    this.setData({
+      hasReadNotices: !this.data.hasReadNotices,
+    });
+  },
+  openPurchaseNotice() {
+    wx.navigateTo({
+      url: "/pages/web-view/index?url=https://yuchao2025.zszlchina.com/agreement.html",
+    });
+  },
   idTypeOptionsByName(type: string) {
     if (!type) {
       return;
@@ -198,6 +208,14 @@ Page({
       return;
     }
 
+    if (!this.data.hasReadNotices) {
+      wx.showToast({
+        title: "请先阅读用户协议",
+        icon: "none",
+      });
+      return;
+    }
+
     // 检查是否已登录
     const app = getApp<IAppOption>();
     if (app.globalData.isLoggedIn) {
@@ -310,9 +328,9 @@ Page({
       const idTypeMap: {
         [key: string]: "ID_CARD" | "GA_JM_LWND_TXZ" | "PASSPORT";
       } = {
-        "ID_CARD": "ID_CARD",
-        "PASSPORT": "PASSPORT", 
-        "GAT_TXZ": "GA_JM_LWND_TXZ",
+        ID_CARD: "ID_CARD",
+        PASSPORT: "PASSPORT",
+        GAT_TXZ: "GA_JM_LWND_TXZ",
       };
 
       // 调用注册接口
@@ -441,7 +459,7 @@ Page({
     }
 
     // 身份证特殊处理
-    if (idType === "身份证") {
+    if (idType === "ID_CARD") {
       return this.validateIdCard(trimmedNumber);
     }
 
@@ -457,7 +475,7 @@ Page({
       return "请输入证件号";
     }
 
-    if (idType === "身份证") {
+    if (idType === "ID_CARD") {
       if (!this.validateIdCard(trimmedNumber)) {
         return "请输入正确的身份证号";
       }

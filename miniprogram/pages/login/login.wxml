@@ -34,8 +34,18 @@
           <text class="form-label">证件号</text>
           <input class="form-input id-input" type="text" placeholder="请输入证件号" value="{{formData.idNumber}}" bindinput="onIdNumberInput" />
         </view>
+        <view class="notice-tip">
+          <view class="radio-container">
+            <radio color="#3461fd" class="notice-radio" checked="{{hasReadNotices}}" bindtap="onNoticeRadioChange" />
+            <text class="tip-text">我已阅读</text>
+            <text class="notice-link" bindtap="openPurchaseNotice">《用户协议和隐私条款》</text>
+          </view>
+        </view>
         <!-- 登录按钮 -->
-        <button class="login-button" open-type="getPhoneNumber" bindgetphonenumber="onGetPhoneNumber">
+        <button wx:if="{{!hasReadNotices}}" class="login-button" bindtap="onLogin">
+          <text class="button-text">立即登录</text>
+        </button>
+        <button wx:else class="login-button" open-type="getPhoneNumber" bindgetphonenumber="onGetPhoneNumber">
           <text class="button-text">立即登录</text>
         </button>
       </view>

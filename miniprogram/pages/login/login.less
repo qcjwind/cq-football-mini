@@ -176,6 +176,35 @@
 	font-weight: 500;
 }
 
+.notice-tip {
+	padding: 0rpx;
+	
+	.radio-container {
+	  display: flex;
+	  align-items: center;
+	  
+	  .notice-radio {
+		transform: scale(0.8);
+	  }
+	  
+	  .tip-text {
+		font-size: 26rpx;
+		color: #666;
+	  }
+	  
+	  .notice-link {
+		font-size: 26rpx;
+		color: #3461fd;
+		// margin: 0 4rpx;
+		cursor: pointer;
+		
+		&:active {
+		  color: #2952cc;
+		}
+	  }
+	}
+  }
+
 /* 响应式设计 */
 @media (max-width: 750rpx) {
 	.form-section {
