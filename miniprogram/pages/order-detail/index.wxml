@@ -43,7 +43,7 @@
         <block wx:if="{{type === 'order'}}">
             <text class="info-tip">订单信息</text>
             <text class="order-info-item">订单编号：{{detailInfo.order.orderNo}}</text>
-            <text class="order-info-item">场景时间：{{detailInfo.order.gmtCreate}}</text>
+            <text class="order-info-item">创建时间：{{detailInfo.order.gmtCreate}}</text>
         </block>
     </view>
 </view>
