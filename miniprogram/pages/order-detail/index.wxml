@@ -30,7 +30,7 @@
         </view>
         <text class="info-tip">温馨提示</text>
         <view class="tip-desc">
-            <text class="tip-desc-title">观赛请携带身份证原件！！无身份证原件禁止入场！！</text>
+            <text class="tip-desc-title">根据安保工作要求：观赛请携带身份证原件！！无身份证原件禁止入场！！</text>
         </view>
         <text class="info-tip">不支持退·比赛时长，以现场为准</text>
         <view class="order-address" bindtap="onAddressTap">
