@@ -63,7 +63,6 @@ Page({
 
   onLoad(options: any) {
     console.log("订单确认页面参数:", options);
-
     const { matchId, skuId, ticketBid, type } = options;
 
     // 设置基本数据
@@ -81,9 +80,7 @@ Page({
     this.loadUserAttendeeInfo();
 
     // 加载赛事信息
-    if (matchId) {
-      this.loadMatchInfo(matchId, type);
-    }
+    this.loadMatchInfo(matchId, type);
   },
 
   // 加载用户信息作为观赛人
@@ -624,21 +621,21 @@ Page({
   // 打开购票须知
   openPurchaseNotice() {
     wx.navigateTo({
-      url: '/pages/web-view/index?url=https://yuchao2025.zszlchina.com/buyTicket.html'
+      url: "/pages/web-view/index?url=https://yuchao2025.zszlchina.com/buyTicket.html",
     });
   },
 
   // 打开安检须知
   openSecurityNotice() {
     wx.navigateTo({
-      url: '/pages/web-view/index?url=https://yuchao2025.zszlchina.com/securityCheck.html'
+      url: "/pages/web-view/index?url=https://yuchao2025.zszlchina.com/securityCheck.html",
     });
   },
 
   // 打开入场须知
   openEntryNotice() {
     wx.navigateTo({
-      url: '/pages/web-view/index?url=https://yuchao2025.zszlchina.com/admissionNoticead.html'
+      url: "/pages/web-view/index?url=https://yuchao2025.zszlchina.com/admissionNoticead.html",
     });
   },
 
