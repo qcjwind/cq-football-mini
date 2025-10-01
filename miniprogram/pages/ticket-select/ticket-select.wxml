@@ -27,7 +27,7 @@
     <view class="session-section">
       <view class="section-header">
         <text class="section-title">场次</text>
-        <text class="section-desc">场次时间均为演出当地时间</text>
+        <text class="section-desc">场次时间均为当地比赛时间</text>
       </view>
       <view class="session-list">
         <view 
@@ -51,13 +51,13 @@
         <view 
           wx:for="{{areaList}}" 
           wx:key="id"
-          class="area-item {{item.selected ? 'selected' : ''}} {{item.status}}"
+          class="area-item {{item.status}} {{item.selected ? 'selected' : ''}}"
           data-id="{{item.id}}"
           bindtap="onAreaSelect"
         >
           <text class="area-name">{{item.name}}</text>
           <view wx:if="{{item.status === 'outofstock'}}" class="status-tag outofstock">
-            <text class="status-text">缺货</text>
+            <text class="status-text">库存不足</text>
           </view>
           <view wx:elif="{{item.status === 'soldout'}}" class="status-tag soldout">
             <text class="status-text">售罄</text>
