@@ -342,7 +342,7 @@ Page({
               paySign: pay.paySign,
               success: () => {
                 wx.reLaunch({
-                  url: `/pages/order-detail/index?orderId=${response.data.id}&type=order`,
+                  url: `/pages/order-detail/index?orderId=${response.data.id}&type=order&payStatus=PAY_SUCCESS`,
                 });
               },
               fail: () => {

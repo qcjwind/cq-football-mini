@@ -20,12 +20,15 @@ Page({
     timer: null as any, // 定时器引用
   },
   onLoad(options: any) {
-    const { orderId, type } = options;
+    const { orderId, type, payStatus } = options;
     if (type === "order") {
       wx.setNavigationBarTitle({
         title: "订单详情",
       });
       this.getOrderDetail(orderId);
+      if (payStatus === "PAY_SUCCESS") {
+        this.loopPayResult(orderId);
+      }
     } else {
       wx.setNavigationBarTitle({
         title: "票务详情",

@@ -18,8 +18,8 @@ interface RequestConfig {
 }
 
 class BaseService {
-  // protected baseURL = 'https://yuchao2025.zszlchina.com';
-  protected baseURL = 'http://10.113.1.26:80';
+  protected baseURL = 'https://yuchao2025.zszlchina.com';
+  // protected baseURL = 'http://10.113.1.26:80';
   protected token = '';
 
   constructor() {
