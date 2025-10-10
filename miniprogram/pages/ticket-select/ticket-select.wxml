@@ -79,6 +79,13 @@
     <view class="limit-info">
       <text class="limit-text">{{limitText}}</text>
     </view>
-    <button class="buy-button" bindtap="onBuyNow">立即购买</button>
+    
+    <!-- 倒计时按钮 -->
+    <button wx:if="{{isCountdownActive}}" class="countdown-button" disabled>
+        {{countdown.days}}天{{countdown.hours}}小时{{countdown.minutes}}分钟{{countdown.seconds}}秒
+    </button>
+    
+    <!-- 立即购买按钮 -->
+    <button wx:else class="buy-button" bindtap="onBuyNow">立即购买</button>
   </view>
 </view>

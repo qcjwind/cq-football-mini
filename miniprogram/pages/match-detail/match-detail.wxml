@@ -25,7 +25,7 @@
     <view class="venue-policy-section">
       <view class="price-info">
         <text class="price-symbol">¥</text>
-        <text class="price-number">{{skuList[0].price || 0}}</text>
+        <text class="price-number">{{skuList[0].price / 100 || 0}}</text>
         <text class="price-suffix">起</text>
       </view>
       <view class="venue-info" bindtap="onAddressTap">

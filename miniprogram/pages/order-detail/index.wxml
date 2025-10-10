@@ -1,4 +1,9 @@
 <view class="order-detail-container">
+    <view wx:if="{{detailInfo.order.orderStatus === 'WAIT_PAY'}}" class="order-not-pay">
+        <text>待支付</text>
+        <text wx:if="{{isCountdownActive}}" class="countdown-text">{{countdownText}}</text>
+        <text wx:else class="countdown-text">00:00</text>
+    </view>
     <view class="match-info">
         <image class="match-info-left" src="{{detailInfo.match.cover}}" />
         <view class="match-info-right">
@@ -12,22 +17,34 @@
         </view>
     </view>
     <view class="order-info">
-        <view wx:if="{{type === 'order'}}" class="order-info-tip">
-            {{currentIndex + 1}} / {{detailInfo.ticketList.length}}
-        </view>
-        <text class="info-title">凭本人有效身份证原件入场</text>
-        <view class="bill-list">
-            <swiper class="bill-swiper" circular bindchange="onSwiperChange">
-                <swiper-item wx:for="{{detailInfo.ticketList}}" wx:key="index">
-                    <view class="bill-item">
-                        <image class="ic-card" src="../../assets/id-card.png" mode="widthFix" />
-                        <text class="name">{{item.name}}</text>
-                        <text class="id-number">{{item.idNo}}</text>
-                        <text class="seat-no">{{item.area}}·{{item.subArea}}·{{item.seatRow}}排·{{item.seatNo}}号</text>
-                    </view>
-                </swiper-item>
-            </swiper>
-        </view>
+        <block wx:if="{{detailInfo.order.orderStatus !== 'CANCEL'}}">
+            <view wx:if="{{type === 'order'}}" class="order-info-tip">
+                {{currentIndex + 1}} / {{detailInfo.ticketList.length}}
+            </view>
+            <text class="info-title">凭本人有效身份证原件入场</text>
+            <view class="bill-list">
+                <swiper class="bill-swiper" circular bindchange="onSwiperChange">
+                    <swiper-item wx:for="{{detailInfo.ticketList}}" wx:key="index">
+                        <view class="bill-item">
+                            <view wx:if="{{labelMap[item.idType]}}" class="bill-item-top">
+                                <text>{{labelMap[item.idType]}}</text>
+                            </view>
+                            <image class="ic-card" src="../../assets/id-card.png" mode="widthFix" />
+                            <text class="name">{{item.name}}</text>
+                            <text class="id-number">{{item.idNo}}</text>
+                            <view class="seat-no">
+                                <text>{{item.area}}</text>
+                                <block wx:if="{{detailInfo.match.matchTags !== 'DISABLE_SEAT'}}">
+                                    <text>·{{item.subArea}}</text>
+                                    <text>·{{item.seatRow}}排</text>
+                                    <text>·{{item.seatNo}}号</text>
+                                </block>
+                            </view>
+                        </view>
+                    </swiper-item>
+                </swiper>
+            </view>
+        </block>
         <text class="info-tip">温馨提示</text>
         <view class="tip-desc">
             <text class="tip-desc-title">根据安保工作要求：观赛请携带身份证原件！！无身份证原件禁止入场！！</text>
@@ -45,5 +62,11 @@
             <text class="order-info-item">订单编号：{{detailInfo.order.orderNo}}</text>
             <text class="order-info-item">创建时间：{{detailInfo.order.gmtCreate}}</text>
         </block>
+    </view>
+    <view wx:if="{{detailInfo.order.orderStatus === 'WAIT_PAY'}}" class="bottom-bar">
+        <view class="cancel-btn" bindtap="cancelOrder">取消订单</view>
+        <view class="buy-button {{isPurchasing ? 'buy-button-disabled' : ''}}" bindtap="confirmPay">
+            {{isPurchasing ? '处理中...' : '立即支付'}} (¥{{detailInfo.order.totalPrice / 100 || 0}})
+        </view>
     </view>
 </view>

@@ -1,3 +1,5 @@
+import { getUUID } from "../utils/index";
+
 // service/base.ts - API服务基类
 interface ApiResponse<T = any> {
   code: number;
@@ -16,8 +18,8 @@ interface RequestConfig {
 }
 
 class BaseService {
-  protected baseURL = 'https://yuchao2025.zszlchina.com';
-  // protected baseURL = 'http://10.113.1.26:80';
+  // protected baseURL = 'https://yuchao2025.zszlchina.com';
+  protected baseURL = 'http://10.113.1.26:80';
   protected token = '';
 
   constructor() {
@@ -84,7 +86,10 @@ class BaseService {
     }
 
     // 处理POST请求的数据格式
-    let requestData = data;
+    let requestData = {
+      ...data,
+      clientId: getUUID(),
+    };
     // if (method === 'POST' && data && typeof data === 'object') {
     //   // 使用URL编码格式，数组直接JSON字符串化
     //   requestHeader['Content-Type'] = 'application/x-www-form-urlencoded';

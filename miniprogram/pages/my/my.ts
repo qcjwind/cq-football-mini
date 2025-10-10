@@ -20,7 +20,7 @@ Page({
     orderLoading: false, // 订单加载状态
     orderHasMore: true, // 订单是否还有更多数据
     orderPageNumber: 1, // 订单当前页码
-    pageSize: 10, // 每页数量
+    pageSize: 100, // 每页数量
   },
 
   // 检查登录状态
@@ -82,7 +82,7 @@ Page({
     try {
       this.setData({ orderLoading: true });
       wx.showLoading({ title: "loading..." });
-      const pageNumber = refresh ? 1 : this.data.orderPageNumber;
+      const pageNumber = 1;
       const response = await orderService.getMyOrderList({
         pageNumber,
         pageSize: this.data.pageSize,
@@ -90,12 +90,12 @@ Page({
 
       if (response.code === 200) {
         const newOrderList = response.data || [];
-        const orderList = refresh
-          ? newOrderList
-          : [...this.data.orderList, ...newOrderList];
+        // const orderList = refresh
+        //   ? newOrderList
+        //   : [...this.data.orderList, ...newOrderList];
 
         this.setData({
-          orderList,
+          orderList: newOrderList,
           orderPageNumber: pageNumber + 1,
           orderHasMore: newOrderList.length === this.data.pageSize,
           orderLoading: false,
@@ -234,8 +234,7 @@ Page({
     // 如果已登录且是默认的订单tab且还未加载数据，则加载订单数据
     if (
       this.data.isLoggedIn &&
-      this.data.activeTab === "order" &&
-      this.data.orderList.length === 0
+      this.data.activeTab === "order"
     ) {
       this.loadOrderList();
     }

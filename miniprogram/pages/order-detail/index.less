@@ -3,7 +3,8 @@
   height: 100vh;
   overflow-y: auto;
   background: rgba(249, 249, 249, 1);
-  padding: 20px;
+  padding: 40rpx;
+  padding-bottom: calc(140rpx + env(safe-area-inset-bottom));
 
   .match-info {
     display: flex;
@@ -113,6 +114,22 @@
         position: relative;
         padding: 0 32rpx;
 
+        .bill-item-top {
+          position: absolute;
+          top: 0;
+          right: 0;
+          padding: 10rpx 20rpx;
+          border-radius: 10rpx 0 10rpx 0;
+          background: rgba(0, 0, 0, 0.2);
+          z-index: 10;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 24rpx;
+          color: rgba(255, 255, 255, 1);
+          font-weight: 500;
+        }
+
         .ic-card {
           width: 100%;
         }
@@ -163,7 +180,7 @@
       margin-top: 30rpx;
 
       .tip-desc-title {
-        color: #F56C6C;
+        color: #f56c6c;
         font-family: Source Han Sans CN;
         font-size: 28rpx;
         font-weight: 500;
@@ -214,7 +231,7 @@
       letter-spacing: 5%;
     }
   }
-  
+
   .order-info-item {
     display: block;
     color: rgba(138, 138, 138, 1);
@@ -225,4 +242,70 @@
     letter-spacing: 1%;
     margin-top: 30rpx;
   }
+
+  .order-not-pay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 38rpx;
+    color: #f56c6c;
+    padding-bottom: 40rpx;
+    gap: 20rpx;
+
+    .countdown-text {
+      font-size: 38rpx;
+      font-weight: bold;
+      color: #f56c6c;
+      font-family: "Courier New", monospace;
+      background: rgba(245, 108, 108, 0.1);
+      padding: 10rpx 20rpx;
+      border-radius: 10rpx;
+      border: 2rpx solid #f56c6c;
+    }
+  }
+
+  .order-paid {
+    color: #909399;
+  }
+
+  // 底部购买栏
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding-bottom: env(safe-area-inset-bottom);
+  background-color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 100; // 确保在内容之上
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.1); // 添加阴影效果
+
+  .cancel-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32rpx;
+    width: 50%;
+    padding: 40rpx 60rpx;
+  }
+
+  .buy-button {
+    background-color: #3461fd;
+    color: #fff;
+    padding: 40rpx 60rpx;
+    font-size: 32rpx;
+    font-weight: bold;
+    text-align: center;
+    min-width: 200rpx;
+    transition: all 0.3s ease;
+
+    &.buy-button-disabled {
+      background-color: #ccc;
+      color: #999;
+      cursor: not-allowed;
+    }
+  }
+}
 }

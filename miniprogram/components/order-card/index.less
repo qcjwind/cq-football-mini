@@ -1,10 +1,12 @@
 /* components/ticket-card/ticket-card.less */
 .ticket-card {
+  position: relative;
   background-color: white;
   border-radius: 20rpx;
   padding: 30rpx;
   box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.08);
   margin-bottom: 20px;
+  overflow: hidden;
 }
 
 .card-content {
@@ -70,4 +72,23 @@
 .time-value {
   font-size: 28rpx;
   color: #333;
+}
+
+.order-status {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: #fff;
+  font-size: 20rpx;
+  padding: 10rpx 20rpx;
+  border-radius: 10rpx 0 10rpx 0;
+  background: rgba(0, 0, 0, 0.2);
+
+  .not-pay {
+    color: #f56c6c;
+  }
+
+  .cancel {
+    color: #909399;
+  }
 }

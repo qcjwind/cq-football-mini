@@ -239,13 +239,13 @@
 
 .price-symbol {
   font-size: 28rpx;
-  color: #333;
+  color: #ff4444;
 }
 
 .price-number {
   font-size: 48rpx;
   font-weight: bold;
-  color: #333;
+  color: #ff4444;
 }
 
 .limit-info {
@@ -272,6 +272,31 @@
   border: none;
 }
 
+.countdown-button {
+  background: #ccc;
+  color: #666 !important;
+  font-size: 28rpx;
+  font-weight: bold;
+  padding: 24rpx 40rpx;
+  border-radius: 50rpx;
+  border: none;
+  min-width: 200rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.countdown-button::after {
+  border: none;
+}
+
+.countdown-text {
+  font-size: 28rpx;
+  color: #666;
+  text-align: center;
+  white-space: nowrap;
+}
+
 /* 响应式调整 */
 @media (max-width: 750rpx) {
   .area-grid {
@@ -287,5 +312,14 @@
   .buy-button {
     width: 100%;
     min-width: auto;
+  }
+  
+  .countdown-button {
+    width: 100%;
+    min-width: auto;
+  }
+  
+  .countdown-text {
+    font-size: 26rpx;
   }
 }

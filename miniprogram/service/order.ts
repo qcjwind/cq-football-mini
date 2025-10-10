@@ -60,6 +60,8 @@ interface BuyTicketResponse {
     totalPrice: number;
     userId: number;
     venueId: number;
+    orderStatus: string;
+    payInfo?: string;
   };
 }
 

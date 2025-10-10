@@ -9,6 +9,7 @@ interface AttendeeInfo {
   idNumber: string;
   phone?: string;
   idType?: string;
+  containsMySelf?: boolean;
 }
 
 interface OrderConfirmData {
@@ -63,7 +64,7 @@ Page({
 
   onLoad(options: any) {
     console.log("订单确认页面参数:", options);
-    const { matchId, skuId, ticketBid, type } = options;
+    const { matchId, skuId, ticketBid, type, price } = options;
 
     // 设置基本数据
     this.setData({
@@ -71,9 +72,9 @@ Page({
       skuId: skuId || "",
       ticketBid,
       type,
-      ticketPrice: 0, // 默认价格，后续从接口获取
+      ticketPrice: price || 0, // 默认价格，后续从接口获取
       ticketCount: 1, // 默认购买1张票
-      totalPrice: 0, // 默认总价
+      totalPrice: price || 0, // 默认总价
     });
 
     // 加载用户信息作为观赛人
@@ -94,6 +95,7 @@ Page({
           idNumber: userInfo.idNo || "",
           phone: userInfo.mobile || "",
           idType: userInfo.idType || "ID_CARD",
+          containsMySelf: true,
         };
 
         // 生成指定数量的观赛人信息
@@ -318,6 +320,7 @@ Page({
             idNo: attendee.idNumber,
             idType: attendee.idType || "ID_CARD",
             mobile: attendee.phone || "",
+            mySelf: attendee.containsMySelf || false,
           }))
         ),
       };
@@ -328,6 +331,29 @@ Page({
       const response = await orderService.buySaleTicket(buyTicketParams);
 
       if (response.code === 200) {
+        if (response.data.orderStatus === "WAIT_PAY" && response.data.payInfo) {
+          try {
+            const pay = JSON.parse(response.data.payInfo);
+            wx.requestPayment({
+              timeStamp: pay.timeStamp,
+              nonceStr: pay.nonceStr,
+              package: pay.packageValue,
+              signType: pay.signType,
+              paySign: pay.paySign,
+              success: () => {
+                wx.reLaunch({
+                  url: `/pages/order-detail/index?orderId=${response.data.id}&type=order`,
+                });
+              },
+              fail: () => {
+                wx.reLaunch({
+                  url: `/pages/order-detail/index?orderId=${response.data.id}&type=order`,
+                });
+              },
+            });
+          } catch (error) {}
+          return;
+        }
         // 购票成功
         wx.showToast({
           title: "购票成功",
