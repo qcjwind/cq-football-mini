@@ -6,11 +6,13 @@ interface MatchInfo {
   cover: string;
   detail: string;
   endTime: string;
+  agreementInfo: string;
   giftTicketUrl: string;
   gmtCreate: string;
   gmtModify: string;
   id: number;
   matineeName: string;
+  buyLimit: number;
   name: string;
   saleStatus: 'NOT_FINISH' | 'FINISHED';
   startTime: string;

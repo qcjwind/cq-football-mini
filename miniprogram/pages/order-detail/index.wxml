@@ -33,12 +33,10 @@
                             <text class="name">{{item.name}}</text>
                             <text class="id-number">{{item.idNo}}</text>
                             <view class="seat-no">
-                                <text>{{item.area}}</text>
-                                <block wx:if="{{detailInfo.match.matchTags !== 'DISABLE_SEAT'}}">
-                                    <text>·{{item.subArea}}</text>
-                                    <text>·{{item.seatRow}}排</text>
-                                    <text>·{{item.seatNo}}号</text>
-                                </block>
+                                <text wx:if="{{area}}">{{item.area}}·</text>
+                                <text wx:if="{{subArea}}">{{item.subArea}}·</text>
+                                <text wx:if="{{seatRow}}">{{item.seatRow}}排·</text>
+                                <text wx:if="{{seatNo}}">{{item.seatNo}}号</text>
                             </view>
                         </view>
                     </swiper-item>
@@ -68,5 +66,9 @@
         <view class="buy-button {{isPurchasing ? 'buy-button-disabled' : ''}}" bindtap="confirmPay">
             {{isPurchasing ? '处理中...' : '立即支付'}} (¥{{detailInfo.order.totalPrice / 100 || 0}})
         </view>
+    </view>
+
+    <view wx:if="{{detailInfo.order.orderStatus === 'PAY_SUCCESS' && detailInfo.match.allowRefund === 'Y' && detailInfo.order.totalPrice > 0}}" class="bottom-bar">
+        <view class="cancel-btn" style="width: 100%;" bindtap="refundHandle">退款退票</view>
     </view>
 </view>

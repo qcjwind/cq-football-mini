@@ -1,6 +1,6 @@
 // ticket-select.ts
 import matchService from "../../service/match";
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 interface AreaItem {
   id: string;
   name: string;
@@ -27,6 +27,7 @@ Page({
     areaList: [] as AreaItem[],
     sessionList: [] as SessionItem[],
     totalPrice: 0,
+    areaId: "",
     limitText: "每张身份证限购1张",
     // 倒计时相关
     countdown: {
@@ -76,7 +77,7 @@ Page({
           areaList,
           selectedSession,
           selectedArea,
-          totalPrice: (+selectedArea?.price / 100) || 0,
+          totalPrice: +selectedArea?.price / 100 || 0,
           loading: false,
         });
 
@@ -133,7 +134,8 @@ Page({
       return [];
     }
 
-    return skuList
+    const skuDesc: Record<string, string> = {};
+    const list = skuList
       .filter((sku) => sku.skuType === "SALE_TICKET")
       .map((sku, index) => {
         // 根据剩余票数确定区域状态
@@ -148,14 +150,21 @@ Page({
           status = "available"; // 可购买
         }
 
+        skuDesc[sku.id] = sku.description;
         return {
           id: sku.id.toString(),
           name: sku.skuName || sku.area || `区域${index + 1}`,
           price: sku.price,
           status,
+          description: sku.description,
           selected: index === 0 && status === "available", // 第一个可用区域默认选中
         };
       });
+    this.setData({
+      skuDesc,
+      areaId: list[0].id,
+    });
+    return list;
   },
 
   onSessionSelect(e: any) {
@@ -191,7 +200,8 @@ Page({
     this.setData({
       areaList,
       selectedArea,
-      totalPrice: (+selectedArea?.price / 100) || 0,
+      areaId,
+      totalPrice: +selectedArea?.price / 100 || 0,
     });
   },
 

@@ -1,5 +1,6 @@
 import dayjs from "dayjs";
 import { orderService, ticketService } from "../../service/index";
+import { sleep } from "../../utils/index";
 
 Page({
   data: {
@@ -11,6 +12,10 @@ Page({
       PASSPORT: "护照",
       GAT_TXZ: "港澳通行证",
     },
+    area: true,
+    subArea: true,
+    seatRow: true,
+    seatNo: true,
     totalPrice: 0,
     isPurchasing: false,
     // 倒计时相关
@@ -39,14 +44,34 @@ Page({
       type,
     });
   },
+  onShow() {
+    const { order } = (this.data.detailInfo as any) || {};
+    if (order?.orderTime && !this.data.timer) {
+      this.startCountdown(order.orderTime);
+    }
+  },
   onSwiperChange(e: any) {
     this.setData({
       currentIndex: e.detail.current,
     });
   },
 
+  mmssToSeconds(mmss: string) {
+    const [minutes, seconds] = mmss.split(":").map(Number);
+    return minutes * 60 + seconds;
+  },
+
   confirmPay() {
     try {
+      const temp = this.mmssToSeconds(this.data.countdownText);
+      if (temp <= 10) {
+        wx.showToast({
+          title: "支付时间不足",
+          icon: "none",
+        });
+        return;
+      }
+
       this.setData({
         isPurchasing: true,
       });
@@ -149,8 +174,12 @@ Page({
       if (Object.prototype.toString.call(data?.ticket) !== "[object Array]") {
         data.ticketList = [data.ticket];
       }
+      const ticketShowInfo = JSON.parse(data?.match?.ticketShowInfo || "{}");
+      console.log("ticketShowInfo", ticketShowInfo);
+
       this.setData({
         detailInfo: data,
+        ...ticketShowInfo,
       });
     });
   },
@@ -321,6 +350,57 @@ Page({
         });
       },
     });
+  },
+
+  refundHandle() {
+    const rules = JSON.parse(this.data.detailInfo?.match?.refundRule || "{}");
+    if (!rules || rules?.refundRules?.length === 0) {
+      wx.showModal({
+        title: "提示",
+        content: "确定退款退票吗？",
+        success: (res) => {
+          if (res.confirm) {
+            this.refundHandleConfirm();
+          }
+        },
+      });
+      return;
+    }
+    let content = `退款截止时间为：${rules?.endTime};\n退款规则：`;
+    rules?.refundRules?.forEach((rule: any) => {
+      content += `${rule.minBeforeEndHour}小时前退款，扣除手续费${rule.refundRate}%；\n`;
+    });
+    wx.showModal({
+      title: "确定退款退票吗？",
+      content,
+      success: (res) => {
+        if (res.confirm) {
+          this.refundHandleConfirm();
+        }
+      },
+    });
+  },
+
+  refundHandleConfirm() {
+    const { order } = (this.data.detailInfo as any) || {};
+    wx.showLoading({
+      title: "退款退票中...",
+    });
+    ticketService
+      .refundTicket(order.id)
+      .then(async (res) => {
+        if (res.code === 200) {
+          wx.showToast({
+            title: "退款退票成功",
+            icon: "success",
+          });
+          await sleep(1000);
+          this.getOrderDetail(order.id + "");
+        }
+      })
+      .finally(() => {
+        wx.hideLoading();
+      });
   },
 
   // 页面卸载时清理定时器

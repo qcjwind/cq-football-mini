@@ -19,6 +19,7 @@ interface OrderConfirmData {
   matchId: string;
   skuId: string;
   ticketPrice: number;
+  agreementInfo?: null | any[];
   ticketCount: number;
   matchTimeStr: string;
   showAddModal: boolean;
@@ -45,6 +46,7 @@ Page({
     ticketCount: 1,
     matchTimeStr: "2025.08.22 周六 17:20",
     showAddModal: false,
+    agreementInfo: null,
     newAttendee: {
       name: "",
       idNumber: "",
@@ -115,6 +117,12 @@ Page({
     }
   },
 
+  openAgreement(e: any) {
+    const index = e.currentTarget.dataset.index;
+    wx.navigateTo({
+      url: `/pages/agreement/index?matchId=${this.data.matchId}&index=${index}`,
+    });
+  },
   // 加载赛事信息
   async loadMatchInfo(matchId: string, type: string) {
     try {
@@ -137,16 +145,18 @@ Page({
         const matchInfo = {
           id: match.id,
           name: match.name,
+          buyLimit: match.buyLimit,
           startTime: match.startTime,
           location: venue?.venueAddress || "天府新区文化体路888号",
         };
 
         // 格式化时间显示
         const matchTimeStr = this.formatMatchTime(match.startTime);
-
+        const agreementInfo = JSON.parse(match.agreementInfo || "[]");
         this.setData({
           matchInfo,
           matchTimeStr,
+          agreementInfo,
         });
       } else {
         wx.showToast({
@@ -210,9 +220,9 @@ Page({
 
   // 添加观赛人
   addAttendee() {
-    if (this.data.attendeeList.length >= 2) {
+    if (this.data.attendeeList.length >= this.data.matchInfo.buyLimit) {
       wx.showToast({
-        title: "最多只能添加2名观赛人",
+        title: `最多只能添加${this.data.matchInfo.buyLimit}名观赛人`,
         icon: "none",
       });
       return;
@@ -235,7 +245,7 @@ Page({
       return;
     }
 
-    if (!this.data.hasReadNotices) {
+    if (!this.data.hasReadNotices && this.data.agreementInfo && this.data.agreementInfo.length > 0) {
       wx.showToast({
         title: "请阅读购票须知",
         icon: "none",

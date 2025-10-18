@@ -107,32 +107,6 @@ class TicketService extends BaseService {
       throw error;
     }
   }
-
-  /**
-   * 申请退款
-   * @param ticketId 票务ID
-   * @param reason 退款原因
-   * @returns Promise<any>
-   */
-  async refundTicket(ticketId: number, reason: string): Promise<any> {
-    try {
-      const response = await this.post(
-        `/app/ticket/refund/${ticketId}`,
-        {
-          reason,
-        },
-        {
-          showLoading: true,
-          loadingText: "申请退款中...",
-        }
-      );
-      return response;
-    } catch (error) {
-      console.error("申请退款失败:", error);
-      throw error;
-    }
-  }
-
   /**
    * 获取票务二维码
    * @param ticketId 票务ID
@@ -171,6 +145,16 @@ class TicketService extends BaseService {
       return response;
     } catch (error) {
       console.error("取消订单失败:", error);
+      throw error;
+    }
+  }
+
+  async refundTicket(orderId: number): Promise<any> {
+    try {
+      const response = await this.post(`/app/order/refundApply`, {orderId});
+      return response;
+    } catch (error) {
+      console.error("退款退票失败:", error);
       throw error;
     }
   }

@@ -7,6 +7,7 @@
     "pages/ticket-select/ticket-select",
     "pages/order-confirm/order-confirm",
     "pages/my/my",
+    "pages/agreement/index",
     "pages/order-detail/index"
   ],
   "tabBar": {

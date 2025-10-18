@@ -4,7 +4,6 @@
   <view wx:if="{{loading}}" class="loading-container">
     <text>加载中...</text>
   </view>
-  
   <!-- 主要内容 -->
   <view wx:else class="content">
     <!-- 赛事信息卡片 -->
@@ -22,7 +21,6 @@
         </view>
       </view>
     </view>
-
     <!-- 场次选择区域 -->
     <view class="session-section">
       <view class="section-header">
@@ -30,31 +28,18 @@
         <text class="section-desc">场次时间均为当地比赛时间</text>
       </view>
       <view class="session-list">
-        <view 
-          wx:for="{{sessionList}}" 
-          wx:key="id"
-          class="session-item {{item.selected ? 'selected' : ''}}"
-          data-id="{{item.id}}"
-          bindtap="onSessionSelect"
-        >
+        <view wx:for="{{sessionList}}" wx:key="id" class="session-item {{item.selected ? 'selected' : ''}}" data-id="{{item.id}}" bindtap="onSessionSelect">
           <text class="session-text">{{item.date}} {{item.time}} {{item.name}}</text>
         </view>
       </view>
     </view>
-
     <!-- 区域选择区域 -->
     <view class="area-section">
       <view class="section-header">
         <text class="section-title">区域</text>
       </view>
       <view class="area-grid">
-        <view 
-          wx:for="{{areaList}}" 
-          wx:key="id"
-          class="area-item {{item.status}} {{item.selected ? 'selected' : ''}}"
-          data-id="{{item.id}}"
-          bindtap="onAreaSelect"
-        >
+        <view wx:for="{{areaList}}" wx:key="id" class="area-item {{item.status}} {{item.selected ? 'selected' : ''}}" data-id="{{item.id}}" bindtap="onAreaSelect">
           <text class="area-name">{{item.name}}</text>
           <view wx:if="{{item.status === 'outofstock'}}" class="status-tag outofstock">
             <text class="status-text">库存不足</text>
@@ -68,8 +53,11 @@
         </view>
       </view>
     </view>
+    
+    <view class="area-description" wx:if="{{skuDesc[areaId]}}">
+      <rich-text class="intro-detail" nodes="{{skuDesc[areaId]}}"></rich-text>
+    </view>
   </view>
-
   <!-- 底部购买栏 -->
   <view wx:if="{{!loading}}" class="bottom-purchase-bar">
     <view class="price-info">
@@ -79,12 +67,10 @@
     <view class="limit-info">
       <text class="limit-text">{{limitText}}</text>
     </view>
-    
     <!-- 倒计时按钮 -->
     <button wx:if="{{isCountdownActive}}" class="countdown-button" disabled>
-        {{countdown.days}}天{{countdown.hours}}小时{{countdown.minutes}}分钟{{countdown.seconds}}秒
+      {{countdown.days}}天{{countdown.hours}}小时{{countdown.minutes}}分钟{{countdown.seconds}}秒
     </button>
-    
     <!-- 立即购买按钮 -->
     <button wx:else class="buy-button" bindtap="onBuyNow">立即购买</button>
   </view>
