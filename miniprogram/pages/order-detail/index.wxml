@@ -33,9 +33,9 @@
                             <text class="name">{{item.name}}</text>
                             <text class="id-number">{{item.idNo}}</text>
                             <view class="seat-no">
-                                <text wx:if="{{area}}">{{item.area}}·</text>
-                                <text wx:if="{{subArea}}">{{item.subArea}}·</text>
-                                <text wx:if="{{seatRow}}">{{item.seatRow}}排·</text>
+                                <text wx:if="{{area}}">{{item.area}}</text>
+                                <text wx:if="{{subArea}}">·{{item.subArea}}</text>
+                                <text wx:if="{{seatRow}}">·{{item.seatRow}}排</text>
                                 <text wx:if="{{seatNo}}">{{item.seatNo}}号</text>
                             </view>
                         </view>

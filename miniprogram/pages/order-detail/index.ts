@@ -179,7 +179,6 @@ Page({
         data.ticketList = [data.ticket];
       }
       const ticketShowInfo = JSON.parse(data?.match?.ticketShowInfo || "{}");
-      console.log("ticketShowInfo", ticketShowInfo);
 
       this.setData({
         detailInfo: data,
@@ -268,6 +267,10 @@ Page({
           detailInfo: res.data,
         });
         this.startCountdown(res.data?.order?.orderTime);
+        const ticketShowInfo = JSON.parse(res?.data?.match?.ticketShowInfo || "{}");
+        this.setData({
+          ...ticketShowInfo,
+        });
       })
       .finally(() => {
         wx.hideLoading();
