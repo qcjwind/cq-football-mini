@@ -23,6 +23,10 @@ Page({
     countdownText: "00:00", // 格式化显示文本
     isCountdownActive: false, // 是否正在倒计时
     timer: null as any, // 定时器引用
+    // 退款弹窗相关
+    showRefundModal: false, // 是否显示退款弹窗
+    refundRules: [], // 退款规则数据
+    refundEndTime: "", // 退款截止时间
   },
   onLoad(options: any) {
     const { orderId, type, payStatus } = options;
@@ -353,8 +357,12 @@ Page({
   },
 
   refundHandle() {
-    const rules = JSON.parse(this.data.detailInfo?.match?.refundRule || "{}");
-    if (!rules || rules?.refundRules?.length === 0) {
+    const rules = JSON.parse(
+      (this.data.detailInfo as any)?.match?.refundRule || "{}"
+    );
+
+    if (!rules || !rules?.ruleList || rules?.ruleList?.length === 0) {
+      // 没有退款规则，直接显示简单确认弹窗
       wx.showModal({
         title: "提示",
         content: "确定退款退票吗？",
@@ -366,23 +374,116 @@ Page({
       });
       return;
     }
-    let content = `退款截止时间为：${rules?.endTime};\n退款规则：`;
-    rules?.refundRules?.forEach((rule: any) => {
-      content += `${rule.minBeforeEndHour}小时前退款，扣除手续费${rule.refundRate}%；\n`;
+
+    // 处理退款规则数据
+    const processedRules = this.processRefundRules(rules);
+
+    this.setData({
+      showRefundModal: true,
+      refundRules: processedRules,
+      refundEndTime: rules?.endTime || "",
     });
-    wx.showModal({
-      title: "确定退款退票吗？",
-      content,
-      success: (res) => {
-        if (res.confirm) {
-          this.refundHandleConfirm();
-        }
-      },
+  },
+
+  // 处理退款规则数据
+  processRefundRules(rules: any) {
+    const refundRules = rules?.ruleList || [];
+    const currentTime = new Date();
+
+    // 先计算所有规则的时间范围
+    const rulesWithTimeRange = refundRules.map((rule: any, index: number) => {
+      const timeRangeObj = this.calculateTimeRange(
+        rule,
+        rules.endTime,
+        currentTime
+      );
+      const feeText = this.formatFeeText(rule.refundRate);
+
+      return {
+        ...rule,
+        timeRange: timeRangeObj,
+        feeText,
+        index,
+      };
     });
+
+    // 计算当前时间到结束时间的间隔（小时）
+    const endTimeDate = new Date(rules.endTime);
+    const currentTimeToEndHours =
+      (endTimeDate.getTime() - currentTime.getTime()) / (1000 * 60 * 60);
+
+    // 找到当前退档 <= beforeEndHour 且最靠近 beforeEndHour 的第一档
+    // 按 beforeEndHour 从小到大排序，找到第一个满足条件的
+    const sortedRules = rulesWithTimeRange.sort(
+      (a: any, b: any) => a.beforeEndHour - b.beforeEndHour
+    );
+    const currentStageRule = sortedRules.find((rule: any) => {
+      return currentTimeToEndHours <= rule.beforeEndHour;
+    });
+
+    // 标记当前阶段
+    return rulesWithTimeRange.map((rule: any) => ({
+      ...rule,
+      isCurrent: rule.index === currentStageRule?.index,
+    }));
+  },
+
+  // 计算时间范围
+  calculateTimeRange(rule: any, endTime: string, _currentTime: Date) {
+    const endTimeDate = new Date(endTime);
+    const startTime = new Date(
+      endTimeDate.getTime() - rule.beforeEndHour * 60 * 60 * 1000
+    );
+    return {
+      startTime: this.formatDate(startTime),
+      endTime: this.formatDate(endTimeDate),
+    };
+  },
+
+  // 格式化手续费文本
+  formatFeeText(refundRate: number) {
+    if (refundRate === 0) {
+      return "免费退票";
+    }
+    return `票价${refundRate}%`;
+  },
+
+  // 格式化日期
+  formatDate(date: Date) {
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+    return `${month}.${day} ${hours}:${minutes}`;
+  },
+
+  // 退款弹窗关闭
+  onRefundModalClose() {
+    this.setData({
+      showRefundModal: false,
+    });
+  },
+
+  // 退款弹窗取消
+  onRefundModalCancel() {
+    this.setData({
+      showRefundModal: false,
+    });
+  },
+
+  // 退款弹窗确认
+  onRefundModalConfirm() {
+    this.setData({
+      showRefundModal: false,
+    });
+    this.refundHandleConfirm();
   },
 
   refundHandleConfirm() {
     const { order } = (this.data.detailInfo as any) || {};
+    if (!order) {
+      return;
+    }
     wx.showLoading({
       title: "退款退票中...",
     });
@@ -394,12 +495,12 @@ Page({
             title: "退款退票成功",
             icon: "success",
           });
-          await sleep(1000);
+          await sleep(1500);
           this.getOrderDetail(order.id + "");
         }
       })
       .finally(() => {
-        wx.hideLoading();
+        wx.hideLoading({ noConflict: true });
       });
   },
 

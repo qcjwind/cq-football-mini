@@ -1,0 +1,48 @@
+<!-- refund-modal.wxml -->
+<view wx:if="{{show}}" class="refund-modal-overlay" bindtap="onOverlayTap">
+  <view class="refund-modal-container" catchtap="onModalTap">
+    <!-- 弹窗头部 -->
+    <view class="modal-header">
+      <text class="modal-title">退/换票规则</text>
+      <view class="close-btn" bindtap="onClose">
+        <text class="close-icon">×</text>
+      </view>
+    </view>
+    
+    <!-- 弹窗内容 -->
+    <view class="modal-content">
+      <!-- 规则说明 -->
+      <view class="rules-description">
+        <view class="rule-item">
+          <text class="rule-text">• 一个订单多张票不支持部分退，每张订单只能退款一次。</text>
+        </view>
+        <view class="rule-item">
+          <text class="rule-text">• 本商品当前退票规则如下：</text>
+        </view>
+      </view>
+      
+      <!-- 退款规则表格 -->
+      <view class="refund-table">
+        <view class="table-header">
+          <view class="header-cell">退款时间</view>
+          <view class="header-cell">退票比例</view>
+        </view>
+        
+        <view wx:for="{{refundRules}}" wx:key="index" class="table-row {{item.isCurrent ? 'current-stage' : ''}}">
+          <view class="row-cell time-cell">
+            <text>{{item.timeRange.startTime}}</text>
+            <text>~</text>
+            <text>{{item.timeRange.endTime}}</text>
+          </view>
+          <view class="row-cell fee-cell">{{item.feeText}}</view>
+        </view>
+      </view>
+    </view>
+    
+    <!-- 弹窗底部按钮 -->
+    <view class="modal-footer">
+      <view class="footer-btn cancel-btn" bindtap="onCancel">取消</view>
+      <view class="footer-btn confirm-btn" bindtap="onConfirm">确定退款</view>
+    </view>
+  </view>
+</view>

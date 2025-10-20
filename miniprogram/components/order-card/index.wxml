@@ -1,8 +1,10 @@
 <!-- components/ticket-card/ticket-card.wxml -->
 <view class="ticket-card" bindtap="onCardTap">
-  <view wx:if="{{orderInfo.orderStatus === 'WAIT_PAY' || orderInfo.orderStatus === 'CANCEL'}}" class="order-status">
+  <view wx:if="{{orderInfo.orderStatus === 'WAIT_PAY' || orderInfo.orderStatus === 'CANCEL' || orderInfo.orderStatus === 'REFUND' || orderInfo.orderStatus === 'REFUND_SUCCESS'}}" class="order-status">
+    <text class="refund" wx:if="{{orderInfo.orderStatus === 'REFUND'}}">退款中</text>
+    <text class="refund-success" wx:if="{{orderInfo.orderStatus === 'REFUND_SUCCESS'}}">退款成功</text>
     <text class="not-pay" wx:if="{{orderInfo.orderStatus === 'WAIT_PAY'}}">待支付</text>
-    <text class="cancel" wx:elif="{{orderInfo.orderStatus === 'CANCEL'}}">已取消</text>
+    <text class="cancel" wx:if="{{orderInfo.orderStatus === 'CANCEL'}}">已取消</text>
   </view>
   <view class="card-content">
     <view class="cover-image">

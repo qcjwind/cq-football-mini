@@ -68,7 +68,17 @@
         </view>
     </view>
 
-    <view wx:if="{{detailInfo.order.orderStatus === 'PAY_SUCCESS' && detailInfo.match.allowRefund === 'Y' && detailInfo.order.totalPrice > 0}}" class="bottom-bar">
+    <view wx:if="{{detailInfo.order.orderStatus === 'PAY_SUCCESS' && type === 'order' && detailInfo.match.allowRefund === 'Y' && detailInfo.order.totalPrice > 0}}" class="bottom-bar">
         <view class="cancel-btn" style="width: 100%;" bindtap="refundHandle">退款退票</view>
     </view>
+    
+    <!-- 退款规则弹窗 -->
+    <refund-modal 
+        show="{{showRefundModal}}"
+        refund-rules="{{refundRules}}"
+        end-time="{{refundEndTime}}"
+        bind:close="onRefundModalClose"
+        bind:cancel="onRefundModalCancel"
+        bind:confirm="onRefundModalConfirm">
+    </refund-modal>
 </view>

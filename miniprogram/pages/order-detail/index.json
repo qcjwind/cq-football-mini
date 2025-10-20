@@ -1,5 +1,7 @@
 {
-    "usingComponents": {},
+    "usingComponents": {
+      "refund-modal": "../../components/refund-modal/refund-modal"
+    },
     "navigationBarTitleText": "",
     "navigationStyle": "default",
     "navigationBarBackgroundColor": "#ffffff",
