@@ -5,10 +5,14 @@ Page({
     text: "",
   },
   onLoad(options: any) {
-    this.getMatchInfo(options.matchId, options.index);
+    this.getMatchInfo(options.matchId, options.index, options.type, options.ticketBid);
   },
-  getMatchInfo(matchId: string, index: number) {
-    matchService.getMatchInfo({ matchId: Number(matchId) }).then((res) => {
+  getMatchInfo(matchId: string, index: number, type: string, ticketBid: string) {
+    let params = { matchId: Number(matchId) };
+    if (type === "gift") {
+      params = { ticketBid: ticketBid || "" };
+    }
+    matchService.getMatchInfo(params).then((res) => {
       const agreementInfo = JSON.parse(res.data.match?.agreementInfo || "[]");
       console.log("agreementInfo", agreementInfo);
       wx.setNavigationBarTitle({

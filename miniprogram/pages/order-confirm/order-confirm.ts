@@ -43,6 +43,7 @@ Page({
     matchId: "",
     skuId: "",
     ticketPrice: 0,
+    ticketInfo: {},
     ticketCount: 1,
     matchTimeStr: "2025.08.22 周六 17:20",
     showAddModal: false,
@@ -120,7 +121,7 @@ Page({
   openAgreement(e: any) {
     const index = e.currentTarget.dataset.index;
     wx.navigateTo({
-      url: `/pages/agreement/index?matchId=${this.data.matchId}&index=${index}`,
+      url: `/pages/agreement/index?matchId=${this.data.matchId}&index=${index}&type=${this.data.type}&ticketBid=${this.data.ticketBid}`,
     });
   },
   // 加载赛事信息
@@ -139,7 +140,7 @@ Page({
       const response = await matchService.getMatchInfo(params);
 
       if (response.code === 200 && response.data) {
-        const { match, venue } = response.data;
+        const { match, venue, ticket } = response.data;
 
         // 格式化赛事信息
         const matchInfo = {
@@ -150,6 +151,7 @@ Page({
           location: venue?.venueAddress || "天府新区文化体路888号",
         };
 
+        const ticketShowInfo = JSON.parse(match?.ticketShowInfo || "{}");
         // 格式化时间显示
         const matchTimeStr = this.formatMatchTime(match.startTime);
         const agreementInfo = JSON.parse(match.agreementInfo || "[]");
@@ -157,6 +159,8 @@ Page({
           matchInfo,
           matchTimeStr,
           agreementInfo,
+          ticketInfo: ticket,
+          ...ticketShowInfo
         });
       } else {
         wx.showToast({

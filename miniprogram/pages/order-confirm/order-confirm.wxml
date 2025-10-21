@@ -41,13 +41,23 @@
       <image class="add-icon" src="../../assets/add.png" mode="aspectFit"></image>
       <text class="add-text">新增</text>
     </view>
+    <view wx:else class="ticket-info">
+      <text wx:if="{{area}}">{{ticketInfo.area}}</text>
+      <text wx:if="{{subArea}}">·{{ticketInfo.subArea}}</text>
+      <text wx:if="{{seatRow}}">·{{ticketInfo.seatRow}}排</text>
+      <text wx:if="{{seatNo}}">{{ticketInfo.seatNo}}号</text>
+    </view>
   </view>
   <!-- 购票须知提示 -->
   <view wx:if="{{agreementInfo && agreementInfo.length > 0}}" class="notice-tip">
     <view class="radio-container">
-      <radio color="#3461fd" class="notice-radio" checked="{{hasReadNotices}}" bindtap="onNoticeRadioChange" />
-      <text class="tip-text">我已阅读</text>
-      <text wx:for="{{agreementInfo}}" class="notice-link" wx:key="index" data-index="{{index}}" bindtap="openAgreement">{{item.name}}</text>
+      <view class="radio-item">
+        <radio color="#3461fd" class="notice-radio" checked="{{hasReadNotices}}" bindtap="onNoticeRadioChange" />
+        <text class="tip-text">我已阅读</text>
+      </view>
+      <view class="agreement-info">
+        <text wx:for="{{agreementInfo}}" class="notice-link" wx:key="index" data-index="{{index}}" bindtap="openAgreement">{{item.name}}</text>
+      </view>
     </view>
   </view>
   <!-- 底部购买区域 -->
@@ -78,7 +88,9 @@
           <picker range="{{idTypeOptions}}" range-key="label" value="{{currentIdTypeIndex}}" bindchange="onIdTypeChange">
             <view class="form-picker">
               <view class="picker-content">
-                <text class="picker-text">{{idTypeOptions[currentIdTypeIndex].label || '身份证'}}</text>
+                <text class="picker-text">
+                  {{idTypeOptions[currentIdTypeIndex].label || '身份证'}}
+                </text>
                 <image class="picker-arrow" src="../../assets/arrow-right.png" mode="widthFix" />
               </view>
             </view>

@@ -125,6 +125,14 @@
     }
   }
 
+  .ticket-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24rpx 0;
+    border-top: 1px solid rgba(231, 231, 231, 1);
+  }
+
   .add-attendee {
     display: flex;
     align-items: center;
@@ -149,26 +157,41 @@
 // 购票须知提示
 .notice-tip {
   padding: 0rpx 40rpx;
-  
+
   .radio-container {
     display: flex;
-    align-items: center;
-    
+    align-items: flex-start;
+
+    .radio-item {
+      display: flex;
+      flex-shrink: 0;
+      align-items: center;
+    }
+
     .notice-radio {
       transform: scale(0.8);
     }
-    
+
     .tip-text {
       font-size: 26rpx;
       color: #666;
+      flex-shrink: 0;
     }
-    
+
+    .agreement-info {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      flex-wrap: wrap;
+      padding-top: 6rpx;
+    }
+
     .notice-link {
       font-size: 26rpx;
       color: #3461fd;
       // margin: 0 4rpx;
       cursor: pointer;
-      
+
       &:active {
         color: #2952cc;
       }
