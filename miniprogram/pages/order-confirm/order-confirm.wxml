@@ -88,9 +88,7 @@
           <picker range="{{idTypeOptions}}" range-key="label" value="{{currentIdTypeIndex}}" bindchange="onIdTypeChange">
             <view class="form-picker">
               <view class="picker-content">
-                <text class="picker-text">
-                  {{idTypeOptions[currentIdTypeIndex].label || '身份证'}}
-                </text>
+                <text class="picker-text">{{idTypeOptions[currentIdTypeIndex].label || '身份证'}}</text>
                 <image class="picker-arrow" src="../../assets/arrow-right.png" mode="widthFix" />
               </view>
             </view>

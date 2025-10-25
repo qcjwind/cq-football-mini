@@ -218,7 +218,7 @@ Page({
     this.setData({
       attendeeList,
       ticketCount: attendeeList.length,
-      totalPrice: this.data.ticketPrice * attendeeList.length,
+      totalPrice: ((this.data.ticketPrice * 100) * attendeeList.length) / 100,
     });
   },
 
@@ -554,7 +554,7 @@ Page({
     this.setData({
       attendeeList,
       ticketCount: attendeeList.length,
-      totalPrice: this.data.ticketPrice * attendeeList.length,
+      totalPrice: ((this.data.ticketPrice * 100) * attendeeList.length) / 100,
       showAddModal: false,
       // 成功添加后重置表单数据
       newAttendee: {

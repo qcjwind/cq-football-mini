@@ -78,23 +78,6 @@ Page({
   // 获取login接口数据
   async getLoginData() {
     try {
-      const app = getApp<IAppOption>();
-
-      // 优先使用全局的login数据
-      if (app.globalData.loginData) {
-        console.log("使用全局login数据");
-        this.setData({
-          loginData: {
-            openid: app.globalData.loginData.data.openid,
-            sessionKey: app.globalData.loginData.data.sessionKey,
-          },
-        });
-        console.log("获取login数据成功:", this.data.loginData);
-        return;
-      }
-
-      // 如果全局没有数据，说明app.ts的login调用可能失败了，需要重新调用
-      console.log("全局没有login数据，重新调用login接口...");
       const response = await authService.login();
       if (response.code === 200) {
         this.setData({
@@ -103,8 +86,14 @@ Page({
             sessionKey: response.data.sessionKey, // 暂时使用openid，如果接口有专门的sessionKey字段需要调整
           },
         });
-        console.log("获取login数据成功:", this.data.loginData);
-        console.log("Login响应数据:", response.data);
+        // 保存登录信息到本地存储
+        const userInfo = {
+          ...response.data.userDO,
+        };
+        wx.setStorageSync("userInfo", userInfo);
+        // 更新全局登录状态
+        const app = getApp<IAppOption>();
+        app.setLoginStatus(userInfo);
         if (!response.data.reg) {
           if (this.data.type === "gift") {
             this.jumpToGift();

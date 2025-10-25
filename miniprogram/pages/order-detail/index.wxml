@@ -12,12 +12,14 @@
             </view>
             <view class="match-info-right-bottom">
                 <text class="match-info-right-bottom-time">{{detailInfo.match.startTime}}</text>
-                <text class="match-info-right-bottom-address">{{detailInfo.arena.venueAddress}}</text>
+                <text class="match-info-right-bottom-address">
+                    {{detailInfo.arena.venueAddress}}
+                </text>
             </view>
         </view>
     </view>
     <view class="order-info">
-        <block wx:if="{{detailInfo.order.orderStatus !== 'CANCEL'}}">
+        <block wx:if="{{detailInfo.order.orderStatus !== 'CANCEL' && detailInfo.order.orderStatus !== 'REFUND_SUCCESS' && detailInfo.order.orderStatus !== 'REFUND_ING'}}">
             <view wx:if="{{type === 'order'}}" class="order-info-tip">
                 {{currentIndex + 1}} / {{detailInfo.ticketList.length}}
             </view>
@@ -47,7 +49,10 @@
         <view class="tip-desc">
             <text class="tip-desc-title">根据安保工作要求：观赛请携带身份证原件！！无身份证原件禁止入场！！</text>
         </view>
-        <text class="info-tip">不支持退·比赛时长，以现场为准</text>
+        <text class="info-tip">
+            <text wx:if="{{detailInfo.match.allowRefund === 'N'}}">不支持退·</text>
+            比赛时长，以现场为准
+        </text>
         <view class="order-address" bindtap="onAddressTap">
             <view class="address-info">
                 <text>{{detailInfo.arena.name}}</text>
@@ -59,6 +64,9 @@
             <text class="info-tip">订单信息</text>
             <text class="order-info-item">订单编号：{{detailInfo.order.orderNo}}</text>
             <text class="order-info-item">创建时间：{{detailInfo.order.gmtCreate}}</text>
+            <text wx:if="{{detailInfo.order.totalPrice}}" class="order-info-item">支付金额：￥{{detailInfo.order.totalPrice / 100 || 0}}</text>
+            <text wx:if="{{detailInfo.order.refundPrice}}" class="order-info-item">退款金额：￥{{detailInfo.order.refundPrice / 100 || 0}}</text>
+            <text wx:if="{{detailInfo.order.refundTime}}" class="order-info-item">退款时间：{{detailInfo.order.refundTime}}</text>
         </block>
     </view>
     <view wx:if="{{detailInfo.order.orderStatus === 'WAIT_PAY'}}" class="bottom-bar">
@@ -67,18 +75,9 @@
             {{isPurchasing ? '处理中...' : '立即支付'}} (¥{{detailInfo.order.totalPrice / 100 || 0}})
         </view>
     </view>
-
     <view wx:if="{{detailInfo.order.orderStatus === 'PAY_SUCCESS' && type === 'order' && detailInfo.match.allowRefund === 'Y' && detailInfo.order.totalPrice > 0}}" class="bottom-bar">
         <view class="cancel-btn" style="width: 100%;" bindtap="refundHandle">退款退票</view>
     </view>
-    
     <!-- 退款规则弹窗 -->
-    <refund-modal 
-        show="{{showRefundModal}}"
-        refund-rules="{{refundRules}}"
-        end-time="{{refundEndTime}}"
-        bind:close="onRefundModalClose"
-        bind:cancel="onRefundModalCancel"
-        bind:confirm="onRefundModalConfirm">
-    </refund-modal>
+    <refund-modal show="{{showRefundModal}}" refund-rules="{{refundRules}}" end-time="{{refundEndTime}}" bind:close="onRefundModalClose" bind:cancel="onRefundModalCancel" bind:confirm="onRefundModalConfirm"></refund-modal>
 </view>
