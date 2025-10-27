@@ -55,7 +55,7 @@
   <view wx:if="{{!loading}}" class="event-intro-section">
     <text class="intro-title">赛事介绍</text>
     <view class="intro-content">
-      <rich-text class="intro-detail" nodes="{{matchInfo.detail}}"></rich-text>
+      <rich-text class="intro-detail" nodes="{{matchInfo.detail}}" catchtap="previewDetailImage"></rich-text>
     </view>
   </view>
   <!-- 底部购票按钮 -->

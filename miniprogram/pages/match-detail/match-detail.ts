@@ -10,6 +10,7 @@ Page({
     arenaInfo: null as any,
     skuList: [] as any[],
     loading: true,
+    detailImgs: [],
   },
 
   onLoad(options: any) {
@@ -19,21 +20,43 @@ Page({
     }
   },
 
+  extractImgSrcsAdvanced(htmlString: string) {
+    const regex = /<img\s+[^>]*?src\s*=\s*(["'])(.*?)\1[^>]*>/gi;
+    const srcs = [];
+    let match;
+
+    while ((match = regex.exec(htmlString)) !== null) {
+      // match[2] 包含src属性的值
+      srcs.push(match[2]);
+    }
+
+    return srcs;
+  },
+  previewDetailImage() {
+    const { detailImgs } = this.data;
+    wx.previewImage({
+      urls: detailImgs,
+      current: detailImgs[0],
+    });
+  },
   async loadMatchDetail(matchId: string) {
     try {
       console.log("加载赛事详情:", matchId);
 
       // 调用真实的API接口
-      const response = await matchService.getMatchInfo({ matchId: Number(matchId) });
+      const response = await matchService.getMatchInfo({
+        matchId: Number(matchId),
+      });
 
       if (response.code === 200 && response.data) {
         const { match, venue, skuList } = response.data;
-
+        const detailImgs = this.extractImgSrcsAdvanced(match.detail);
         this.setData({
           matchInfo: match,
           arenaInfo: venue,
           skuList: skuList || [],
           loading: false,
+          detailImgs,
         });
       } else {
         wx.showToast({
