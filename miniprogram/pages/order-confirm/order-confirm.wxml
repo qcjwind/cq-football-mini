@@ -31,9 +31,12 @@
         <view class="attendee-remove" bindtap="removeAttendee" data-index="{{index}}">
           <image class="remove-icon" src="../../assets/delete.png" mode="aspectFit"></image>
         </view>
-        <view class="attendee-info">
+        <view wx:if="{{needIdForTicket === 'Y'}}" class="attendee-info">
           <view class="attendee-name">{{item.name}}</view>
           <view class="attendee-id">证件号 {{item.idNumber}}</view>
+        </view>
+        <view wx:else class="attendee-info">
+          <view class="attendee-name">{{item.phone}}</view>
         </view>
       </view>
     </view>
@@ -56,7 +59,9 @@
         <text class="tip-text">我已阅读</text>
       </view>
       <view class="agreement-info">
-        <text wx:for="{{agreementInfo}}" class="notice-link" wx:key="index" data-index="{{index}}" bindtap="openAgreement">{{item.name}}</text>
+        <text wx:for="{{agreementInfo}}" class="notice-link" wx:key="index" data-index="{{index}}" bindtap="openAgreement">
+          {{item.name}}
+        </text>
       </view>
     </view>
   </view>
@@ -77,28 +82,30 @@
         <text class="modal-title">添加观赛人</text>
       </view>
       <view class="form-content">
-        <!-- 姓名输入 -->
-        <view class="form-item">
-          <text class="form-label">姓名</text>
-          <input class="form-input" placeholder="请输入姓名" value="{{newAttendee.name}}" data-field="name" bindinput="onInputChange" focus="{{false}}" />
-        </view>
-        <!-- 证件类型选择 -->
-        <view class="form-item">
-          <text class="form-label">证件类型</text>
-          <picker range="{{idTypeOptions}}" range-key="label" value="{{currentIdTypeIndex}}" bindchange="onIdTypeChange">
-            <view class="form-picker">
-              <view class="picker-content">
-                <text class="picker-text">{{idTypeOptions[currentIdTypeIndex].label || '身份证'}}</text>
-                <image class="picker-arrow" src="../../assets/arrow-right.png" mode="widthFix" />
+        <block wx:if="{{needIdForTicket === 'Y'}}">
+          <!-- 姓名输入 -->
+          <view class="form-item">
+            <text class="form-label">姓名</text>
+            <input class="form-input" placeholder="请输入姓名" value="{{newAttendee.name}}" data-field="name" bindinput="onInputChange" focus="{{false}}" />
+          </view>
+          <!-- 证件类型选择 -->
+          <view class="form-item">
+            <text class="form-label">证件类型</text>
+            <picker range="{{idTypeOptions}}" range-key="label" value="{{currentIdTypeIndex}}" bindchange="onIdTypeChange">
+              <view class="form-picker">
+                <view class="picker-content">
+                  <text class="picker-text">{{idTypeOptions[currentIdTypeIndex].label || '身份证'}}</text>
+                  <image class="picker-arrow" src="../../assets/arrow-right.png" mode="widthFix" />
+                </view>
               </view>
-            </view>
-          </picker>
-        </view>
-        <!-- 证件号输入 -->
-        <view class="form-item">
-          <text class="form-label">证件号</text>
-          <input class="form-input" placeholder="请输入证件号" value="{{newAttendee.idNumber}}" data-field="idNumber" bindinput="onInputChange" focus="{{false}}" />
-        </view>
+            </picker>
+          </view>
+          <!-- 证件号输入 -->
+          <view class="form-item">
+            <text class="form-label">证件号</text>
+            <input class="form-input" placeholder="请输入证件号" value="{{newAttendee.idNumber}}" data-field="idNumber" bindinput="onInputChange" focus="{{false}}" />
+          </view>
+        </block>
         <!-- 电话号码输入 -->
         <view class="form-item">
           <text class="form-label">电话号码</text>

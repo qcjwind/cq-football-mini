@@ -28,12 +28,17 @@
                 <swiper class="bill-swiper" circular bindchange="onSwiperChange">
                     <swiper-item wx:for="{{detailInfo.ticketList}}" wx:key="index">
                         <view class="bill-item">
-                            <view wx:if="{{labelMap[item.idType]}}" class="bill-item-top">
-                                <text>{{labelMap[item.idType]}}</text>
+                            <!-- <view wx:if="{{labelMap[item.idType]}}" class="bill-item-top">
+                                    <text>{{labelMap[item.idType]}}</text>
+                                </view> -->
+                            <!-- <image class="ic-card" src="../../assets/id-card.png" mode="widthFix" /> -->
+                            <view class="ticket-qrcode-wrap">
+                                <qr-container text="{{item.qrcode}}" size="{{detailInfo.match.needIdForTicket === 'Y' ? 300 : 400}}" />
                             </view>
-                            <image class="ic-card" src="../../assets/id-card.png" mode="widthFix" />
-                            <text class="name">{{item.name}}</text>
-                            <text class="id-number">{{item.idNo}}</text>
+                            <block wx:if="{{detailInfo.match.needIdForTicket === 'Y'}}">
+                                <text class="name">{{item.name}}</text>
+                                <text class="id-number">{{item.idNo}}</text>
+                            </block>
                             <view class="seat-no">
                                 <text wx:if="{{area}}">{{item.area}}</text>
                                 <text wx:if="{{subArea}}">·{{item.subArea}}</text>
@@ -64,9 +69,15 @@
             <text class="info-tip">订单信息</text>
             <text class="order-info-item">订单编号：{{detailInfo.order.orderNo}}</text>
             <text class="order-info-item">创建时间：{{detailInfo.order.gmtCreate}}</text>
-            <text wx:if="{{detailInfo.order.totalPrice}}" class="order-info-item">支付金额：￥{{detailInfo.order.totalPrice / 100 || 0}}</text>
-            <text wx:if="{{detailInfo.order.refundPrice}}" class="order-info-item">退款金额：￥{{detailInfo.order.refundPrice / 100 || 0}}</text>
-            <text wx:if="{{detailInfo.order.refundTime}}" class="order-info-item">退款时间：{{detailInfo.order.refundTime}}</text>
+            <text wx:if="{{detailInfo.order.totalPrice}}" class="order-info-item">
+                支付金额：￥{{detailInfo.order.totalPrice / 100 || 0}}
+            </text>
+            <text wx:if="{{detailInfo.order.refundPrice}}" class="order-info-item">
+                退款金额：￥{{detailInfo.order.refundPrice / 100 || 0}}
+            </text>
+            <text wx:if="{{detailInfo.order.refundTime}}" class="order-info-item">
+                退款时间：{{detailInfo.order.refundTime}}
+            </text>
         </block>
     </view>
     <view wx:if="{{detailInfo.order.orderStatus === 'WAIT_PAY'}}" class="bottom-bar">

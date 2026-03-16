@@ -1,6 +1,7 @@
 // index.ts
 import matchService, { MatchInfo } from "../../service/match";
-import { checkGiftSuccess } from "../../utils/index";
+import bannerService, { BannerInfo } from "../../service/banner";
+// import { checkGiftSuccess } from "../../utils/index";
 
 Page({
   data: {
@@ -14,12 +15,28 @@ Page({
     emptyImage: "/assets/empty.png", // 空态图片
     // 搜索相关状态
     searchKeyword: "", // 搜索关键词
+    // Banner 列表
+    bannerList: [] as BannerInfo[],
   },
 
   // 访客模式初始化
   initGuestMode() {
     // 直接加载赛事列表，无需登录检查
     this.loadMatchList(true);
+  },
+
+  // 加载首页 Banner 列表
+  async loadBannerList() {
+    try {
+      const res = await bannerService.getBannerList();
+      if (res.code === 200 && Array.isArray(res.data)) {
+        this.setData({
+          bannerList: res.data,
+        });
+      }
+    } catch (error) {
+      console.error("获取 Banner 列表失败:", error);
+    }
   },
 
   // 搜索输入框输入事件
@@ -213,6 +230,7 @@ Page({
   onShow() {
     console.log("首页加载完成 - 访客模式");
     this.initGuestMode();
+    this.loadBannerList();
     // checkGiftSuccess()
   },
 

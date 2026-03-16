@@ -42,7 +42,12 @@
   <!-- 横幅区域 -->
   <view class="banner-section">
     <view class="banner-image">
-      <image class="banner-bg" src="../../assets/home_back.jpg" mode="aspectFill"></image>
+      <swiper class="banner-swiper" autoplay circular interval="5000" duration="500" wx:if="{{bannerList.length}}">
+        <swiper-item wx:for="{{bannerList}}" wx:key="id">
+          <image class="banner-bg" src="{{item.imageUrl}}" mode="aspectFill"></image>
+        </swiper-item>
+      </swiper>
+      <image wx:else class="banner-bg" src="../../assets/home_back.jpg" mode="aspectFill"></image>
     </view>
   </view>
 

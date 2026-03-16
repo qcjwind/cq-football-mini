@@ -1,6 +1,7 @@
 {
     "usingComponents": {
-      "refund-modal": "../../components/refund-modal/refund-modal"
+      "refund-modal": "../../components/refund-modal/refund-modal",
+      "qr-container": "wx-qr"
     },
     "navigationBarTitleText": "",
     "navigationStyle": "default",

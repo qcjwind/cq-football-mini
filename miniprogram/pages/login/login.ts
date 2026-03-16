@@ -86,14 +86,7 @@ Page({
             sessionKey: response.data.sessionKey, // 暂时使用openid，如果接口有专门的sessionKey字段需要调整
           },
         });
-        // 保存登录信息到本地存储
-        const userInfo = {
-          ...response.data.userDO,
-        };
-        wx.setStorageSync("userInfo", userInfo);
-        // 更新全局登录状态
-        const app = getApp<IAppOption>();
-        app.setLoginStatus(userInfo);
+
         if (!response.data.reg) {
           if (this.data.type === "gift") {
             this.jumpToGift();
@@ -102,6 +95,15 @@ Page({
           wx.switchTab({
             url: "/pages/index/index",
           });
+        } else {
+          // 保存登录信息到本地存储
+          const userInfo = {
+            ...response.data.userDO,
+          };
+          wx.setStorageSync("userInfo", userInfo);
+          // 更新全局登录状态
+          const app = getApp<IAppOption>();
+          app.setLoginStatus(userInfo);
         }
       } else {
         console.error("获取login数据失败:", response.msg);

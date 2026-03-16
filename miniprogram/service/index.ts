@@ -1,8 +1,9 @@
 // service/index.ts - 服务入口文件
-import authService from './auth';
-import matchService from './match';
-import ticketService from './ticket';
-import orderService from './order';
+import authService from "./auth";
+import matchService from "./match";
+import ticketService from "./ticket";
+import orderService from "./order";
+import bannerService from "./banner";
 
 // 导出所有服务
 export {
@@ -10,6 +11,7 @@ export {
   matchService,
   ticketService,
   orderService,
+  bannerService,
   // 可以在这里添加其他服务
   // userService
 };

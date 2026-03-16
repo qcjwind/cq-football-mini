@@ -1,6 +1,7 @@
 import dayjs from "dayjs";
 import { orderService, ticketService } from "../../service/index";
 import { sleep } from "../../utils/index";
+import drawQrcode from "weapp-qrcode";
 
 Page({
   data: {
@@ -267,7 +268,9 @@ Page({
           detailInfo: res.data,
         });
         this.startCountdown(res.data?.order?.orderTime);
-        const ticketShowInfo = JSON.parse(res?.data?.match?.ticketShowInfo || "{}");
+        const ticketShowInfo = JSON.parse(
+          res?.data?.match?.ticketShowInfo || "{}",
+        );
         this.setData({
           ...ticketShowInfo,
         });
@@ -361,7 +364,7 @@ Page({
 
   refundHandle() {
     const rules = JSON.parse(
-      (this.data.detailInfo as any)?.match?.refundRule || "{}"
+      (this.data.detailInfo as any)?.match?.refundRule || "{}",
     );
 
     if (!rules || !rules?.ruleList || rules?.ruleList?.length === 0) {
@@ -398,7 +401,7 @@ Page({
       const timeRangeObj = this.calculateTimeRange(
         rule,
         rules.endTime,
-        currentTime
+        currentTime,
       );
       const feeText = this.formatFeeText(rule.refundRate);
 
@@ -418,7 +421,7 @@ Page({
     // 找到当前退档 <= beforeEndHour 且最靠近 beforeEndHour 的第一档
     // 按 beforeEndHour 从小到大排序，找到第一个满足条件的
     const sortedRules = rulesWithTimeRange.sort(
-      (a: any, b: any) => a.beforeEndHour - b.beforeEndHour
+      (a: any, b: any) => a.beforeEndHour - b.beforeEndHour,
     );
     const currentStageRule = sortedRules.find((rule: any) => {
       return currentTimeToEndHours <= rule.beforeEndHour;
@@ -435,7 +438,7 @@ Page({
   calculateTimeRange(rule: any, endTime: string, _currentTime: Date) {
     const endTimeDate = new Date(endTime);
     const startTime = new Date(
-      endTimeDate.getTime() - rule.beforeEndHour * 60 * 60 * 1000
+      endTimeDate.getTime() - rule.beforeEndHour * 60 * 60 * 1000,
     );
     return {
       startTime: this.formatDate(startTime),

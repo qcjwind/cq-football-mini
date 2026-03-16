@@ -20,6 +20,7 @@ interface OrderConfirmData {
   skuId: string;
   ticketPrice: number;
   agreementInfo?: null | any[];
+  needIdForTicket?: 'Y' | 'N';
   ticketCount: number;
   matchTimeStr: string;
   showAddModal: boolean;
@@ -42,6 +43,7 @@ Page({
     totalPrice: 0,
     matchId: "",
     skuId: "",
+    needIdForTicket: "Y",
     ticketPrice: 0,
     ticketInfo: {},
     ticketCount: 1,
@@ -67,7 +69,7 @@ Page({
 
   onLoad(options: any) {
     console.log("订单确认页面参数:", options);
-    const { matchId, skuId, ticketBid, type, price } = options;
+    const { matchId, skuId, ticketBid, type, price, needIdForTicket } = options;
 
     // 设置基本数据
     this.setData({
@@ -75,6 +77,7 @@ Page({
       skuId: skuId || "",
       ticketBid,
       type,
+      needIdForTicket: needIdForTicket || "",
       ticketPrice: price || 0, // 默认价格，后续从接口获取
       ticketCount: 1, // 默认购买1张票
       totalPrice: price || 0, // 默认总价
@@ -267,7 +270,7 @@ Page({
 
     // 验证观赛人信息
     for (const attendee of this.data.attendeeList) {
-      if (!attendee.name || !attendee.idNumber) {
+      if ((!attendee.name || !attendee.idNumber) && this.data.needIdForTicket === 'Y') {
         wx.showToast({
           title: "请完善观赛人信息",
           icon: "none",
@@ -449,10 +452,10 @@ Page({
 
   // 确认添加观赛人
   async confirmAddAttendee() {
-    const { newAttendee } = this.data;
+    const { newAttendee, needIdForTicket } = this.data;
 
     // 验证表单
-    if (!newAttendee.name.trim()) {
+    if (!newAttendee.name.trim() && needIdForTicket === 'Y') {
       wx.showToast({
         title: "请输入姓名",
         icon: "none",
@@ -460,7 +463,7 @@ Page({
       return;
     }
 
-    if (!newAttendee.idNumber.trim()) {
+    if (!newAttendee.idNumber.trim() && needIdForTicket === 'Y') {
       wx.showToast({
         title: "请输入证件号",
         icon: "none",
@@ -492,6 +495,7 @@ Page({
         newAttendee.idType || "身份证",
         newAttendee.idNumber
       )
+      && needIdForTicket === 'Y'
     ) {
       const errorMessage = this.getIdNumberErrorMessage(
         newAttendee.idType || "身份证",
@@ -505,7 +509,7 @@ Page({
     }
 
     // 只有身份证类型才进行实名认证
-    if (newAttendee.idType === "ID_CARD") {
+    if (newAttendee.idType === "ID_CARD" && needIdForTicket === 'Y') {
       // 调用实名认证接口
       try {
         const validParams: IdNoValidParams = {

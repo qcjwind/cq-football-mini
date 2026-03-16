@@ -224,7 +224,7 @@ Page({
 
     // 跳转到订单确认页面
     wx.navigateTo({
-      url: `/pages/order-confirm/order-confirm?matchId=${this.data.matchInfo.id}&skuId=${this.data.selectedArea.id}&price=${this.data.totalPrice}`,
+      url: `/pages/order-confirm/order-confirm?matchId=${this.data.matchInfo.id}&skuId=${this.data.selectedArea.id}&price=${this.data.totalPrice}&needIdForTicket=${this.data.matchInfo.needIdForTicket}`,
     });
   },
 

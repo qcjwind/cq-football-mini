@@ -110,15 +110,16 @@ class TicketService extends BaseService {
   /**
    * 获取票务二维码
    * @param ticketId 票务ID
+   * @param options 可选，silent 为 true 时不显示 loading（用于批量加载）
    * @returns Promise<any>
    */
-  async getTicketQRCode(ticketId: number): Promise<any> {
+  async getTicketQRCode(ticketId: number, options?: { silent?: boolean }): Promise<any> {
     try {
       const response = await this.get(
         `/app/ticket/qrcode/${ticketId}`,
         {},
         {
-          showLoading: true,
+          showLoading: !options?.silent,
           loadingText: "生成二维码中...",
         }
       );

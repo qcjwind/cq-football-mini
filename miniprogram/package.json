@@ -7,7 +7,9 @@
   "author": "",
   "license": "",
   "dependencies": {
-    "dayjs": "^1.11.18"
+    "dayjs": "^1.11.18",
+    "weapp-qrcode": "^1.0.0",
+    "wx-qr": "^0.1.2"
   },
   "devDependencies": {
     "miniprogram-api-typings": "^2.8.3-1"

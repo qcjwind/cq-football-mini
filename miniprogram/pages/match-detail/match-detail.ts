@@ -88,10 +88,12 @@ Page({
 
   onBuyTicket() {
     // 检查登录状态
-    if (!app.globalData.isLoggedIn) {
+    console.log('app.globalData.isLoggedIn', app.globalData.isLoggedIn);
+    
+    if (!app.globalData.isLoggedIn || !app.globalData.loginUserInfo?.id) {
       // 未登录，跳转到登录页面
       wx.navigateTo({
-        url: "/pages/login/login",
+        url: `/pages/login/login?needIdForTicket=${this.data.matchInfo.needIdForTicket}`,
       });
       return;
     }

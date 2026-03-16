@@ -99,7 +99,8 @@
     .bill-list {
       width: 510rpx;
       border-radius: 20rpx;
-      box-shadow: 0px 15px 80px 0px rgba(0, 0, 0, 0.07),
+      box-shadow:
+        0px 15px 80px 0px rgba(0, 0, 0, 0.07),
         0px 0.9975153207778931px 5.32008171081543px 0px rgba(0, 0, 0, 0.01);
       background: rgba(255, 255, 255, 1);
       margin: 0 auto;
@@ -150,6 +151,24 @@
           letter-spacing: 1px;
           margin-top: 10rpx;
           text-align: center;
+        }
+
+        .ticket-qrcode-wrap {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 280rpx;
+          margin-top: 20rpx;
+        }
+
+        .ticket-qrcode {
+          width: 280rpx;
+          height: 280rpx;
+        }
+
+        .ticket-qrcode-loading {
+          font-size: 26rpx;
+          color: rgba(112, 112, 112, 1);
         }
 
         .seat-no {
@@ -269,43 +288,50 @@
   }
 
   // 底部购买栏
-.bottom-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding-bottom: env(safe-area-inset-bottom);
-  background-color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  z-index: 100; // 确保在内容之上
-  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.1); // 添加阴影效果
-
-  .cancel-btn {
+  .bottom-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding-bottom: env(safe-area-inset-bottom);
+    background-color: #fff;
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 32rpx;
-    width: 50%;
-    padding: 40rpx 60rpx;
-  }
+    justify-content: space-between;
+    z-index: 100; // 确保在内容之上
+    box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.1); // 添加阴影效果
 
-  .buy-button {
-    background-color: #3461fd;
-    color: #fff;
-    padding: 40rpx 60rpx;
-    font-size: 32rpx;
-    font-weight: bold;
-    text-align: center;
-    min-width: 200rpx;
-    transition: all 0.3s ease;
+    .cancel-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32rpx;
+      width: 50%;
+      padding: 40rpx 60rpx;
+    }
 
-    &.buy-button-disabled {
-      background-color: #ccc;
-      color: #999;
-      cursor: not-allowed;
+    .buy-button {
+      background-color: #3461fd;
+      color: #fff;
+      padding: 40rpx 60rpx;
+      font-size: 32rpx;
+      font-weight: bold;
+      text-align: center;
+      min-width: 200rpx;
+      transition: all 0.3s ease;
+
+      &.buy-button-disabled {
+        background-color: #ccc;
+        color: #999;
+        cursor: not-allowed;
+      }
     }
   }
 }
+
+.ticket-qrcode-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
 }
