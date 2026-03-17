@@ -87,20 +87,19 @@ Page({
   },
 
   onBuyTicket() {
+    const url = `/pages/ticket-select/ticket-select?id=${this.data.matchInfo.id}`;
     // 检查登录状态
-    console.log('app.globalData.isLoggedIn', app.globalData.isLoggedIn);
-    
     if (!app.globalData.isLoggedIn || !app.globalData.loginUserInfo?.id) {
       // 未登录，跳转到登录页面
       wx.navigateTo({
-        url: `/pages/login/login?needIdForTicket=${this.data.matchInfo.needIdForTicket}`,
+        url: `/pages/login/login?needIdForTicket=${this.data.matchInfo.needIdForTicket}&jumpUrl=${encodeURIComponent(url)}`,
       });
       return;
     }
 
     // 已登录，跳转到购票选择页面
     wx.navigateTo({
-      url: `/pages/ticket-select/ticket-select?id=${this.data.matchInfo.id}`,
+      url,
     });
   },
 

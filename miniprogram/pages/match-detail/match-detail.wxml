@@ -40,7 +40,7 @@
           <image class="policy-icon" src="../../assets/no_quit.png" mode="aspectFill"></image>
           <text class="policy-text">不支持退</text>
         </view>
-        <view class="policy-item">
+        <view wx:if="{{matchInfo.needIdForTicket === 'Y'}}" class="policy-item">
           <image class="policy-icon" src="../../assets/shiming.png" mode="aspectFill"></image>
           <text class="policy-text">实名制购票和入场</text>
         </view>

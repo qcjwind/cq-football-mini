@@ -19,7 +19,7 @@ interface RequestConfig {
 
 class BaseService {
   protected baseURL = 'https://yuchao2025.zszlchina.com';
-  // protected baseURL = 'http://10.113.1.186:18080';
+  // protected baseURL = 'http://192.168.1.4:18080';
   protected token = '';
 
   constructor() {

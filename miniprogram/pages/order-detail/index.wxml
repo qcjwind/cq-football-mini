@@ -1,3 +1,14 @@
+<wxs module="w">
+function isSVIP(area) {
+  if (!area) return false;
+  return ('' + area).indexOf('SVIP') !== -1;
+}
+
+module.exports = {
+  isSVIP: isSVIP
+}
+</wxs>
+
 <view class="order-detail-container">
     <view wx:if="{{detailInfo.order.orderStatus === 'WAIT_PAY'}}" class="order-not-pay">
         <text>待支付</text>
@@ -42,16 +53,16 @@
                             <view class="seat-no">
                                 <text wx:if="{{area}}">{{item.area}}</text>
                                 <text wx:if="{{subArea}}">·{{item.subArea}}</text>
-                                <text wx:if="{{seatRow}}">·{{item.seatRow}}排</text>
-                                <text wx:if="{{seatNo}}">{{item.seatNo}}号</text>
+                                <text wx:if="{{seatRow || w.isSVIP(item.area)}}">·{{item.seatRow}}排</text>
+                                <text wx:if="{{seatNo || w.isSVIP(item.area)}}">{{item.seatNo}}号</text>
                             </view>
                         </view>
                     </swiper-item>
                 </swiper>
             </view>
         </block>
-        <text class="info-tip">温馨提示</text>
-        <view class="tip-desc">
+        <text wx:if="{{detailInfo.match.needIdForTicket === 'Y'}}" class="info-tip">温馨提示</text>
+        <view wx:if="{{detailInfo.match.needIdForTicket === 'Y'}}" class="tip-desc">
             <text class="tip-desc-title">根据安保工作要求：观赛请携带身份证原件！！无身份证原件禁止入场！！</text>
         </view>
         <text class="info-tip">

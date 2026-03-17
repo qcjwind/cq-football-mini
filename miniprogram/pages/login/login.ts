@@ -4,15 +4,19 @@ import authService from "../../service/auth";
 interface LoginQuery {
   ticketBid?: string;
   type?: string;
+  jumpUrl?: string;
+  needIdForTicket?: string;
 }
 
 Page({
   data: {
+    needIdForTicket: "Y",
     formData: {
       name: "",
       idType: "ID_CARD",
       idNumber: "",
     },
+    jumpUrl: "",
     idTypeName: "身份证",
     ticketBid: "",
     type: "",
@@ -31,9 +35,13 @@ Page({
     // 页面加载时的初始化逻辑
     const q = decodeURIComponent(query?.q);
     const params = this.getUrlParams(q);
+    console.log('query?.jumpUrl', query?.jumpUrl);
+    
     this.setData({
       ticketBid: params?.ticketBid,
       type: params?.type,
+      needIdForTicket: query?.needIdForTicket,
+      jumpUrl: decodeURIComponent(query?.jumpUrl || ""),
     });
 
     this.getLoginData();
@@ -161,7 +169,7 @@ Page({
     const { name, idType, idNumber } = this.data.formData;
 
     // 表单验证
-    if (!name.trim()) {
+    if (this.data.needIdForTicket === "Y" && !name.trim()) {
       wx.showToast({
         title: "请输入姓名",
         icon: "none",
@@ -170,7 +178,7 @@ Page({
       return;
     }
 
-    if (!idType) {
+    if (this.data.needIdForTicket === "Y" && !idType) {
       wx.showToast({
         title: "请选择证件类型",
         icon: "none",
@@ -179,7 +187,7 @@ Page({
       return;
     }
 
-    if (!idNumber.trim()) {
+    if (this.data.needIdForTicket === "Y" && !idNumber.trim()) {
       wx.showToast({
         title: "请输入证件号",
         icon: "none",
@@ -189,7 +197,10 @@ Page({
     }
 
     // 证件号格式验证
-    if (!this.validateIdNumber(idType, idNumber)) {
+    if (
+      this.data.needIdForTicket === "Y" &&
+      !this.validateIdNumber(idType, idNumber)
+    ) {
       const errorMessage = this.getIdNumberErrorMessage(idType, idNumber);
       wx.showToast({
         title: errorMessage,
@@ -249,7 +260,7 @@ Page({
     const { name, idType, idNumber } = this.data.formData;
 
     // 表单验证
-    if (!name.trim()) {
+    if (this.data.needIdForTicket === "Y" && !name.trim()) {
       wx.showToast({
         title: "请输入姓名",
         icon: "none",
@@ -258,7 +269,7 @@ Page({
       return;
     }
 
-    if (!idType) {
+    if (this.data.needIdForTicket === "Y" && !idType) {
       wx.showToast({
         title: "请选择证件类型",
         icon: "none",
@@ -267,7 +278,7 @@ Page({
       return;
     }
 
-    if (!idNumber.trim()) {
+    if (this.data.needIdForTicket === "Y" && !idNumber.trim()) {
       wx.showToast({
         title: "请输入证件号",
         icon: "none",
@@ -277,7 +288,10 @@ Page({
     }
 
     // 证件号格式验证
-    if (!this.validateIdNumber(idType, idNumber)) {
+    if (
+      this.data.needIdForTicket === "Y" &&
+      !this.validateIdNumber(idType, idNumber)
+    ) {
       const errorMessage = this.getIdNumberErrorMessage(idType, idNumber);
       wx.showToast({
         title: errorMessage,
@@ -377,6 +391,13 @@ Page({
         // 赠票逻辑
         if (this.data.type === "gift") {
           this.jumpToGift();
+          return;
+        }
+
+        if (this.data.jumpUrl) {
+          wx.redirectTo({
+            url: this.data.jumpUrl,
+          });
           return;
         }
 
