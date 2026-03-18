@@ -35,7 +35,6 @@ Page({
     // 页面加载时的初始化逻辑
     const q = decodeURIComponent(query?.q);
     const params = this.getUrlParams(q);
-    console.log('query?.jumpUrl', query?.jumpUrl);
     
     this.setData({
       ticketBid: params?.ticketBid,

@@ -14,10 +14,33 @@ Page({
   },
 
   onLoad(options: any) {
-    const matchId = options.id;
+    const q = decodeURIComponent(options?.q);
+    const params = this.getUrlParams(q);
+
+    let matchId = options.id;
+    if (params?.type === "qrcode") {
+      matchId = params?.id;
+    }
     if (matchId) {
       this.loadMatchDetail(matchId);
     }
+  },
+
+  getUrlParams(url: string) {
+    if (!url) {
+      return {};
+    }
+    // 解析url查询参数 微信不支持URLSearchParams
+    const obj = {};
+    url
+      ?.split?.("?")?.[1]
+      ?.split?.("&")
+      ?.forEach?.((item) => {
+        const [key, value] = item.split("=");
+        obj[key] = value;
+      });
+    console.log("params", obj);
+    return obj;
   },
 
   extractImgSrcsAdvanced(htmlString: string) {
