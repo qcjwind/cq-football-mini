@@ -1,5 +1,5 @@
-import { pos } from "../../static/seat_pos";
 import matchService from "../../service/match";
+import { RENDER_SEAT_MAP } from "./util";
 
 // 座位状态枚举
 type SeatStatus = 'UNSOLD' | 'WAIT_PAY' | 'SOLD';
@@ -15,6 +15,8 @@ interface Seat {
   status?: SeatStatus; // 座位状态
   subArea?: string; // 子区域名称
   data?: any; // 座位数据数据字段
+  /** 由 RENDER_SEAT_MAP 按接口布局生成的区域名 */
+  apiArea?: string;
 }
 
 // 画布尺寸接口
@@ -36,7 +38,7 @@ Page({
   canvas: null as any, // 画布实例
   ctx: null as any, // 2D上下文
   canvasSize: { width: 750, height: 1334 } as CanvasSize, // 画布尺寸
-  seatSize: 2, // 座位大小（像素）
+  seatSize: 4, // 座位大小（像素）
   bgImage: null as any, // 背景图片
   seats: [] as Seat[], // 座位数据
   scale: 1, // 基础缩放比例（设计稿750px转换为屏幕宽度）
@@ -67,6 +69,9 @@ Page({
   // 匹配ID
   matchId: null as number | null,
   skuId: null as string | null,
+
+  /** 接口座位：外层 key=area，内层 key=seatRow，value=该行下座位 item 数组 */
+  areaSeatMap: {} as Record<string, Record<string, any[]>>,
 
   /**
    * 页面加载时初始化
@@ -165,16 +170,11 @@ Page({
    * 初始化座位数据
    */
   initSeats() {
-    // 如果 seats 已经有数据（从 API 加载的），不要覆盖
+    // 座位完全由 getSeatInfo + RENDER_SEAT_MAP 根据接口数据生成，不使用 seat_pos
     if (this.seats && this.seats.length > 0) {
       return;
     }
-    this.seats = pos.map((item: any, index: number) => ({
-      ...item,
-      id: index + 1, // 为每个座位生成唯一ID
-      selected: false,
-      status: 'UNSOLD' as SeatStatus, // 默认状态为未售
-    }));
+    this.seats = [];
   },
 
   /**
@@ -404,7 +404,10 @@ Page({
       .map((seat: Seat) => `${seat.comment} ${seat.number}号`)
       .join("、");
     // 计算订单金额
-    const totalPrice = selectedSeats.length * selectedSeats.reduce((acc, cur) => acc + (cur.data?.price || 0), 0);
+    const totalPrice = selectedSeats.reduce(
+      (acc, cur) => acc + (cur.data?.price || 0),
+      0,
+    );
 
     // 更新数据
     this.setData({
@@ -594,37 +597,54 @@ Page({
   /** 查询座位信息 */
   async getSeatInfo(matchId: any) {
     const { code, data } = await matchService.getPlaceSeatInfo(matchId);
-    if (code === 200) {
-      if (data && data.length > 0) {
-        data.forEach((item:any) => {
-          item.area = "A区"
-        })
-        console.log(data);
-        let index = 0
-        this.seats = pos.map((seat:any) => {
-          const areaInfo = data.find((item) => item.area === seat.area && item.seatNo * item.seatRow === seat.number);
-          /** 根据行 x 列得到具体位置编号 */
-          if(Boolean(areaInfo)) {
-            console.log(seat.comment, seat.number)
-            index++
-            index % 2 === 0 && areaInfo && (areaInfo.saleStatus = "SOLD")
-          }
-          console.log(areaInfo?.saleStatus as SeatStatus ?? "UNSOLD")
-          return {
-            ...seat,
-            id: seat.id || pos.indexOf(seat) + 1,
-            selected: false, //
-            status: areaInfo?.saleStatus as SeatStatus ?? "UNSOLD",
-            data: {
-              ...areaInfo,
-            }
-          };
-        });
-        // 如果 ctx 已初始化则直接渲染，否则等待 initCanvas 完成后再渲染
-        if (this.ctx) {
-          this.render();
-        }
+    if (code !== 200 || !data || data.length === 0) {
+      this.seats = [];
+      if (this.ctx) {
+        this.render();
       }
+      return;
+    }
+
+    const areaSeatMap: Record<string, Record<string, any[]>> = {};
+    data.forEach((item: any) => {
+      const areaKey = item.area != null ? String(item.area) : "";
+      const rowKey =
+        item.seatRow != null && item.seatRow !== ""
+          ? String(item.seatRow)
+          : "";
+      if (!areaSeatMap[areaKey]) {
+        areaSeatMap[areaKey] = {};
+      }
+      if (!areaSeatMap[areaKey][rowKey]) {
+        areaSeatMap[areaKey][rowKey] = [];
+      }
+      areaSeatMap[areaKey][rowKey].push(item);
+    });
+    // 同一行内按 seatNo 升序
+    Object.keys(areaSeatMap).forEach((ak) => {
+      const byRow = areaSeatMap[ak];
+      Object.keys(byRow).forEach((rk) => {
+        byRow[rk].sort((a: any, b: any) => {
+          const na = Number(a.seatNo);
+          const nb = Number(b.seatNo);
+          return (Number.isFinite(na) ? na : 0) - (Number.isFinite(nb) ? nb : 0);
+        });
+      });
+    });
+    this.areaSeatMap = areaSeatMap;
+
+    // 仅按 RENDER_SEAT_MAP 注册的区域与布局函数生成画布座位（不读 seat_pos）
+    this.seats = [];
+    Object.keys(RENDER_SEAT_MAP).forEach((ak) => {
+      if (areaSeatMap[ak]) {
+        RENDER_SEAT_MAP[ak](areaSeatMap[ak], this, ak);
+      }
+    });
+
+    console.log('this.areaSeatMap', this.areaSeatMap);
+    
+    if (this.ctx) {
+      this.render();
     }
   },
 
