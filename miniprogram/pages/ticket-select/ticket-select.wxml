@@ -62,6 +62,7 @@ module.exports = {
           <view wx:elif="{{item.status === 'full'}}" class="status-tag full">
             <text class="status-text">已满</text>
           </view>
+          <view class="area-item-badge">余<text class="badge-value">{{ item.stockTicket }}</text>张</view>
         </view>
       </view>
     </view>

@@ -158,6 +158,7 @@ Page({
           status,
           description: sku.description,
           selected: index === 0 && status === "available", // 第一个可用区域默认选中
+          stockTicket: sku.stockTicket
         };
       });
     this.setData({
@@ -223,8 +224,11 @@ Page({
     }
 
     // 跳转到订单确认页面
+    // wx.navigateTo({
+    //   url: `/pages/order-confirm/order-confirm?matchId=${this.data.matchInfo.id}&skuId=${this.data.selectedArea.id}&price=${this.data.totalPrice}&needIdForTicket=${this.data.matchInfo.needIdForTicket}`,
+    // });
     wx.navigateTo({
-      url: `/pages/order-confirm/order-confirm?matchId=${this.data.matchInfo.id}&skuId=${this.data.selectedArea.id}&price=${this.data.totalPrice}&needIdForTicket=${this.data.matchInfo.needIdForTicket}`,
+      url: `/pages/seat-select/seat-select?matchId=${this.data.matchInfo.id}&skuId=${this.data.selectedArea.id}&price=${this.data.totalPrice}&needIdForTicket=${this.data.matchInfo.needIdForTicket}`,
     });
   },
 

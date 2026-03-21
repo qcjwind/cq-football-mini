@@ -1,6 +1,6 @@
 {
   "libVersion": "2.32.3",
-  "projectname": "miniprogram-1",
+  "projectname": "cq-football-mini",
   "setting": {
     "urlCheck": false,
     "coverView": false,
@@ -23,11 +23,18 @@
     "miniprogram": {
       "list": [
         {
+          "name": "pages/seat-select/seat-select",
+          "pathName": "pages/seat-select/seat-select",
+          "query": "id=15",
+          "scene": null,
+          "launchMode": "default"
+        },
+        {
           "name": "pages/login/login",
           "pathName": "pages/login/login",
           "query": "",
-          "scene": null,
-          "launchMode": "default"
+          "launchMode": "default",
+          "scene": null
         },
         {
           "name": "log",
