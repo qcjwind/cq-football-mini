@@ -28,7 +28,7 @@ Page({
       { label: "港澳通行证", value: "GAT_TXZ" },
     ],
     hasReadNotices: false,
-    backgroundImage: "/assets/login_back.png", // 使用本地背景图片
+    backgroundImage: "/assets/cysr.jpg", // 使用本地背景图片
   },
 
   onLoad(query: LoginQuery) {
