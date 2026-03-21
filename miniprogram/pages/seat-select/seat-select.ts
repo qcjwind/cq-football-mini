@@ -2,7 +2,7 @@ import { pos } from "../../static/seat_pos";
 import matchService from "../../service/match";
 
 // 座位状态枚举
-type SeatStatus = 'UNSOLD' | 'WAIT_PAY' | 'SOLD';
+type SeatStatus = "UNSOLD" | "WAIT_PAY" | "SOLD";
 
 // 座位接口定义
 interface Seat {
@@ -74,7 +74,7 @@ Page({
   onLoad(options: any) {
     this.initCanvas();
 
-    const matchId = 14 // options.id ?? 15;
+    const matchId = 14; // options.id ?? 15;
     this.skuId = options.skuId ?? "";
     if (matchId) {
       this.matchId = matchId;
@@ -173,7 +173,7 @@ Page({
       ...item,
       id: index + 1, // 为每个座位生成唯一ID
       selected: false,
-      status: 'UNSOLD' as SeatStatus, // 默认状态为未售
+      status: "UNSOLD" as SeatStatus, // 默认状态为未售
     }));
   },
 
@@ -218,13 +218,13 @@ Page({
       const y = seat.y * scale - seatSize / 2;
 
       // 优先根据status渲染颜色
-      if (seat.status === 'SOLD') {
+      if (seat.status === "SOLD") {
         // 已售：红色
         ctx.fillStyle = "#F44336";
-      } else if (seat.status === 'WAIT_PAY') {
+      } else if (seat.status === "WAIT_PAY") {
         // 待支付：黄色
         ctx.fillStyle = "#FFEB3B";
-      } else if (seat.selected && seat.status === 'UNSOLD') {
+      } else if (seat.selected && seat.status === "UNSOLD") {
         // 未售且被选中：绿色
         ctx.fillStyle = "#4CAF50";
       } else {
@@ -294,11 +294,14 @@ Page({
       // 缩放比例大于等于1.5，执行座位选择操作
       if (clickedSeat) {
         // 如果座位是WAIT_PAY或SOLD状态，直接返回不处理
-        if (clickedSeat.status === 'WAIT_PAY' || clickedSeat.status === 'SOLD') {
+        if (
+          clickedSeat.status === "WAIT_PAY" ||
+          clickedSeat.status === "SOLD"
+        ) {
           return;
         }
         // 只有未售的座位才能被选择
-        if (clickedSeat.status === 'UNSOLD') {
+        if (clickedSeat.status === "UNSOLD") {
           clickedSeat.selected = !clickedSeat.selected;
           this.updateSelectedSeats();
         }
@@ -404,7 +407,9 @@ Page({
       .map((seat: Seat) => `${seat.comment} ${seat.number}号`)
       .join("、");
     // 计算订单金额
-    const totalPrice = selectedSeats.length * selectedSeats.reduce((acc, cur) => acc + (cur.data?.price || 0), 0);
+    const totalPrice =
+      selectedSeats.length *
+      selectedSeats.reduce((acc, cur) => acc + (cur.data?.price || 0), 0);
 
     // 更新数据
     this.setData({
@@ -596,28 +601,21 @@ Page({
     const { code, data } = await matchService.getPlaceSeatInfo(matchId);
     if (code === 200) {
       if (data && data.length > 0) {
-        data.forEach((item:any) => {
-          item.area = "A区"
-        })
-        console.log(data);
-        let index = 0
-        this.seats = pos.map((seat:any) => {
-          const areaInfo = data.find((item) => item.area === seat.area && item.seatNo * item.seatRow === seat.number);
-          /** 根据行 x 列得到具体位置编号 */
-          if(Boolean(areaInfo)) {
-            console.log(seat.comment, seat.number)
-            index++
-            index % 2 === 0 && areaInfo && (areaInfo.saleStatus = "SOLD")
-          }
-          console.log(areaInfo?.saleStatus as SeatStatus ?? "UNSOLD")
+        this.seats = pos.map((seat: any) => {
+          const areaInfo = data.find(
+            (item) =>
+              item.area === seat.area &&
+              item.seatNo === seat.seatNo &&
+              item.seatRow === seat.seatRow,
+          );
           return {
             ...seat,
             id: seat.id || pos.indexOf(seat) + 1,
             selected: false, //
-            status: areaInfo?.saleStatus as SeatStatus ?? "UNSOLD",
+            status: (areaInfo?.saleStatus as SeatStatus) ?? "UNSOLD",
             data: {
               ...areaInfo,
-            }
+            },
           };
         });
         // 如果 ctx 已初始化则直接渲染，否则等待 initCanvas 完成后再渲染
@@ -631,18 +629,23 @@ Page({
   /** 确认选座 */
   buyTicket() {
     console.log(this.data.selectedSeats);
-    if(!this.data.selectedSeats.length) {
+    if (!this.data.selectedSeats.length) {
       wx.showToast({
-        title: '请选择座位',
-        icon: 'none',
+        title: "请选择座位",
+        icon: "none",
       });
       return;
     } else {
-      const totalPrice = this.data.selectedSeats.reduce((acc, cur:any) => acc + (cur.data?.price ?? 0), 0);
-      const buyIds = this.data.selectedSeats.map((item:any) => item.data?.bid)?.join(',');
+      const totalPrice = this.data.selectedSeats.reduce(
+        (acc, cur: any) => acc + (cur.data?.price ?? 0),
+        0,
+      );
+      const buyIds = this.data.selectedSeats
+        .map((item: any) => item.data?.bid)
+        ?.join(",");
       wx.redirectTo({
         url: `/pages/order-confirm/order-confirm?matchId=${this.matchId}&buyIds=${buyIds}&price=${totalPrice}&needIdForTicket=Y&skuId=${this.skuId}`,
-      }); 
+      });
     }
   },
 });
