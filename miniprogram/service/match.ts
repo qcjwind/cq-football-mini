@@ -1,5 +1,5 @@
 // service/match.ts - 赛事服务
-import BaseService from './base';
+import BaseService from "./base";
 
 // 赛事信息接口
 interface MatchInfo {
@@ -14,9 +14,9 @@ interface MatchInfo {
   matineeName: string;
   buyLimit: number;
   name: string;
-  saleStatus: 'NOT_FINISH' | 'FINISHED';
+  saleStatus: "NOT_FINISH" | "FINISHED";
   startTime: string;
-  status: 'ENABLE';
+  status: "ENABLE";
   venueId: number;
 }
 
@@ -32,7 +32,7 @@ interface MatchListResponse {
 
 // 场馆信息接口
 interface ArenaInfo {
-  areaCode: string; 
+  areaCode: string;
   areaName: string;
   cityCode: string;
   cityName: string;
@@ -59,7 +59,7 @@ interface SkuInfo {
   matchId: number;
   price: number;
   skuName: string;
-  skuType: 'SALE_TICKET' | 'GIFT_TICKET';
+  skuType: "SALE_TICKET" | "GIFT_TICKET";
   // 剩余票数
   stockTicket: number;
   totalTicket: number;
@@ -81,13 +81,32 @@ interface MatchDetailResponse {
 interface MatchListParams {
   page?: number;
   pageSize?: number;
-  status?: 'upcoming' | 'live' | 'finished';
+  status?: "upcoming" | "live" | "finished";
   keyword?: string;
   matchName?: string;
 }
 
+interface MatchTicketList {
+  ticket: number;
+  bid: string;
+  area: string;
+  subArea: string;
+  seatRow: number;
+  seatNo: number;
+  price: number;
+  ticketType: string;       // 如 "SALE_TICKET"
+  saleStatus: "UNSOLD" | "WAIT_PAY" | "SOLD";       // 如 "UNSOLD"
+  syncStatus: string;       // 如 "NOT_SYNC"
+  verificationStatus: string; // 如 "N"
+}
+
+interface MatchTicketListResponse {
+  code: number;
+  message: string;
+  data: MatchTicketList[];
+}
+
 class MatchService extends BaseService {
-  
   /**
    * 获取赛事列表
    * @param params 查询参数
@@ -95,13 +114,13 @@ class MatchService extends BaseService {
    */
   async getMatchList(params: MatchListParams = {}): Promise<MatchListResponse> {
     try {
-      const response = await this.post('/app/match/list', params, {
+      const response = await this.post("/app/match/list", params, {
         showLoading: true,
-        loadingText: '加载赛事列表中...'
+        loadingText: "加载赛事列表中...",
       });
       return response;
     } catch (error) {
-      console.error('获取赛事列表失败:', error);
+      console.error("获取赛事列表失败:", error);
       throw error;
     }
   }
@@ -112,19 +131,22 @@ class MatchService extends BaseService {
    * @param params 其他查询参数
    * @returns Promise<MatchListResponse>
    */
-  async searchMatches(keyword: string, params: Omit<MatchListParams, 'keyword'> = {}): Promise<MatchListResponse> {
+  async searchMatches(
+    keyword: string,
+    params: Omit<MatchListParams, "keyword"> = {},
+  ): Promise<MatchListResponse> {
     try {
       const searchParams = {
         ...params,
-        keyword
+        keyword,
       };
-      const response = await this.get('/app/match/search', searchParams, {
+      const response = await this.get("/app/match/search", searchParams, {
         showLoading: true,
-        loadingText: '搜索赛事中...'
+        loadingText: "搜索赛事中...",
       });
       return response;
     } catch (error) {
-      console.error('搜索赛事失败:', error);
+      console.error("搜索赛事失败:", error);
       throw error;
     }
   }
@@ -134,15 +156,40 @@ class MatchService extends BaseService {
    * @param matchId 赛事ID
    * @returns Promise<MatchDetailResponse>
    */
-  async getMatchInfo(params: { matchId?: number, ticketBid?: string }): Promise<MatchDetailResponse> {
+  async getMatchInfo(params: {
+    matchId?: number;
+    ticketBid?: string;
+  }): Promise<MatchDetailResponse> {
     try {
-      const response = await this.post('/app/match/info', params, {
+      const response = await this.post("/app/match/info", params, {
         showLoading: false,
-        loadingText: '加载赛事信息中...'
+        loadingText: "加载赛事信息中...",
       });
       return response;
     } catch (error) {
-      console.error('获取赛事信息失败:', error);
+      console.error("获取赛事信息失败:", error);
+      throw error;
+    }
+  }
+
+  /**
+   * 获取赛事座位信息
+   * @param matchId 赛事ID
+   * @returns Promise<MatchTicketListResponse>
+   */
+  async getPlaceSeatInfo(matchId: number): Promise<MatchTicketListResponse> {
+    try {
+      const response = await this.post(
+        "/app/match/tick/list",
+        { matchId },
+        {
+          showLoading: false,
+          loadingText: "加载赛事座位信息中...",
+        },
+      );
+      return response;
+    } catch (error) {
+      console.error("获取赛事座位信息失败:", error);
       throw error;
     }
   }

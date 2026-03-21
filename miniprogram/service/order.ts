@@ -43,6 +43,7 @@ interface BuyTicketParams {
   // 幂等，前端生成UUID
   requestNo: string;
   skuId: number;
+  ticket?: string[];
 }
 
 // 购票响应接口

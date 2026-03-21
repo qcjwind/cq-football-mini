@@ -8,7 +8,8 @@
     "pages/order-confirm/order-confirm",
     "pages/my/my",
     "pages/agreement/index",
-    "pages/order-detail/index"
+    "pages/order-detail/index",
+    "pages/seat-select/seat-select"
   ],
   "tabBar": {
     "color": "#999",

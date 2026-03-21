@@ -38,6 +38,9 @@
         <view wx:else class="attendee-info">
           <view class="attendee-name">{{item.phone}}</view>
         </view>
+        <view class="attendee-edit" bindtap="editAttendee" data-index="{{index}}" wx:if="{{!item.containsMySelf}}">
+          <image class="edit-icon" src="../../assets/edit.png" mode="aspectFit"></image>
+        </view>
       </view>
     </view>
     <view wx:if="{{type !== 'gift'}}" class="add-attendee" bindtap="addAttendee">

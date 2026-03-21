@@ -10,6 +10,8 @@ interface AttendeeInfo {
   phone?: string;
   idType?: string;
   containsMySelf?: boolean;
+  edit?: boolean;
+  index?: number;
 }
 
 interface OrderConfirmData {
@@ -32,6 +34,7 @@ interface OrderConfirmData {
   type?: string;
   ticketBid?: string;
   hasReadNotices: boolean;
+  buyIds?: string[];
 }
 
 Page({
@@ -65,12 +68,13 @@ Page({
     currentIdTypeIndex: 0,
     isPurchasing: false, // 防抖标志
     hasReadNotices: false, // 是否已阅读须知
+    buyIds: [] as string[],
   } as OrderConfirmData,
 
   onLoad(options: any) {
     console.log("订单确认页面参数:", options);
-    const { matchId, skuId, ticketBid, type, price, needIdForTicket } = options;
-
+    const { matchId, skuId, ticketBid, type, price, needIdForTicket, buyIds } = options;
+    const buyIdsList = buyIds?.split(',') || [];
     // 设置基本数据
     this.setData({
       matchId: matchId || "",
@@ -79,22 +83,30 @@ Page({
       type,
       needIdForTicket: needIdForTicket || "",
       ticketPrice: price || 0, // 默认价格，后续从接口获取
-      ticketCount: 1, // 默认购买1张票
+      ticketCount: buyIdsList.length || 1, // 默认购买1张票
       totalPrice: price || 0, // 默认总价
+      buyIds: buyIdsList,
     });
 
     // 加载用户信息作为观赛人
-    this.loadUserAttendeeInfo();
+    this.loadUserAttendeeInfo(buyIdsList);
 
     // 加载赛事信息
     this.loadMatchInfo(matchId, type);
   },
 
   // 加载用户信息作为观赛人
-  loadUserAttendeeInfo() {
+  loadUserAttendeeInfo(buyIdsList?: string[]) {
     try {
       // 从本地存储获取用户信息
       const userInfo = wx.getStorageSync("userInfo");
+      const defaultInfo = ():AttendeeInfo =>({
+        name: "",
+        idNumber: "",
+        phone: "",
+        idType: "ID_CARD",
+        containsMySelf: false,
+      })
       if (userInfo) {
         const attendee: AttendeeInfo = {
           name: userInfo.name || "",
@@ -103,13 +115,21 @@ Page({
           idType: userInfo.idType || "ID_CARD",
           containsMySelf: true,
         };
+        const buyIdLen = buyIdsList?.length || 0;
 
         // 生成指定数量的观赛人信息
-        const attendeeList: AttendeeInfo[] = Array(this.data.ticketCount)
+        const attendeeList: AttendeeInfo[] = buyIdLen ? [{ ...attendee }] : Array(this.data.ticketCount)
           .fill(null)
           .map(() => ({ ...attendee }));
-        console.log("attendeeList", attendeeList);
+        if(buyIdLen > 1) {
+          buyIdsList!.forEach((id, index) => {
+            if(index < buyIdLen - 1) {
+              attendeeList.push(defaultInfo())
+            }
+          })
+        }
 
+        console.log("attendeeList", attendeeList);
         this.setData({
           attendeeList,
         });
@@ -341,6 +361,10 @@ Page({
           }))
         ),
       };
+      /** 如果是选座来的 */
+      if(this.data.buyIds && this.data.buyIds.length > 0) {
+        buyTicketParams.ticket = this.data.buyIds
+      }
 
       console.log("购票参数:", buyTicketParams);
 
@@ -553,6 +577,19 @@ Page({
 
   // 添加观赛人到列表
   addAttendeeToList(attendee: AttendeeInfo) {
+    console.log("选中的节点", attendee)
+    if(attendee.edit) {
+      this.setData({
+        attendeeList: this.data.attendeeList.map((item, index) => {
+          if(index === attendee.index) {
+            return { ...item, ...attendee };
+          }
+          return item;
+        }),
+        showAddModal: false,
+      })
+      return;
+    }
     const attendeeList = [...this.data.attendeeList, { ...attendee }];
 
     this.setData({
@@ -648,6 +685,15 @@ Page({
     }
 
     return "";
+  },
+
+  // 新增一个用户信息编辑
+  editAttendee(e: any) {
+    const index = e.currentTarget.dataset.index;
+    this.setData({
+      showAddModal: true,
+      newAttendee: { ...this.data.attendeeList[index], edit: true, index: index },
+    });
   },
 
   // 页面显示时刷新数据
