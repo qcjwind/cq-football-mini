@@ -572,6 +572,29 @@ export const renderF3EastSeat = (
   }
 };
 
+/** 三楼 A 区：每排行起点相对 150 的纵向偏移（仅 11–14 排） */
+const F3A_ROW_BASE_Y_DELTA: Partial<Record<number, number>> = {
+  11: -5.5,
+  12: -5.5 * 2,
+  13: -5.5 * 3,
+  14: -5.5 * 2,
+};
+
+/** 10–13 排在「列索引 = 排号 - 10」处多下移一格间距 */
+const F3A_FIRST_COL_EXTRA = 5.5 * 2;
+
+/**
+ * 10–14 排在列索引 `row + 13` 处为大台阶(+114)，其后再为小步(+4.5)，其余列 +5.5
+ */
+function f3aStepYAfterSeat(row: number, colIndex: number, y: number): number {
+  if (row >= 10 && row <= 14) {
+    const bigGapAt = row + 13;
+    if (colIndex === bigGapAt) return y + 114;
+    if (colIndex > bigGapAt) return y + 4.5;
+  }
+  return y + 5.5;
+}
+
 const renderThreeFloorASeat = (
   byRow: Record<string, any[]>,
   page: SeatLayoutPage,
@@ -583,10 +606,13 @@ const renderThreeFloorASeat = (
   let nid = page.seats.reduce((m, s) => Math.max(m, Number(s.id) || 0), 0);
   let x = 138;
   for (const rk of rowKeys) {
-    let y = 138;
-
+    const row = Number(rk);
+    let y = 150 + (F3A_ROW_BASE_Y_DELTA[row] ?? 0);
     const list = byRow[rk] || [];
     for (let i = 0; i < list.length; i++) {
+      if (row >= 10 && row <= 13 && i === row - 10) {
+        y += F3A_FIRST_COL_EXTRA;
+      }
       const item = list[i];
       const sr = Number(item.seatRow);
       const sn = Number(item.seatNo);
@@ -595,7 +621,7 @@ const renderThreeFloorASeat = (
       page.seats.push({
         id: nid,
         x,
-        y: +rk <= 14 ? y : y + 264.5,
+        y: row <= 14 ? y : y + 251.5,
         number,
         comment: ` ${areaKey} ${rk}排`,
         area: areaKey,
@@ -605,22 +631,44 @@ const renderThreeFloorASeat = (
         apiArea: areaKey,
         seatDrawSize: resolveSeatDrawSize(item, opts),
       });
-      y = (() => {
-        if (+rk > 14) {
-          return y + 4;
-        }
-        if (i < 23) {
-          return y + 6.5;
-        }
-        if (i === 23) {
-          return y + 115;
-        }
-        return y + 4;
-      })();
+      y = f3aStepYAfterSeat(row, i, y);
     }
     x += 6;
   }
 };
+
+/** 三楼 N 区（南）：每排行起点 y */
+const F3N_ROW_BASE_Y = 502;
+
+/** 排号 > 14：整行统一列间距 */
+const F3N_STEP_ROW_GT_14 = 3.5;
+
+/** 排号 ≤ 14：过道前列间距 */
+const F3N_STEP_ROW_LE_14_BEFORE_GAP = 5.5;
+
+/** 排号 ≤ 14：列索引 18 处大台阶（过道） */
+const F3N_STEP_ROW_LE_14_AT_GAP = 115;
+
+/** 排号 ≤ 14：过道后列间距 */
+const F3N_STEP_ROW_LE_14_AFTER_GAP = 3.5;
+
+/**
+ * N 区纵向：每画完一座位后 y 上移（设计稿坐标递减）
+ * - 排 > 14：全程小步
+ * - 排 ≤ 14：0–17 小步，18 大台阶，19+ 另一种小步
+ */
+function f3nStepYAfterSeat(row: number, colIndex: number, y: number): number {
+  if (row > 14) {
+    return y - F3N_STEP_ROW_GT_14;
+  }
+  if (colIndex < 18) {
+    return y - F3N_STEP_ROW_LE_14_BEFORE_GAP;
+  }
+  if (colIndex === 18) {
+    return y - F3N_STEP_ROW_LE_14_AT_GAP;
+  }
+  return y - F3N_STEP_ROW_LE_14_AFTER_GAP;
+}
 
 const renderThreeFloorNSeat = (
   byRow: Record<string, any[]>,
@@ -633,8 +681,8 @@ const renderThreeFloorNSeat = (
   let nid = page.seats.reduce((m, s) => Math.max(m, Number(s.id) || 0), 0);
   let x = 578;
   for (const rk of rowKeys) {
-    let y = 502;
-
+    const row = Number(rk);
+    let y = F3N_ROW_BASE_Y;
     const list = byRow[rk] || [];
     for (let i = 0; i < list.length; i++) {
       const item = list[i];
@@ -655,19 +703,7 @@ const renderThreeFloorNSeat = (
         apiArea: areaKey,
         seatDrawSize: resolveSeatDrawSize(item, opts),
       });
-    //   y -= i === 18 ? 120 : 8.5;
-      y= (() => {
-        if (+rk > 14) {
-          return y - 3.5;
-        }
-        if (i < 18) {
-          return y - 5.5;
-        }
-        if (i === 18) {
-          return y - 115;
-        }
-        return y - 3.5;
-      })();
+      y = f3nStepYAfterSeat(row, i, y);
     }
     x += 6;
   }
