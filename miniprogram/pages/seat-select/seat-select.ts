@@ -124,7 +124,7 @@ Page({
   // 缩放相关属性
   currentScale: 1, // 当前缩放比例
   minScale: 0.5, // 最小缩放比例
-  maxScale: 8, // 最大缩放比例
+  maxScale: 10, // 最大缩放比例
   offsetX: 0, // X轴偏移量
   offsetY: 0, // Y轴偏移量
 
@@ -415,7 +415,7 @@ Page({
       const seatY = seat.y * scale;
 
       const dot = seat.seatDrawSize ?? seatSize;
-      const halfSize = dot / 2 + 2;
+      const halfSize = Math.floor(dot / 2);
 
       if (
         transformedX >= seatX - halfSize &&
