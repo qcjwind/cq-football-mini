@@ -2,7 +2,7 @@ import matchService, { SkuInfo } from "../../service/match";
 import { RENDER_SEAT_MAP, DEFAULT_SEAT_DRAW_PX } from "./util";
 
 // 座位状态枚举
-type SeatStatus = "UNSOLD" | "WAIT_PAY" | "SOLD";
+type SeatStatus = "UNSOLD" | "SOLD";
 
 // 座位接口定义
 interface Seat {
@@ -114,7 +114,7 @@ Page({
   /** 无 seatDrawSize 的座位使用的默认绘制边长（逻辑像素），与 util DEFAULT_SEAT_DRAW_PX 一致 */
   seatSize: DEFAULT_SEAT_DRAW_PX,
   bgImage: null as any, // 背景图片
-  /** seat1 可选 / seat2 已售 / seat3 不可选（WAIT_PAY 等） */
+  /** seat1 可选 / seat2 已售（含接口 WAIT_PAY）/ seat3 不可选（赠票等） */
   seatImages: null as null | {
     available: any;
     sold: any;
@@ -342,7 +342,7 @@ Page({
       let tile: any = null;
       if (seat.status === "SOLD") {
         tile = seatImages?.sold;
-      } else if (seat.status === "WAIT_PAY" || isGiftTicketSeat(seat)) {
+      } else if (isGiftTicketSeat(seat)) {
         tile = seatImages?.disabled;
       } else {
         tile = seatImages?.available;
@@ -360,7 +360,7 @@ Page({
       } else {
         if (seat.status === "SOLD") {
           ctx.fillStyle = "#F44336";
-        } else if (seat.status === "WAIT_PAY" || isGiftTicketSeat(seat)) {
+        } else if (isGiftTicketSeat(seat)) {
           ctx.fillStyle = "#FFEB3B";
         } else if (seat.selected && seat.status === "UNSOLD") {
           ctx.fillStyle = "#4CAF50";
@@ -441,12 +441,8 @@ Page({
     } else {
       // 缩放比例大于等于1.5，执行座位选择操作
       if (clickedSeat) {
-        // WAIT_PAY / SOLD / 赠票 不可选
-        if (
-          clickedSeat.status === "WAIT_PAY" ||
-          clickedSeat.status === "SOLD" ||
-          isGiftTicketSeat(clickedSeat)
-        ) {
+        // 已售（含接口原 WAIT_PAY）/ 赠票 不可选
+        if (clickedSeat.status === "SOLD" || isGiftTicketSeat(clickedSeat)) {
           return;
         }
         // 只有未售且非赠票的座位才能被选择

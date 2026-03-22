@@ -26,10 +26,9 @@ function resolveSeatDrawSize(
   return DEFAULT_SEAT_DRAW_PX;
 }
 
-function normalizeStatus(
-  saleStatus: string | undefined,
-): "UNSOLD" | "WAIT_PAY" | "SOLD" {
-  if (saleStatus === "SOLD" || saleStatus === "WAIT_PAY") return saleStatus;
+/** 接口 WAIT_PAY（待支付占座）与 SOLD 一并视为已售，画布与选座逻辑统一 */
+function normalizeStatus(saleStatus: string | undefined): "UNSOLD" | "SOLD" {
+  if (saleStatus === "SOLD" || saleStatus === "WAIT_PAY") return "SOLD";
   return "UNSOLD";
 }
 
