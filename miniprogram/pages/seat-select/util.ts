@@ -301,6 +301,84 @@ const renderOneFloorVIPAreaSW = (
   }
 };
 
+const renderThreeFloorASeat = (
+  byRow: Record<string, any[]>,
+  page: SeatLayoutPage,
+  areaKey: string,
+  opts?: RenderSeatLayoutOptions,
+) => {
+  const rowKeys = rowKeysSeatRowDesc(byRow);
+
+  let nid = page.seats.reduce((m, s) => Math.max(m, Number(s.id) || 0), 0);
+  let x = 138;
+  for (const rk of rowKeys) {
+    let y = 90;
+
+    const list = byRow[rk] || [];
+    for (let i = 0; i < list.length; i++) {
+      const item = list[i];
+      const sr = Number(item.seatRow);
+      const sn = Number(item.seatNo);
+      const number = Number.isFinite(sr) && Number.isFinite(sn) ? sr * sn : 0;
+      nid += 1;
+      page.seats.push({
+        id: nid,
+        x: i < 8 && +rk <= 14 ? x + 40 : x,
+        y: +rk <= 14 ? y : y + 315.5,
+        number,
+        comment: ` ${areaKey} ${rk}排`,
+        area: areaKey,
+        selected: false,
+        status: normalizeStatus(item.saleStatus),
+        data: { ...item },
+        apiArea: areaKey,
+        seatDrawSize: resolveSeatDrawSize(item, opts),
+      });
+      y += i === 23 ? 120 : 8.5;
+    }
+    x += 6;
+  }
+};
+
+const renderThreeFloorNSeat = (
+  byRow: Record<string, any[]>,
+  page: SeatLayoutPage,
+  areaKey: string,
+  opts?: RenderSeatLayoutOptions,
+) => {
+  const rowKeys = Object.keys(byRow);
+
+  let nid = page.seats.reduce((m, s) => Math.max(m, Number(s.id) || 0), 0);
+  let x = 578;
+  for (const rk of rowKeys) {
+    let y = 560;
+
+    const list = byRow[rk] || [];
+    for (let i = 0; i < list.length; i++) {
+      const item = list[i];
+      const sr = Number(item.seatRow);
+      const sn = Number(item.seatNo);
+      const number = Number.isFinite(sr) && Number.isFinite(sn) ? sr * sn : 0;
+      nid += 1;
+      page.seats.push({
+        id: nid,
+        x: i > 34 ? x - 40 : x,
+        y,
+        number,
+        comment: ` ${areaKey} ${rk}排`,
+        area: areaKey,
+        selected: false,
+        status: normalizeStatus(item.saleStatus),
+        data: { ...item },
+        apiArea: areaKey,
+        seatDrawSize: resolveSeatDrawSize(item, opts),
+      });
+      y -= i === 18 ? 120 : 8.5;
+    }
+    x += 6;
+  }
+};
+
 export const RENDER_SEAT_MAP: Record<
   string,
   (
@@ -311,12 +389,16 @@ export const RENDER_SEAT_MAP: Record<
   ) => void
 > = {
   "SVIP A区": renderSVIPASeat,
-  "SVIP D区": renderSVIPDSeat,
-  "SVIP B区": renderSVIPBSeat,
+  "SVIP D区": renderSVIPBSeat,
+  "SVIP B区": renderSVIPDSeat,
   "SVIP C区": renderSVIPCSeat,
   /** 示例：本区域单独更大像素可改为 `(b,p,k)=>renderOneFloorVIPAreaNW(b,p,k,{ seatDrawSize: 6 })` */
   "一楼VIP区（西北）": (b, p, k) =>
     renderOneFloorVIPAreaNW(b, p, k, { seatDrawSize: 2 }),
   "一楼VIP区（西南）": (b, p, k) =>
     renderOneFloorVIPAreaSW(b, p, k, { seatDrawSize: 2 }),
+  "三楼 A区（北）": (b, p, k) =>
+    renderThreeFloorASeat(b, p, k, { seatDrawSize: 2.5 }),
+  "三楼 A区（南）": (b, p, k) =>
+    renderThreeFloorNSeat(b, p, k, { seatDrawSize: 2.5 }),
 };

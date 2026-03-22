@@ -27,6 +27,44 @@ interface Seat {
   seatDrawSize?: number;
 }
 
+/** 赠票座位不可选、与「不可选」同一套展示 */
+function isGiftTicketSeat(seat: Seat): boolean {
+  return seat.data?.ticketType === "GIFT_TICKET";
+}
+
+/**
+ * 电影院选座角标：仅右下角小圆 + 对勾（约为原方案一半大小），不铺遮罩、不画整格边框，避免挡住 seat 贴图
+ */
+function drawCinemaSelectedOverlay(ctx: any, x: number, y: number, dot: number) {
+  ctx.save();
+
+  const r = Math.max(1.6, Math.min(dot * 0.17, dot * 0.22));
+  const pad = Math.max(0.4, dot * 0.05);
+  const cx = x + dot - pad - r;
+  const cy = y + dot - pad - r;
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, r, 0, Math.PI * 2);
+  ctx.fillStyle = "#D32F2F";
+  ctx.fill();
+  ctx.strokeStyle = "rgba(255,255,255,0.9)";
+  ctx.lineWidth = Math.max(0.45, dot * 0.035);
+  ctx.stroke();
+
+  const t = r * 0.58;
+  ctx.beginPath();
+  ctx.moveTo(cx - t * 0.42, cy + t * 0.02);
+  ctx.lineTo(cx - t * 0.1, cy + t * 0.34);
+  ctx.lineTo(cx + t * 0.42, cy - t * 0.32);
+  ctx.strokeStyle = "#FFFFFF";
+  ctx.lineWidth = Math.max(0.55, r * 0.2);
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.stroke();
+
+  ctx.restore();
+}
+
 /** 选中列表写入 setData 时补齐 seatNo / seatRow / seatArea（来自接口 data） */
 function withSeatAxisForSelection(seat: Seat): Seat {
   const d = seat.data || {};
@@ -64,6 +102,12 @@ Page({
   /** 无 seatDrawSize 的座位使用的默认绘制边长（逻辑像素），与 util DEFAULT_SEAT_DRAW_PX 一致 */
   seatSize: DEFAULT_SEAT_DRAW_PX,
   bgImage: null as any, // 背景图片
+  /** seat1 可选 / seat2 已售 / seat3 不可选（WAIT_PAY 等） */
+  seatImages: null as null | {
+    available: any;
+    sold: any;
+    disabled: any;
+  },
   seats: [] as Seat[], // 座位数据
   scale: 1, // 基础缩放比例（设计稿750px转换为屏幕宽度）
 
@@ -174,12 +218,16 @@ Page({
                 this.initialOffsetY = this.offsetY;
 
                 this.initSeats();
-                this.render();
+                this.loadSeatImages(canvas, () => {
+                  this.render();
+                });
               };
               img.onerror = (err: any) => {
                 console.error("背景图片加载失败", err);
                 this.initSeats();
-                this.render();
+                this.loadSeatImages(canvas, () => {
+                  this.render();
+                });
               };
             });
         }, 0);
@@ -199,6 +247,41 @@ Page({
       return;
     }
     this.seats = [];
+  },
+
+  /**
+   * 加载座位贴图（须与 canvas 同源 createImage）
+   */
+  loadSeatImages(canvas: any, onReady: () => void) {
+    const specs = [
+      { key: "available" as const, src: "/assets/seat1.png" },
+      { key: "sold" as const, src: "/assets/seat2.png" },
+      { key: "disabled" as const, src: "/assets/seat3.png" },
+    ];
+    const images: { available: any; sold: any; disabled: any } = {
+      available: null,
+      sold: null,
+      disabled: null,
+    };
+    let pending = specs.length;
+    const done = () => {
+      pending -= 1;
+      if (pending === 0) {
+        this.seatImages = images;
+        onReady();
+      }
+    };
+    specs.forEach(({ key, src }) => {
+      const im = canvas.createImage();
+      im.onload = done;
+      im.onerror = (err: any) => {
+        console.error("座位图加载失败:", src, err);
+        images[key] = null;
+        done();
+      };
+      im.src = src;
+      images[key] = im;
+    });
   },
 
   /**
@@ -235,28 +318,51 @@ Page({
    * 绘制座位
    */
   drawSeats() {
-    const { ctx, scale, seatSize, seats } = this;
+    const { ctx, scale, seatSize, seats, seatImages } = this;
 
     seats.forEach((seat: Seat) => {
       const dot = seat.seatDrawSize ?? seatSize;
       const x = seat.x * scale - dot / 2;
       const y = seat.y * scale - dot / 2;
 
-      // 优先根据status渲染颜色
-      if (seat.status === 'SOLD') {
-        // 已售：红色
-        ctx.fillStyle = "#F44336";
-      } else if (seat.status === 'WAIT_PAY') {
-        // 待支付：黄色
-        ctx.fillStyle = "#FFEB3B";
-      } else if (seat.selected && seat.status === 'UNSOLD') {
-        // 未售且被选中：绿色
-        ctx.fillStyle = "#4CAF50";
+      let tile: any = null;
+      if (seat.status === "SOLD") {
+        tile = seatImages?.sold;
+      } else if (seat.status === "WAIT_PAY" || isGiftTicketSeat(seat)) {
+        tile = seatImages?.disabled;
       } else {
-        // 未售：白色
-        ctx.fillStyle = "#FFFFFF";
+        tile = seatImages?.available;
       }
-      ctx.fillRect(x, y, dot, dot);
+
+      const canDraw =
+        tile &&
+        typeof tile.width === "number" &&
+        tile.width > 0 &&
+        typeof tile.height === "number" &&
+        tile.height > 0;
+
+      if (canDraw) {
+        ctx.drawImage(tile, x, y, dot, dot);
+      } else {
+        if (seat.status === "SOLD") {
+          ctx.fillStyle = "#F44336";
+        } else if (seat.status === "WAIT_PAY" || isGiftTicketSeat(seat)) {
+          ctx.fillStyle = "#FFEB3B";
+        } else if (seat.selected && seat.status === "UNSOLD") {
+          ctx.fillStyle = "#4CAF50";
+        } else {
+          ctx.fillStyle = "#FFFFFF";
+        }
+        ctx.fillRect(x, y, dot, dot);
+      }
+
+      if (
+        seat.selected &&
+        seat.status === "UNSOLD" &&
+        !isGiftTicketSeat(seat)
+      ) {
+        drawCinemaSelectedOverlay(ctx, x, y, dot);
+      }
     });
   },
 
@@ -319,12 +425,16 @@ Page({
     } else {
       // 缩放比例大于等于1.5，执行座位选择操作
       if (clickedSeat) {
-        // 如果座位是WAIT_PAY或SOLD状态，直接返回不处理
-        if (clickedSeat.status === 'WAIT_PAY' || clickedSeat.status === 'SOLD') {
+        // WAIT_PAY / SOLD / 赠票 不可选
+        if (
+          clickedSeat.status === "WAIT_PAY" ||
+          clickedSeat.status === "SOLD" ||
+          isGiftTicketSeat(clickedSeat)
+        ) {
           return;
         }
-        // 只有未售的座位才能被选择
-        if (clickedSeat.status === 'UNSOLD') {
+        // 只有未售且非赠票的座位才能被选择
+        if (clickedSeat.status === "UNSOLD") {
           clickedSeat.selected = !clickedSeat.selected;
           this.updateSelectedSeats();
         }
@@ -425,7 +535,7 @@ Page({
   updateSelectedSeats() {
     // 过滤出选中的座位，并写入 seatNo / seatRow / seatArea 供页面与下单使用
     const selectedSeats = this.seats
-      .filter((seat: Seat) => seat.selected)
+      .filter((seat: Seat) => seat.selected && !isGiftTicketSeat(seat))
       .map((seat: Seat) => withSeatAxisForSelection(seat));
     // 生成选中座位的文本描述
     const selectedSeatsText = selectedSeats
@@ -660,7 +770,8 @@ Page({
       });
     });
     this.areaSeatMap = areaSeatMap;
-
+    console.log('this.areaSeatMap', this.areaSeatMap);
+    
     // 仅按 RENDER_SEAT_MAP 注册的区域与布局函数生成画布座位（不读 seat_pos）
     this.seats = [];
     Object.keys(RENDER_SEAT_MAP).forEach((ak) => {
@@ -669,8 +780,6 @@ Page({
       }
     });
 
-    console.log('this.areaSeatMap', this.areaSeatMap);
-    
     if (this.ctx) {
       this.render();
     }
