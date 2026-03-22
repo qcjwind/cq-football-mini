@@ -9,7 +9,13 @@ interface Seat {
   id: number; // 座位唯一ID
   x: number; // 座位X坐标
   y: number; // 座位Y坐标
-  number: number; // 座位编号
+  number: number; // 展示/业务用编号（如 seatRow*seatNo）
+  /** 接口座位号，写入 selectedSeats 时使用 */
+  seatNo?: number;
+  /** 接口排号，写入 selectedSeats 时使用 */
+  seatRow?: number;
+  /** 区域号，优先 data.seatArea / data.areaId */
+  seatArea?: number;
   comment: string; // 座位注释（如区域）
   selected?: boolean; // 是否被选中
   status?: SeatStatus; // 座位状态
@@ -17,6 +23,21 @@ interface Seat {
   data?: any; // 座位数据数据字段
   /** 由 RENDER_SEAT_MAP 按接口布局生成的区域名 */
   apiArea?: string;
+}
+
+/** 选中列表写入 setData 时补齐 seatNo / seatRow / seatArea（来自接口 data） */
+function withSeatAxisForSelection(seat: Seat): Seat {
+  const d = seat.data || {};
+  const sn = Number(d.seatNo);
+  const sr = Number(d.seatRow);
+  const rawArea = d.seatArea ?? d.areaId;
+  const sa = Number(rawArea);
+  return {
+    ...seat,
+    seatNo: Number.isFinite(sn) ? sn : 0,
+    seatRow: Number.isFinite(sr) ? sr : 0,
+    seatArea: Number.isFinite(sa) ? sa : 0,
+  };
 }
 
 // 画布尺寸接口
@@ -397,8 +418,10 @@ Page({
    * 更新选中座位
    */
   updateSelectedSeats() {
-    // 过滤出选中的座位
-    const selectedSeats = this.seats.filter((seat: Seat) => seat.selected);
+    // 过滤出选中的座位，并写入 seatNo / seatRow / seatArea 供页面与下单使用
+    const selectedSeats = this.seats
+      .filter((seat: Seat) => seat.selected)
+      .map((seat: Seat) => withSeatAxisForSelection(seat));
     // 生成选中座位的文本描述
     const selectedSeatsText = selectedSeats
       .map((seat: Seat) => `${seat.comment} ${seat.number}号`)

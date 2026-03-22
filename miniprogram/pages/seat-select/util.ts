@@ -23,6 +23,20 @@ function rowKeysSeatRowDesc(byRow: Record<string, any[]>): string[] {
   });
 }
 
+/** 同一行内按 seatNo 数字从大到小排序（不修改原数组） */
+function sortSeatsBySeatNoDesc(list: any[]): any[] {
+  return [...list].sort((a, b) => {
+    const na = Number(a.seatNo);
+    const nb = Number(b.seatNo);
+    const fa = Number.isFinite(na);
+    const fb = Number.isFinite(nb);
+    if (fa && fb) return nb - na;
+    if (fa) return -1;
+    if (fb) return 1;
+    return 0;
+  });
+}
+
 /**
  * SVIP A 区：按行、按 seatNo（已排序）铺坐标。
  * - 第一排第一个元素在 (startX, startY)
@@ -115,7 +129,7 @@ const renderSVIPBSeat = (
   for (const rk of rowKeys) {
     let y = 274.5;
 
-    const list = byRow[rk] || [];
+    const list = sortSeatsBySeatNoDesc(byRow[rk] || []);
     for (let i = 0; i < list.length; i++) {
       const item = list[i];
       const sr = Number(item.seatRow);
@@ -151,8 +165,8 @@ const renderSVIPCSeat = (
     let x = 443.2;
     for (const rk of rowKeys) {
       let y = 274.5;
-  
-      const list = byRow[rk] || [];
+
+      const list = sortSeatsBySeatNoDesc(byRow[rk] || []);
       for (let i = 0; i < list.length; i++) {
         const item = list[i];
         const sr = Number(item.seatRow);
@@ -175,7 +189,7 @@ const renderSVIPCSeat = (
       }
       x += 11;
     }
-}
+};
 export const RENDER_SEAT_MAP: Record<
   string,
   (byRow: Record<string, any[]>, page: SeatLayoutPage, areaKey: string) => void

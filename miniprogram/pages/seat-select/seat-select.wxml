@@ -30,8 +30,8 @@
     <view class="selected-positions">
       <view class="positions-scroll"  wx:if="{{selectedSeats.length > 0}}">
         <view class="positions-list">
-          <view wx:for="{{selectedSeats}}" wx:key="{{index}}" class="seat-tag">
-            <text class="seat-text">{{item.comment}} {{item.number}}号</text>
+          <view wx:for="{{selectedSeats}}" wx:key="{{item.number}}" class="seat-tag">
+            <text class="seat-text">{{item.area}} {{item.seatRow}}排 {{item.seatNo}}号</text>
             <text class="delete-icon" bindtap="removeSeat" data-index="{{index}}">×</text>
           </view>
         </view>
