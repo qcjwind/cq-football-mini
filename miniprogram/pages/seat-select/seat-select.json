@@ -1,5 +1,7 @@
 {
   "usingComponents": {},
+  "disableScroll": true,
+  "enablePullDownRefresh": false,
   "navigationBarTitleText": "座位选择",
   "navigationStyle": "default",
   "navigationBarBackgroundColor": "#ffffff",
