@@ -148,7 +148,6 @@ Page({
 
   // 匹配ID
   matchId: null as number | null,
-  skuId: null as string | null,
   matchSkuList: [] as SkuInfo[],
 
   /** 接口座位：外层 key=area，内层 key=seatRow，value=该行下座位 item 数组 */
@@ -161,7 +160,6 @@ Page({
     this.initCanvas();
 
     const matchId = options.matchId;
-    this.skuId = options.skuId ?? "";
     if (matchId) {
       this.matchId = matchId;
       this.loadMatchData(matchId);
@@ -853,8 +851,9 @@ Page({
       const buyIds = this.data.selectedSeats
         .map((item: any) => item.data?.ticket)
         ?.join(",");
+      const skuId = this.matchSkuList.find(item => item.area === this.data.selectedSeats[0].area)?.id;
       wx.navigateTo({
-        url: `/pages/order-confirm/order-confirm?matchId=${this.matchId}&buyIds=${buyIds}&price=${this.data.totalPrice}&needIdForTicket=Y&skuId=${this.skuId}`,
+        url: `/pages/order-confirm/order-confirm?matchId=${this.matchId}&buyIds=${buyIds}&price=${this.data.totalPrice}&needIdForTicket=Y&skuId=${skuId}`,
       });
     }
   },
