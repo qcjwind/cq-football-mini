@@ -25,7 +25,7 @@
         {
           "name": "pages/seat-select/seat-select",
           "pathName": "pages/seat-select/seat-select",
-          "query": "id=15",
+          "query": "id=14",
           "scene": null,
           "launchMode": "default"
         },

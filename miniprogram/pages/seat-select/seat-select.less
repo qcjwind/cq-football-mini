@@ -9,8 +9,7 @@
 }
 
 .seat-canvas {
-  /* 宽度由 WXML 内联 {{canvasWidth}}px 与绘制逻辑一致，勿用 100vw 以免与 windowWidth 不一致导致点击偏移 */
-  max-width: 100%;
+  width: 100%;
   background-color: #fff;
   border-radius: 16rpx;
   box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
@@ -37,15 +36,15 @@
 }
 
 .legend.available {
-  background-color: #4CAF50;
+  background-color: #4caf50;
 }
 
 .legend.selected {
-  background-color: #FF5722;
+  background-color: #ff5722;
 }
 
 .legend.unavailable {
-  background-color: #DDDDDD;
+  background-color: #dddddd;
 }
 
 .bottom-panel {
@@ -111,7 +110,7 @@
 }
 
 .delete-icon:hover {
-  color: #FF5722;
+  color: #ff5722;
 }
 
 .empty {
@@ -125,18 +124,14 @@
   height: calc(100rpx + env(safe-area-inset-bottom));
   align-items: center;
   background-color: #fff;
-  padding: 20rpx 24rpx;
+  padding: 10rpx 24rpx;
   justify-content: space-between;
   padding-bottom: calc(env(safe-area-inset-bottom) + 10rpx);
 }
 
-.legend-image {
-  width: 48rpx;
-}
-
 .price-info {
   display: flex;
-  align-items: baseline;
+  flex-direction: column;
   flex-shrink: 0;
   flex: 1;
 }
@@ -147,16 +142,9 @@
 }
 
 .price {
-  font-size: 24rpx;
-  color: #ff4444;
+  font-size: 36rpx;
+  color: #ff5722;
   font-weight: 600;
-}
-
-.price-value {
-  font-size: 48rpx;
-  color: #ff4444;
-  font-weight: 600;
-  padding-left: 6rpx;
 }
 
 .price-tip {
@@ -166,7 +154,7 @@
 
 .buy-btn {
   height: 80rpx;
-  background-color: #3461FD;
+  background-color: #3461fd;
   color: #fff;
   border: none;
   border-radius: 40rpx;

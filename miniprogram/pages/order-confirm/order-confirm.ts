@@ -22,7 +22,7 @@ interface OrderConfirmData {
   skuId: string;
   ticketPrice: number;
   agreementInfo?: null | any[];
-  needIdForTicket?: 'Y' | 'N';
+  needIdForTicket?: "Y" | "N";
   ticketCount: number;
   matchTimeStr: string;
   showAddModal: boolean;
@@ -34,7 +34,7 @@ interface OrderConfirmData {
   type?: string;
   ticketBid?: string;
   hasReadNotices: boolean;
-  buyIds?: string[];
+  buyIds: string[];
 }
 
 Page({
@@ -73,8 +73,9 @@ Page({
 
   onLoad(options: any) {
     console.log("订单确认页面参数:", options);
-    const { matchId, skuId, ticketBid, type, price, needIdForTicket, buyIds } = options;
-    const buyIdsList = buyIds?.split(',') || [];
+    const { matchId, skuId, ticketBid, type, price, needIdForTicket, buyIds } =
+      options;
+    const buyIdsList = buyIds?.split(",") || [];
     // 设置基本数据
     this.setData({
       matchId: matchId || "",
@@ -100,13 +101,13 @@ Page({
     try {
       // 从本地存储获取用户信息
       const userInfo = wx.getStorageSync("userInfo");
-      const defaultInfo = ():AttendeeInfo =>({
+      const defaultInfo = (): AttendeeInfo => ({
         name: "",
         idNumber: "",
         phone: "",
         idType: "ID_CARD",
         containsMySelf: false,
-      })
+      });
       if (userInfo) {
         const attendee: AttendeeInfo = {
           name: userInfo.name || "",
@@ -118,15 +119,17 @@ Page({
         const buyIdLen = buyIdsList?.length || 0;
 
         // 生成指定数量的观赛人信息
-        const attendeeList: AttendeeInfo[] = buyIdLen ? [{ ...attendee }] : Array(this.data.ticketCount)
-          .fill(null)
-          .map(() => ({ ...attendee }));
-        if(buyIdLen > 1) {
+        const attendeeList: AttendeeInfo[] = buyIdLen
+          ? [{ ...attendee }]
+          : Array(this.data.ticketCount)
+              .fill(null)
+              .map(() => ({ ...attendee }));
+        if (buyIdLen > 1) {
           buyIdsList!.forEach((id, index) => {
-            if(index < buyIdLen - 1) {
-              attendeeList.push(defaultInfo())
+            if (index < buyIdLen - 1) {
+              attendeeList.push(defaultInfo());
             }
-          })
+          });
         }
 
         console.log("attendeeList", attendeeList);
@@ -183,7 +186,7 @@ Page({
           matchTimeStr,
           agreementInfo,
           ticketInfo: ticket,
-          ...ticketShowInfo
+          ...ticketShowInfo,
         });
       } else {
         wx.showToast({
@@ -228,6 +231,14 @@ Page({
     const index = e.currentTarget.dataset.index;
     const attendeeList = [...this.data.attendeeList];
 
+    // 如果是从购票选座来的，只清空表单数据，不做移除
+    if (this.data.buyIds.length) {
+      this.setData({
+        [`attendeeList[${[index]}]`]: {},
+      });
+      return;
+    }
+
     if (attendeeList.length <= 1) {
       wx.showToast({
         title: "至少需要一名观赛人",
@@ -241,15 +252,18 @@ Page({
     this.setData({
       attendeeList,
       ticketCount: attendeeList.length,
-      totalPrice: ((this.data.ticketPrice * 100) * attendeeList.length) / 100,
+      totalPrice: (this.data.ticketPrice * 100 * attendeeList.length) / 100,
     });
   },
 
-  // 添加观赛人
+  // 添加观赛人、如果是选座位来的，最多可添加已选座位数个位置
   addAttendee() {
-    if (this.data.attendeeList.length >= this.data.matchInfo.buyLimit) {
+    const len = this.data.attendeeList.length;
+    const buyIdsLen = this.data.buyIds.length;
+    const defaultLen = this.data.matchInfo.buyLimit;
+    if (len >= buyIdsLen || len >= defaultLen) {
       wx.showToast({
-        title: `最多只能添加${this.data.matchInfo.buyLimit}名观赛人`,
+        title: `最多只能添加${buyIdsLen > 0 ? buyIdsLen : defaultLen}名观赛人`,
         icon: "none",
       });
       return;
@@ -272,7 +286,11 @@ Page({
       return;
     }
 
-    if (!this.data.hasReadNotices && this.data.agreementInfo && this.data.agreementInfo.length > 0) {
+    if (
+      !this.data.hasReadNotices &&
+      this.data.agreementInfo &&
+      this.data.agreementInfo.length > 0
+    ) {
       wx.showToast({
         title: "请阅读购票须知",
         icon: "none",
@@ -290,7 +308,10 @@ Page({
 
     // 验证观赛人信息
     for (const attendee of this.data.attendeeList) {
-      if ((!attendee.name || !attendee.idNumber) && this.data.needIdForTicket === 'Y') {
+      if (
+        (!attendee.name || !attendee.idNumber) &&
+        this.data.needIdForTicket === "Y"
+      ) {
         wx.showToast({
           title: "请完善观赛人信息",
           icon: "none",
@@ -358,12 +379,12 @@ Page({
             idType: attendee.idType || "ID_CARD",
             mobile: attendee.phone || "",
             mySelf: attendee.containsMySelf || false,
-          }))
+          })),
         ),
       };
       /** 如果是选座来的 */
-      if(this.data.buyIds && this.data.buyIds.length > 0) {
-        buyTicketParams.ticket = this.data.buyIds
+      if (this.data.buyIds && this.data.buyIds.length > 0) {
+        buyTicketParams.ticket = this.data.buyIds;
       }
 
       console.log("购票参数:", buyTicketParams);
@@ -479,7 +500,7 @@ Page({
     const { newAttendee, needIdForTicket } = this.data;
 
     // 验证表单
-    if (!newAttendee.name.trim() && needIdForTicket === 'Y') {
+    if (!newAttendee.name.trim() && needIdForTicket === "Y") {
       wx.showToast({
         title: "请输入姓名",
         icon: "none",
@@ -487,7 +508,7 @@ Page({
       return;
     }
 
-    if (!newAttendee.idNumber.trim() && needIdForTicket === 'Y') {
+    if (!newAttendee.idNumber.trim() && needIdForTicket === "Y") {
       wx.showToast({
         title: "请输入证件号",
         icon: "none",
@@ -517,13 +538,13 @@ Page({
     if (
       !this.validateIdNumber(
         newAttendee.idType || "身份证",
-        newAttendee.idNumber
-      )
-      && needIdForTicket === 'Y'
+        newAttendee.idNumber,
+      ) &&
+      needIdForTicket === "Y"
     ) {
       const errorMessage = this.getIdNumberErrorMessage(
         newAttendee.idType || "身份证",
-        newAttendee.idNumber
+        newAttendee.idNumber,
       );
       wx.showToast({
         title: errorMessage,
@@ -533,7 +554,7 @@ Page({
     }
 
     // 只有身份证类型才进行实名认证
-    if (newAttendee.idType === "ID_CARD" && needIdForTicket === 'Y') {
+    if (newAttendee.idType === "ID_CARD" && needIdForTicket === "Y") {
       // 调用实名认证接口
       try {
         const validParams: IdNoValidParams = {
@@ -577,17 +598,17 @@ Page({
 
   // 添加观赛人到列表
   addAttendeeToList(attendee: AttendeeInfo) {
-    console.log("选中的节点", attendee)
-    if(attendee.edit) {
+    console.log("选中的节点", attendee);
+    if (attendee.edit) {
       this.setData({
         attendeeList: this.data.attendeeList.map((item, index) => {
-          if(index === attendee.index) {
+          if (index === attendee.index) {
             return { ...item, ...attendee };
           }
           return item;
         }),
         showAddModal: false,
-      })
+      });
       return;
     }
     const attendeeList = [...this.data.attendeeList, { ...attendee }];
@@ -595,7 +616,7 @@ Page({
     this.setData({
       attendeeList,
       ticketCount: attendeeList.length,
-      totalPrice: ((this.data.ticketPrice * 100) * attendeeList.length) / 100,
+      totalPrice: (this.data.ticketPrice * 100 * attendeeList.length) / 100,
       showAddModal: false,
       // 成功添加后重置表单数据
       newAttendee: {
@@ -692,7 +713,11 @@ Page({
     const index = e.currentTarget.dataset.index;
     this.setData({
       showAddModal: true,
-      newAttendee: { ...this.data.attendeeList[index], edit: true, index: index },
+      newAttendee: {
+        ...this.data.attendeeList[index],
+        edit: true,
+        index: index,
+      },
     });
   },
 

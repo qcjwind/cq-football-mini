@@ -1,19 +1,19 @@
 <view class="seat-select-container">
   <view class="seat-info">
     <view class="info-item">
-      <image src="/assets/seat1.png" mode="widthFix" class="legend-image"></image>
+      <view class="legend available"></view>
       <text>可选</text>
     </view>
     <view class="info-item">
-      <image src="/assets/seat2.png" mode="widthFix" class="legend-image"></image>
+      <view class="legend selected"></view>
       <text>已售</text>
     </view>
     <view class="info-item">
-      <image src="/assets/seat3.png" mode="widthFix" class="legend-image"></image>
+      <view class="legend unavailable"></view>
       <text>不可选</text>
     </view>
   </view>
-  <canvas type="2d" id="seatCanvas" class="seat-canvas" bindtap="onCanvasTap" bindtouchstart="onTouchStart" bindtouchmove="onTouchMove" bindtouchend="onTouchEnd" style="width: {{canvasWidth}}px; height: {{canvasHeight}}px;" wx:if="{{showCanvas}}"></canvas>
+  <canvas type="2d" id="seatCanvas" class="seat-canvas" bindtap="onCanvasTap" bindtouchstart="onTouchStart" bindtouchmove="onTouchMove" bindtouchend="onTouchEnd" style="width: 100vw; height: {{canvasHeight}}px;" wx:if="{{showCanvas}}"></canvas>
   <view class="bottom-panel" style="height: calc(100vh - 180rpx - {{canvasHeight}}px - env(safe-area-inset-bottom));">
     <view class="selected-tags" wx:if="{{selectedSeats.length > 0}}">
       <view wx:for="{{selectedSeats}}" wx:key="seat-{{item.number}}" class="seat-tag">
@@ -24,8 +24,8 @@
   </view>
   <view class="order-info">
     <view class="price-info">
-      <text class="price">¥</text>
-      <text class="price-value">{{ totalPrice }}</text>
+      <view class="price-label">订单金额：<text class="price">¥{{ totalPrice }}</text></view>
+      <view class="price-tip">每人最多购买{{ buyLimit }}张</view>
     </view>
     <button class="buy-btn" bindtap="buyTicket">立即购买</button>
   </view>

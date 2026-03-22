@@ -1,4 +1,4 @@
-import matchService from "../../service/match";
+import matchService, { SkuInfo } from "../../service/match";
 import { RENDER_SEAT_MAP, DEFAULT_SEAT_DRAW_PX } from "./util";
 
 // 座位状态枚举
@@ -19,6 +19,7 @@ interface Seat {
   comment: string; // 座位注释（如区域）
   selected?: boolean; // 是否被选中
   status?: SeatStatus; // 座位状态
+  area?: string;
   subArea?: string; // 子区域名称
   data?: any; // 座位数据数据字段
   /** 由 RENDER_SEAT_MAP 按接口布局生成的区域名 */
@@ -33,24 +34,30 @@ function isGiftTicketSeat(seat: Seat): boolean {
 }
 
 /**
- * 电影院选座角标：圆 + 对勾置于座位格子正中心，尺寸随 seatDrawSize（dot）缩放
+ * 电影院选座角标：仅右下角小圆 + 对勾（约为原方案一半大小），不铺遮罩、不画整格边框，避免挡住 seat 贴图
  */
-function drawCinemaSelectedOverlay(ctx: any, x: number, y: number, dot: number) {
-  if (!(dot > 0)) {
-    return;
-  }
+function drawCinemaSelectedOverlay(
+  ctx: any,
+  x: number,
+  y: number,
+  dot: number,
+) {
   ctx.save();
 
-  const cx = x + dot / 2;
-  const cy = y + dot / 2;
-  const r = dot * 0.24;
+  // const r = Math.max(1.6, Math.min(dot * 0.17, dot * 0.22));
+  // const pad = Math.max(0.4, dot * 0.05);
+  // const cx = x + dot - pad - r;
+  // const cy = y + dot - pad - r;
+  const r = dot / 2;
+  const cx = x + r;
+  const cy = y + r;
 
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
   ctx.fillStyle = "#D32F2F";
   ctx.fill();
   ctx.strokeStyle = "rgba(255,255,255,0.9)";
-  ctx.lineWidth = Math.max(dot * 0.04, 0.35);
+  ctx.lineWidth = Math.max(0.45, dot * 0.035);
   ctx.stroke();
 
   const t = r * 0.58;
@@ -59,7 +66,7 @@ function drawCinemaSelectedOverlay(ctx: any, x: number, y: number, dot: number) 
   ctx.lineTo(cx - t * 0.1, cy + t * 0.34);
   ctx.lineTo(cx + t * 0.42, cy - t * 0.32);
   ctx.strokeStyle = "#FFFFFF";
-  ctx.lineWidth = Math.max(dot * 0.055, r * 0.22);
+  ctx.lineWidth = Math.max(0.55, r * 0.2);
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
   ctx.stroke();
@@ -92,17 +99,18 @@ Page({
   data: {
     selectedSeats: [] as Seat[], // 已选中的座位
     selectedSeatsText: "", // 已选中座位的文本描述
-    /** 与 initCanvas 中 canvasWidth 一致，须与 WXML 展示宽高一致，否则 tap/触摸坐标与绘制错位 */
-    canvasWidth: 375,
     canvasHeight: 1334, // 画布高度
     showCanvas: false, // 是否显示canvas
     totalPrice: 0, // 订单金额
+    buyLimit: 1, // 每人最多购买张数
   },
 
   // 画布相关属性
   canvas: null as any, // 画布实例
   ctx: null as any, // 2D上下文
   canvasSize: { width: 750, height: 1334 } as CanvasSize, // 画布尺寸
+  /** canvas 相对于页面的 Y 偏移量（用于修正点击坐标） */
+  canvasOffsetTop: 0,
   /** 无 seatDrawSize 的座位使用的默认绘制边长（逻辑像素），与 util DEFAULT_SEAT_DRAW_PX 一致 */
   seatSize: DEFAULT_SEAT_DRAW_PX,
   bgImage: null as any, // 背景图片
@@ -118,10 +126,7 @@ Page({
   // 缩放相关属性
   currentScale: 1, // 当前缩放比例
   minScale: 0.5, // 最小缩放比例
-  /** 点击画布放大到点/座位时的目标比例（与原先逻辑一致） */
-  maxScale: 10,
-  /** 双指捏合缩放上限（可高于 maxScale，仅手势） */
-  pinchMaxScale: 18,
+  maxScale: 10, // 最大缩放比例
   offsetX: 0, // X轴偏移量
   offsetY: 0, // Y轴偏移量
 
@@ -144,17 +149,10 @@ Page({
   // 匹配ID
   matchId: null as number | null,
   skuId: null as string | null,
+  matchSkuList: [] as SkuInfo[],
 
   /** 接口座位：外层 key=area，内层 key=seatRow，value=该行下座位 item 数组 */
   areaSeatMap: {} as Record<string, Record<string, any[]>>,
-
-  /** #seatCanvas 在视口中的位置与展示尺寸（px），touch 用 clientX/Y 换算到与 canvasSize 一致 */
-  seatCanvasViewport: null as null | {
-    left: number;
-    top: number;
-    width: number;
-    height: number;
-  },
 
   /**
    * 页面加载时初始化
@@ -162,10 +160,11 @@ Page({
   onLoad(options: any) {
     this.initCanvas();
 
-    const matchId = 14; // options.id ?? 15;
+    const matchId = options.matchId;
     this.skuId = options.skuId ?? "";
     if (matchId) {
       this.matchId = matchId;
+      this.loadMatchData(matchId);
       this.getSeatInfo(matchId);
     }
   },
@@ -189,10 +188,9 @@ Page({
         const canvasWidth = screenWidth;
         const canvasHeight = screenWidth / imgRatio;
 
-        // 设置数据，让 canvas 显示出来（展示宽高必须与 buffer/ctx 逻辑尺寸一致）
+        // 设置数据，让 canvas 显示出来
         this.setData({
-          canvasWidth,
-          canvasHeight,
+          canvasHeight: canvasHeight,
           showCanvas: true,
         });
 
@@ -201,7 +199,7 @@ Page({
           const query = wx.createSelectorQuery();
           query
             .select("#seatCanvas")
-            .fields({ node: true, size: true })
+            .fields({ node: true, size: true, rect: true })
             .exec((res: any) => {
               if (!res || !res[0]) {
                 console.error("Canvas 获取失败");
@@ -213,6 +211,8 @@ Page({
 
               this.canvas = canvas;
               this.ctx = ctx;
+              // 记录 canvas 相对于页面的 Y 偏移量
+              this.canvasOffsetTop = res[0].top || 0;
 
               // 加载背景图片
               const img = canvas.createImage();
@@ -227,9 +227,6 @@ Page({
 
                 this.canvasSize = { width: canvasWidth, height: canvasHeight };
                 this.scale = canvasWidth / 750;
-
-                // 同步 canvas 在页面中的展示盒，供触摸坐标换算（避免 Y 与 detail 偏差）
-                this.refreshSeatCanvasViewport();
 
                 // 记录初始状态
                 this.initialScale = this.currentScale;
@@ -386,109 +383,6 @@ Page({
   },
 
   /**
-   * 将点击/触摸转为与 ctx 绘制一致的 canvas 逻辑坐标（与 canvasSize 一致，单位 px）。
-   * 部分机型/基础库下 canvas bindtap 的 detail.x/y（尤其 Y）与 2D 绘制坐标不一致，
-   * 优先用 changedTouches + boundingClientRect 换算，并按展示区域与逻辑尺寸比例映射。
-   */
-  getCanvasLocalXYFromPointerEvent(
-    e: any,
-    callback: (x: number, y: number) => void,
-  ) {
-    const logicalW = this.canvasSize.width;
-    const logicalH = this.canvasSize.height;
-    const detail = e.detail || {};
-    const fallback = () => {
-      callback(Number(detail.x) || 0, Number(detail.y) || 0);
-    };
-
-    if (!(logicalW > 0 && logicalH > 0)) {
-      fallback();
-      return;
-    }
-
-    const touch =
-      (e.changedTouches && e.changedTouches[0]) ||
-      (e.touches && e.touches[0]);
-
-    wx.createSelectorQuery()
-      .in(this)
-      .select("#seatCanvas")
-      .boundingClientRect()
-      .exec((res: any) => {
-        const rect = res && res[0];
-        if (rect && rect.width > 0 && rect.height > 0) {
-          this.seatCanvasViewport = rect;
-        }
-        if (
-          rect &&
-          rect.width > 0 &&
-          rect.height > 0 &&
-          touch &&
-          typeof touch.clientX === "number" &&
-          typeof touch.clientY === "number"
-        ) {
-          const x =
-            ((touch.clientX - rect.left) * logicalW) / rect.width;
-          const y =
-            ((touch.clientY - rect.top) * logicalH) / rect.height;
-          callback(x, y);
-          return;
-        }
-        // 无触摸点（如开发者工具鼠标）时仍用 detail，并按展示盒与逻辑尺寸对齐
-        if (
-          rect &&
-          rect.width > 0 &&
-          rect.height > 0 &&
-          typeof detail.x === "number" &&
-          typeof detail.y === "number"
-        ) {
-          callback(
-            (detail.x * logicalW) / rect.width,
-            (detail.y * logicalH) / rect.height,
-          );
-          return;
-        }
-        fallback();
-      });
-  },
-
-  /** 查询并缓存 #seatCanvas 的 boundingClientRect（页面滚动/布局变化后需更新） */
-  refreshSeatCanvasViewport() {
-    wx.createSelectorQuery()
-      .in(this)
-      .select("#seatCanvas")
-      .boundingClientRect()
-      .exec((res: any) => {
-        const rect = res && res[0];
-        if (rect && rect.width > 0 && rect.height > 0) {
-          this.seatCanvasViewport = rect;
-        }
-      });
-  },
-
-  /** 将触摸点转为与绘制一致的 canvas 逻辑坐标 */
-  touchPointToCanvasLocal(touch: any): { x: number; y: number } {
-    const rect = this.seatCanvasViewport;
-    const lw = this.canvasSize.width;
-    const lh = this.canvasSize.height;
-    if (
-      rect &&
-      rect.width > 0 &&
-      rect.height > 0 &&
-      lw > 0 &&
-      lh > 0 &&
-      typeof touch.clientX === "number" &&
-      typeof touch.clientY === "number"
-    ) {
-      return {
-        x: ((touch.clientX - rect.left) * lw) / rect.width,
-        y: ((touch.clientY - rect.top) * lh) / rect.height,
-      };
-    }
-    return { x: Number(touch.x) || 0, y: Number(touch.y) || 0 };
-  },
-
-  /**
    * 画布点击事件
    */
   onCanvasTap(e: any) {
@@ -505,58 +399,75 @@ Page({
       return;
     }
 
-    this.getCanvasLocalXYFromPointerEvent(e, (x, y) => {
-      const { scale, seatSize, seats, currentScale, offsetX, offsetY } = this;
+    const { detail } = e;
+    // 修正 Y 坐标：减去 canvas 相对于页面的 Y 偏移量
+    const x = detail.x;
+    const y = detail.y - this.canvasOffsetTop;
 
-      // 转换坐标到世界坐标系（与 render 中 translate/scale 一致）
-      const transformedX = (x - offsetX) / currentScale;
-      const transformedY = (y - offsetY) / currentScale;
+    const { scale, seatSize, seats, currentScale, offsetX, offsetY } = this;
 
-      let clickedSeat = null;
+    // 转换坐标到世界坐标系
+    const transformedX = (x - offsetX) / currentScale;
+    const transformedY = (y - offsetY) / currentScale;
 
-      // 检测是否点击到座位（热区与单座 seatDrawSize 一致）
-      for (let i = 0; i < seats.length; i++) {
-        const seat = seats[i];
-        const seatX = seat.x * scale;
-        const seatY = seat.y * scale;
+    let clickedSeat = null;
 
-        const dot = seat.seatDrawSize ?? seatSize;
-        const halfSize = dot / 2 + 2;
+    // 检测是否点击到座位（热区与单座 seatDrawSize 一致）
+    for (let i = 0; i < seats.length; i++) {
+      const seat = seats[i];
+      const seatX = seat.x * scale;
+      const seatY = seat.y * scale;
 
-        if (
-          transformedX >= seatX - halfSize &&
-          transformedX <= seatX + halfSize &&
-          transformedY >= seatY - halfSize &&
-          transformedY <= seatY + halfSize
-        ) {
-          clickedSeat = seat;
-          break;
-        }
+      const dot = seat.seatDrawSize ?? seatSize;
+      const halfSize = Math.floor(dot / 2);
+
+      if (
+        transformedX >= seatX - halfSize &&
+        transformedX <= seatX + halfSize &&
+        transformedY >= seatY - halfSize &&
+        transformedY <= seatY + halfSize
+      ) {
+        clickedSeat = seat;
+        break;
       }
+    }
 
-      // 根据缩放比例执行不同操作
-      if (currentScale < 1.5) {
-        if (clickedSeat) {
-          this.zoomToSeat(clickedSeat);
-        } else {
-          this.zoomToPoint(transformedX, transformedY);
-        }
+    // 根据缩放比例执行不同操作
+    if (currentScale < 1.5) {
+      // 缩放比例小于1.5，执行放大操作
+      if (clickedSeat) {
+        this.zoomToSeat(clickedSeat);
       } else {
-        if (clickedSeat) {
+        this.zoomToPoint(transformedX, transformedY);
+      }
+    } else {
+      // 缩放比例大于等于1.5，执行座位选择操作
+      if (clickedSeat) {
+        // WAIT_PAY / SOLD / 赠票 不可选
+        if (
+          clickedSeat.status === "WAIT_PAY" ||
+          clickedSeat.status === "SOLD" ||
+          isGiftTicketSeat(clickedSeat)
+        ) {
+          return;
+        }
+        // 只有未售且非赠票的座位才能被选择
+        if (clickedSeat.status === "UNSOLD") {
           if (
-            clickedSeat.status === "WAIT_PAY" ||
-            clickedSeat.status === "SOLD" ||
-            isGiftTicketSeat(clickedSeat)
+            this.data.selectedSeats.length >= this.data.buyLimit &&
+            !clickedSeat.selected
           ) {
+            wx.showToast({
+              icon: "none",
+              title: `最多可选择${this.data.buyLimit}个座位`,
+            });
             return;
           }
-          if (clickedSeat.status === "UNSOLD") {
-            clickedSeat.selected = !clickedSeat.selected;
-            this.updateSelectedSeats();
-          }
+          clickedSeat.selected = !clickedSeat.selected;
+          this.updateSelectedSeats();
         }
       }
-    });
+    }
   },
 
   /**
@@ -658,11 +569,13 @@ Page({
     const selectedSeatsText = selectedSeats
       .map((seat: Seat) => `${seat.comment} ${seat.number}号`)
       .join("、");
+
     // 计算订单金额
-    const totalPrice = selectedSeats.reduce(
-      (acc, cur) => acc + (cur.data?.price || 0),
-      0,
-    );
+    const totalPrice = selectedSeats.reduce((acc, cur) => {
+      const price =
+        this.matchSkuList.find((item) => item.area === cur.area)?.price || 0;
+      return acc + (price ? price / 100 : 0);
+    }, 0);
 
     // 更新数据
     this.setData({
@@ -703,7 +616,6 @@ Page({
    * 触摸开始事件
    */
   onTouchStart(e: any) {
-    this.refreshSeatCanvasViewport();
     const touches = e.touches;
     if (touches.length === 2) {
       // 双指触摸，开始缩放
@@ -728,8 +640,7 @@ Page({
       // 单指触摸，开始拖动
       this.isDragging = true;
       this.isPinching = false;
-      const p0 = this.touchPointToCanvasLocal(touches[0]);
-      this.lastTouchPosition = { x: p0.x, y: p0.y };
+      this.lastTouchPosition = { x: touches[0].x, y: touches[0].y };
       this.hasMoved = false;
     }
   },
@@ -752,10 +663,7 @@ Page({
       let newScale = this.currentScale * distanceRatio;
 
       // 限制缩放范围
-      newScale = Math.max(
-        this.minScale,
-        Math.min(this.pinchMaxScale, newScale),
-      );
+      newScale = Math.max(this.minScale, Math.min(this.maxScale, newScale));
 
       // 计算偏移量
       const scaleRatio = newScale / this.currentScale;
@@ -777,9 +685,8 @@ Page({
     } else if (this.isDragging && e.touches.length === 1) {
       // 单指移动，处理拖动
       const touch = e.touches[0];
-      const p = this.touchPointToCanvasLocal(touch);
-      const deltaX = p.x - this.lastTouchPosition.x;
-      const deltaY = p.y - this.lastTouchPosition.y;
+      const deltaX = touch.x - this.lastTouchPosition.x;
+      const deltaY = touch.y - this.lastTouchPosition.y;
 
       // 计算移动距离
       const moveDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -794,7 +701,7 @@ Page({
         this.offsetX += deltaX;
         this.offsetY += deltaY;
 
-        this.lastTouchPosition = { x: p.x, y: p.y };
+        this.lastTouchPosition = { x: touch.x, y: touch.y };
 
         // 节流渲染
         this.throttledRender();
@@ -826,10 +733,8 @@ Page({
    * 计算两点距离
    */
   getDistance(touch1: any, touch2: any) {
-    const p1 = this.touchPointToCanvasLocal(touch1);
-    const p2 = this.touchPointToCanvasLocal(touch2);
-    const dx = p1.x - p2.x;
-    const dy = p1.y - p2.y;
+    const dx = touch1.x - touch2.x;
+    const dy = touch1.y - touch2.y;
     return Math.sqrt(dx * dx + dy * dy);
   },
 
@@ -837,11 +742,9 @@ Page({
    * 计算两点中心点
    */
   getCenter(touch1: any, touch2: any) {
-    const p1 = this.touchPointToCanvasLocal(touch1);
-    const p2 = this.touchPointToCanvasLocal(touch2);
     return {
-      x: (p1.x + p2.x) / 2,
-      y: (p1.y + p2.y) / 2,
+      x: (touch1.x + touch2.x) / 2,
+      y: (touch1.y + touch2.y) / 2,
     };
   },
 
@@ -897,8 +800,8 @@ Page({
       });
     });
     this.areaSeatMap = areaSeatMap;
-    console.log('this.areaSeatMap', this.areaSeatMap);
-    
+    console.log("this.areaSeatMap", this.areaSeatMap);
+
     // 仅按 RENDER_SEAT_MAP 注册的区域与布局函数生成画布座位（不读 seat_pos）
     this.seats = [];
     Object.keys(RENDER_SEAT_MAP).forEach((ak) => {
@@ -912,6 +815,31 @@ Page({
     }
   },
 
+  /** 查询赛事信息 */
+  async loadMatchData(matchId: any) {
+    try {
+      // 调用真实的API接口
+      const { code, data } = await matchService.getMatchInfo({
+        matchId: Number(matchId),
+      });
+      if (code === 200) {
+        this.setData({
+          buyLimit:
+            data.match.needIdForTicket === "Y" ? 1 : (data.match.buyLimit ?? 2), // 和后台保持一致，默认2个
+        });
+        this.matchSkuList = data.skuList;
+      }
+    } catch (error) {
+      wx.showToast({
+        title: "加载失败，请重试",
+        icon: "none",
+      });
+      this.setData({
+        loading: false,
+      });
+    }
+  },
+
   /** 确认选座 */
   buyTicket() {
     console.log(this.data.selectedSeats);
@@ -922,15 +850,11 @@ Page({
       });
       return;
     } else {
-      const totalPrice = this.data.selectedSeats.reduce(
-        (acc, cur: any) => acc + (cur.data?.price ?? 0),
-        0,
-      );
       const buyIds = this.data.selectedSeats
         .map((item: any) => item.data?.bid)
         ?.join(",");
       wx.redirectTo({
-        url: `/pages/order-confirm/order-confirm?matchId=${this.matchId}&buyIds=${buyIds}&price=${totalPrice}&needIdForTicket=Y&skuId=${this.skuId}`,
+        url: `/pages/order-confirm/order-confirm?matchId=${this.matchId}&buyIds=${buyIds}&price=${this.data.totalPrice}&needIdForTicket=Y&skuId=${this.skuId}`,
       });
     }
   },
