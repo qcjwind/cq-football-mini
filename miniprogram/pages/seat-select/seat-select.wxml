@@ -1,16 +1,4 @@
 <view class="seat-select-container">
-  <canvas 
-    type="2d" 
-    id="seatCanvas" 
-    class="seat-canvas"
-    bindtap="onCanvasTap"
-    bindtouchstart="onTouchStart"
-    bindtouchmove="onTouchMove"
-    bindtouchend="onTouchEnd"
-    style="width: 100vw; height: {{canvasHeight}}px;"
-    wx:if="{{showCanvas}}"
-  ></canvas>
-
   <view class="seat-info">
     <view class="info-item">
       <view class="legend available"></view>
@@ -25,25 +13,20 @@
       <text>不可选</text>
     </view>
   </view>
- 
-  <view class="bottom-panel">
-    <view class="selected-positions">
-      <view class="positions-scroll"  wx:if="{{selectedSeats.length > 0}}">
-        <view class="positions-list">
-          <view wx:for="{{selectedSeats}}" wx:key="{{item.number}}" class="seat-tag">
-            <text class="seat-text">{{item.area}} {{item.seatRow}}排 {{item.seatNo}}号</text>
-            <text class="delete-icon" bindtap="removeSeat" data-index="{{index}}">×</text>
-          </view>
-        </view>
+  <canvas type="2d" id="seatCanvas" class="seat-canvas" bindtap="onCanvasTap" bindtouchstart="onTouchStart" bindtouchmove="onTouchMove" bindtouchend="onTouchEnd" style="width: 100vw; height: {{canvasHeight}}px;" wx:if="{{showCanvas}}"></canvas>
+  <view class="bottom-panel" style="height: calc(100vh - 180rpx - {{canvasHeight}}px - env(safe-area-inset-bottom));">
+    <view class="selected-tags" wx:if="{{selectedSeats.length > 0}}">
+      <view wx:for="{{selectedSeats}}" wx:key="seat-{{item.number}}" class="seat-tag">
+        <text class="seat-text">{{item.area}} {{item.seatRow}}排 {{item.seatNo}}号</text>
+        <text class="delete-icon" bindtap="removeSeat" data-index="{{index}}">×</text>
       </view>
     </view>
-    <view class="order-info">
-      <view class="price-info">
-        <text class="price-label">订单金额：</text>
-        <text class="price">¥{{ totalPrice }}</text>
-        <text class="price-tip">实际价格以订单确认页为准</text>
-      </view>
-      <button class="buy-btn" bindtap="buyTicket">立即购买</button>
+  </view>
+  <view class="order-info">
+    <view class="price-info">
+      <text class="price-label">订单金额：</text>
+      <text class="price">¥{{ totalPrice }}</text>
     </view>
+    <button class="buy-btn" bindtap="buyTicket">立即购买</button>
   </view>
 </view>
