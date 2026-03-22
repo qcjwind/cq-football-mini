@@ -384,7 +384,7 @@ Page({
       };
       /** 如果是选座来的 */
       if (this.data.buyIds && this.data.buyIds.length > 0) {
-        buyTicketParams.ticket = this.data.buyIds;
+        buyTicketParams.tickets = this.data.buyIds.map(Number);
       }
 
       console.log("购票参数:", buyTicketParams);
