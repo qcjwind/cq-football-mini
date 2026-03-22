@@ -853,7 +853,7 @@ Page({
       const buyIds = this.data.selectedSeats
         .map((item: any) => item.data?.ticket)
         ?.join(",");
-      wx.redirectTo({
+      wx.navigateTo({
         url: `/pages/order-confirm/order-confirm?matchId=${this.matchId}&buyIds=${buyIds}&price=${this.data.totalPrice}&needIdForTicket=Y&skuId=${this.skuId}`,
       });
     }

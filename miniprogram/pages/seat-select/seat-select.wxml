@@ -14,7 +14,25 @@
     </view>
   </view>
   <canvas type="2d" id="seatCanvas" class="seat-canvas" bindtap="onCanvasTap" bindtouchstart="onTouchStart" bindtouchmove="onTouchMove" bindtouchend="onTouchEnd" style="width: 100vw; height: {{canvasHeight}}px;" wx:if="{{showCanvas}}"></canvas>
-  <view class="bottom-panel" style="height: calc(100vh - 180rpx - {{canvasHeight}}px - env(safe-area-inset-bottom));">
+  <view class="seat-pirces">
+    <view class="price-box svip">
+      <text>SVIP：</text>
+      <text>¥500</text>
+    </view>
+     <view class="price-box vip">
+      <text>VIP：</text>
+      <text>¥258</text>
+    </view>
+     <view class="price-box b">
+      <text>B区：</text>
+      <text>¥158</text>
+    </view>
+     <view class="price-box a">
+      <text>A区：</text>
+      <text>¥58</text>
+    </view>
+  </view>
+  <view class="bottom-panel" style="height: calc(100vh - 180rpx - 90rpx - {{canvasHeight}}px - env(safe-area-inset-bottom));">
     <view class="selected-tags" wx:if="{{selectedSeats.length > 0}}">
       <view wx:for="{{selectedSeats}}" wx:key="seat-{{item.number}}" class="seat-tag">
         <text class="seat-text">{{item.area}} {{item.seatRow}}排 {{item.seatNo}}号</text>

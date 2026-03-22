@@ -442,7 +442,7 @@ export const renderF2CNorthSeat = (
   areaKey: string,
   opts?: RenderSeatLayoutOptions,
 ) => {
-  const rowKeys = Object.keys(byRow);
+  const rowKeys = rowKeysSeatRowDesc(byRow);
 
   let nid = page.seats.reduce((m, s) => Math.max(m, Number(s.id) || 0), 0);
   let x = 201;
