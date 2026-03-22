@@ -33,6 +33,12 @@ function isGiftTicketSeat(seat: Seat): boolean {
   return seat.data?.ticketType === "GIFT_TICKET";
 }
 
+/** 跨区限制用：与 util 写入的 area / apiArea 一致，下单也用 seat.area */
+function getSeatSelectionAreaKey(seat: Seat): string {
+  const raw = seat.area ?? seat.apiArea ?? seat.data?.area;
+  return raw != null && raw !== "" ? String(raw) : "";
+}
+
 /**
  * 电影院选座角标：圆 + 对勾置于座位格正中心；尺寸按 dot（seatDrawSize ?? 默认 seatSize）比例缩放
  */
@@ -456,6 +462,20 @@ Page({
               title: `最多可选择${this.data.buyLimit}个座位`,
             });
             return;
+          }
+          // 不可跨区域选座（取消选中不限制）
+          if (!clickedSeat.selected && this.data.selectedSeats.length > 0) {
+            const firstKey = getSeatSelectionAreaKey(
+              this.data.selectedSeats[0] as Seat,
+            );
+            const nextKey = getSeatSelectionAreaKey(clickedSeat);
+            if (firstKey !== nextKey) {
+              wx.showToast({
+                icon: "none",
+                title: "不可跨区域选座",
+              });
+              return;
+            }
           }
           clickedSeat.selected = !clickedSeat.selected;
           this.updateSelectedSeats();
