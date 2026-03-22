@@ -2,7 +2,7 @@ import matchService from "../../service/match";
 import { RENDER_SEAT_MAP, DEFAULT_SEAT_DRAW_PX } from "./util";
 
 // 座位状态枚举
-type SeatStatus = 'UNSOLD' | 'WAIT_PAY' | 'SOLD';
+type SeatStatus = "UNSOLD" | "WAIT_PAY" | "SOLD";
 
 // 座位接口定义
 interface Seat {
@@ -147,7 +147,7 @@ Page({
   onLoad(options: any) {
     this.initCanvas();
 
-    const matchId = 14 // options.id ?? 15;
+    const matchId = 14; // options.id ?? 15;
     this.skuId = options.skuId ?? "";
     if (matchId) {
       this.matchId = matchId;
@@ -747,9 +747,7 @@ Page({
     data.forEach((item: any) => {
       const areaKey = item.area != null ? String(item.area) : "";
       const rowKey =
-        item.seatRow != null && item.seatRow !== ""
-          ? String(item.seatRow)
-          : "";
+        item.seatRow != null && item.seatRow !== "" ? String(item.seatRow) : "";
       if (!areaSeatMap[areaKey]) {
         areaSeatMap[areaKey] = {};
       }
@@ -765,7 +763,9 @@ Page({
         byRow[rk].sort((a: any, b: any) => {
           const na = Number(a.seatNo);
           const nb = Number(b.seatNo);
-          return (Number.isFinite(na) ? na : 0) - (Number.isFinite(nb) ? nb : 0);
+          return (
+            (Number.isFinite(na) ? na : 0) - (Number.isFinite(nb) ? nb : 0)
+          );
         });
       });
     });
@@ -788,18 +788,23 @@ Page({
   /** 确认选座 */
   buyTicket() {
     console.log(this.data.selectedSeats);
-    if(!this.data.selectedSeats.length) {
+    if (!this.data.selectedSeats.length) {
       wx.showToast({
-        title: '请选择座位',
-        icon: 'none',
+        title: "请选择座位",
+        icon: "none",
       });
       return;
     } else {
-      const totalPrice = this.data.selectedSeats.reduce((acc, cur:any) => acc + (cur.data?.price ?? 0), 0);
-      const buyIds = this.data.selectedSeats.map((item:any) => item.data?.bid)?.join(',');
+      const totalPrice = this.data.selectedSeats.reduce(
+        (acc, cur: any) => acc + (cur.data?.price ?? 0),
+        0,
+      );
+      const buyIds = this.data.selectedSeats
+        .map((item: any) => item.data?.bid)
+        ?.join(",");
       wx.redirectTo({
         url: `/pages/order-confirm/order-confirm?matchId=${this.matchId}&buyIds=${buyIds}&price=${totalPrice}&needIdForTicket=Y&skuId=${this.skuId}`,
-      }); 
+      });
     }
   },
 });
