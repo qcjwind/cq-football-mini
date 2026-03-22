@@ -160,7 +160,7 @@ Page({
   onLoad(options: any) {
     this.initCanvas();
 
-    const matchId = options.id;
+    const matchId = options.matchId;
     this.skuId = options.skuId ?? "";
     if (matchId) {
       this.matchId = matchId;
@@ -824,7 +824,8 @@ Page({
       });
       if (code === 200) {
         this.setData({
-          buyLimit: data.match.needIdForTicket === "Y" ? 3 : 3, //(data.match.buyLimit ?? 2)
+          buyLimit:
+            data.match.needIdForTicket === "Y" ? 1 : (data.match.buyLimit ?? 2), // 和后台保持一致，默认2个
         });
         this.matchSkuList = data.skuList;
       }
