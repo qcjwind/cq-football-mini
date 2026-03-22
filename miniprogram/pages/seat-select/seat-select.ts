@@ -35,13 +35,21 @@ function isGiftTicketSeat(seat: Seat): boolean {
 /**
  * 电影院选座角标：仅右下角小圆 + 对勾（约为原方案一半大小），不铺遮罩、不画整格边框，避免挡住 seat 贴图
  */
-function drawCinemaSelectedOverlay(ctx: any, x: number, y: number, dot: number) {
+function drawCinemaSelectedOverlay(
+  ctx: any,
+  x: number,
+  y: number,
+  dot: number,
+) {
   ctx.save();
 
-  const r = Math.max(1.6, Math.min(dot * 0.17, dot * 0.22));
-  const pad = Math.max(0.4, dot * 0.05);
-  const cx = x + dot - pad - r;
-  const cy = y + dot - pad - r;
+  // const r = Math.max(1.6, Math.min(dot * 0.17, dot * 0.22));
+  // const pad = Math.max(0.4, dot * 0.05);
+  // const cx = x + dot - pad - r;
+  // const cy = y + dot - pad - r;
+  const r = dot / 2;
+  const cx = x + r;
+  const cy = y + r;
 
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
@@ -99,6 +107,8 @@ Page({
   canvas: null as any, // 画布实例
   ctx: null as any, // 2D上下文
   canvasSize: { width: 750, height: 1334 } as CanvasSize, // 画布尺寸
+  /** canvas 相对于页面的 Y 偏移量（用于修正点击坐标） */
+  canvasOffsetTop: 0,
   /** 无 seatDrawSize 的座位使用的默认绘制边长（逻辑像素），与 util DEFAULT_SEAT_DRAW_PX 一致 */
   seatSize: DEFAULT_SEAT_DRAW_PX,
   bgImage: null as any, // 背景图片
@@ -185,7 +195,7 @@ Page({
           const query = wx.createSelectorQuery();
           query
             .select("#seatCanvas")
-            .fields({ node: true, size: true })
+            .fields({ node: true, size: true, rect: true })
             .exec((res: any) => {
               if (!res || !res[0]) {
                 console.error("Canvas 获取失败");
@@ -197,6 +207,8 @@ Page({
 
               this.canvas = canvas;
               this.ctx = ctx;
+              // 记录 canvas 相对于页面的 Y 偏移量
+              this.canvasOffsetTop = res[0].top || 0;
 
               // 加载背景图片
               const img = canvas.createImage();
@@ -384,7 +396,9 @@ Page({
     }
 
     const { detail } = e;
-    const { x, y } = detail;
+    // 修正 Y 坐标：减去 canvas 相对于页面的 Y 偏移量
+    const x = detail.x;
+    const y = detail.y - this.canvasOffsetTop;
 
     const { scale, seatSize, seats, currentScale, offsetX, offsetY } = this;
 
@@ -770,8 +784,8 @@ Page({
       });
     });
     this.areaSeatMap = areaSeatMap;
-    console.log('this.areaSeatMap', this.areaSeatMap);
-    
+    console.log("this.areaSeatMap", this.areaSeatMap);
+
     // 仅按 RENDER_SEAT_MAP 注册的区域与布局函数生成画布座位（不读 seat_pos）
     this.seats = [];
     Object.keys(RENDER_SEAT_MAP).forEach((ak) => {
