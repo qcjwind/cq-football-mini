@@ -658,9 +658,9 @@ const F3N_STEP_ROW_LE_14_AFTER_GAP = 3.5;
  * - 排 ≤ 14：0–17 小步，18 大台阶，19+ 另一种小步
  */
 function f3nStepYAfterSeat(row: number, colIndex: number, y: number): number {
-  if (row > 14) {
-    return y - F3N_STEP_ROW_GT_14;
-  }
+//   if (row > 14) {
+//     return y - F3N_STEP_ROW_GT_14;
+//   }
   if (colIndex < 18) {
     return y - F3N_STEP_ROW_LE_14_BEFORE_GAP;
   }

@@ -1,15 +1,15 @@
 <view class="seat-select-container">
   <view class="seat-info">
     <view class="info-item">
-      <view class="legend available"></view>
+      <image src="/assets/seat1.png" mode="widthFix" class="legend-image" />
       <text>可选</text>
     </view>
     <view class="info-item">
-      <view class="legend selected"></view>
+      <image src="/assets/seat2.png" mode="widthFix" class="legend-image" />
       <text>已售</text>
     </view>
     <view class="info-item">
-      <view class="legend unavailable"></view>
+      <image src="/assets/seat3.png" mode="widthFix" class="legend-image" />
       <text>不可选</text>
     </view>
   </view>
@@ -24,7 +24,10 @@
   </view>
   <view class="order-info">
     <view class="price-info">
-      <view class="price-label">订单金额：<text class="price">¥{{ totalPrice }}</text></view>
+      <view class="price-label">
+        订单金额：
+        <text class="price">¥{{ totalPrice }}</text>
+      </view>
       <view class="price-tip">每人最多购买{{ buyLimit }}张</view>
     </view>
     <button class="buy-btn" bindtap="buyTicket">立即购买</button>
