@@ -43,11 +43,11 @@
         </view>
       </view>
     </view>
-    <view wx:if="{{type !== 'gift'}}" class="add-attendee" bindtap="addAttendee">
+    <view wx:if="{{type !== 'gift' && buyIds.length === 0}}" class="add-attendee" bindtap="addAttendee">
       <image class="add-icon" src="../../assets/add.png" mode="aspectFit"></image>
       <text class="add-text">新增</text>
     </view>
-    <view wx:else class="ticket-info">
+    <view wx:if="{{type === 'gift'}}" class="ticket-info">
       <text wx:if="{{area}}">{{ticketInfo.area}}</text>
       <text wx:if="{{subArea}}">·{{ticketInfo.subArea}}</text>
       <text wx:if="{{seatRow}}">·{{ticketInfo.seatRow}}排</text>

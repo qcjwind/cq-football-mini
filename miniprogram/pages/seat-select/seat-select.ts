@@ -92,6 +92,8 @@ Page({
   data: {
     selectedSeats: [] as Seat[], // 已选中的座位
     selectedSeatsText: "", // 已选中座位的文本描述
+    /** 与 initCanvas 中 canvasWidth 一致，须与 WXML 展示宽高一致，否则 tap/触摸坐标与绘制错位 */
+    canvasWidth: 375,
     canvasHeight: 1334, // 画布高度
     showCanvas: false, // 是否显示canvas
     totalPrice: 0, // 订单金额
@@ -116,7 +118,10 @@ Page({
   // 缩放相关属性
   currentScale: 1, // 当前缩放比例
   minScale: 0.5, // 最小缩放比例
-  maxScale: 8, // 最大缩放比例
+  /** 点击画布放大到点/座位时的目标比例（与原先逻辑一致） */
+  maxScale: 10,
+  /** 双指捏合缩放上限（可高于 maxScale，仅手势） */
+  pinchMaxScale: 18,
   offsetX: 0, // X轴偏移量
   offsetY: 0, // Y轴偏移量
 
@@ -142,6 +147,14 @@ Page({
 
   /** 接口座位：外层 key=area，内层 key=seatRow，value=该行下座位 item 数组 */
   areaSeatMap: {} as Record<string, Record<string, any[]>>,
+
+  /** #seatCanvas 在视口中的位置与展示尺寸（px），touch 用 clientX/Y 换算到与 canvasSize 一致 */
+  seatCanvasViewport: null as null | {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+  },
 
   /**
    * 页面加载时初始化
@@ -176,9 +189,10 @@ Page({
         const canvasWidth = screenWidth;
         const canvasHeight = screenWidth / imgRatio;
 
-        // 设置数据，让 canvas 显示出来
+        // 设置数据，让 canvas 显示出来（展示宽高必须与 buffer/ctx 逻辑尺寸一致）
         this.setData({
-          canvasHeight: canvasHeight,
+          canvasWidth,
+          canvasHeight,
           showCanvas: true,
         });
 
@@ -213,6 +227,9 @@ Page({
 
                 this.canvasSize = { width: canvasWidth, height: canvasHeight };
                 this.scale = canvasWidth / 750;
+
+                // 同步 canvas 在页面中的展示盒，供触摸坐标换算（避免 Y 与 detail 偏差）
+                this.refreshSeatCanvasViewport();
 
                 // 记录初始状态
                 this.initialScale = this.currentScale;
@@ -369,6 +386,109 @@ Page({
   },
 
   /**
+   * 将点击/触摸转为与 ctx 绘制一致的 canvas 逻辑坐标（与 canvasSize 一致，单位 px）。
+   * 部分机型/基础库下 canvas bindtap 的 detail.x/y（尤其 Y）与 2D 绘制坐标不一致，
+   * 优先用 changedTouches + boundingClientRect 换算，并按展示区域与逻辑尺寸比例映射。
+   */
+  getCanvasLocalXYFromPointerEvent(
+    e: any,
+    callback: (x: number, y: number) => void,
+  ) {
+    const logicalW = this.canvasSize.width;
+    const logicalH = this.canvasSize.height;
+    const detail = e.detail || {};
+    const fallback = () => {
+      callback(Number(detail.x) || 0, Number(detail.y) || 0);
+    };
+
+    if (!(logicalW > 0 && logicalH > 0)) {
+      fallback();
+      return;
+    }
+
+    const touch =
+      (e.changedTouches && e.changedTouches[0]) ||
+      (e.touches && e.touches[0]);
+
+    wx.createSelectorQuery()
+      .in(this)
+      .select("#seatCanvas")
+      .boundingClientRect()
+      .exec((res: any) => {
+        const rect = res && res[0];
+        if (rect && rect.width > 0 && rect.height > 0) {
+          this.seatCanvasViewport = rect;
+        }
+        if (
+          rect &&
+          rect.width > 0 &&
+          rect.height > 0 &&
+          touch &&
+          typeof touch.clientX === "number" &&
+          typeof touch.clientY === "number"
+        ) {
+          const x =
+            ((touch.clientX - rect.left) * logicalW) / rect.width;
+          const y =
+            ((touch.clientY - rect.top) * logicalH) / rect.height;
+          callback(x, y);
+          return;
+        }
+        // 无触摸点（如开发者工具鼠标）时仍用 detail，并按展示盒与逻辑尺寸对齐
+        if (
+          rect &&
+          rect.width > 0 &&
+          rect.height > 0 &&
+          typeof detail.x === "number" &&
+          typeof detail.y === "number"
+        ) {
+          callback(
+            (detail.x * logicalW) / rect.width,
+            (detail.y * logicalH) / rect.height,
+          );
+          return;
+        }
+        fallback();
+      });
+  },
+
+  /** 查询并缓存 #seatCanvas 的 boundingClientRect（页面滚动/布局变化后需更新） */
+  refreshSeatCanvasViewport() {
+    wx.createSelectorQuery()
+      .in(this)
+      .select("#seatCanvas")
+      .boundingClientRect()
+      .exec((res: any) => {
+        const rect = res && res[0];
+        if (rect && rect.width > 0 && rect.height > 0) {
+          this.seatCanvasViewport = rect;
+        }
+      });
+  },
+
+  /** 将触摸点转为与绘制一致的 canvas 逻辑坐标 */
+  touchPointToCanvasLocal(touch: any): { x: number; y: number } {
+    const rect = this.seatCanvasViewport;
+    const lw = this.canvasSize.width;
+    const lh = this.canvasSize.height;
+    if (
+      rect &&
+      rect.width > 0 &&
+      rect.height > 0 &&
+      lw > 0 &&
+      lh > 0 &&
+      typeof touch.clientX === "number" &&
+      typeof touch.clientY === "number"
+    ) {
+      return {
+        x: ((touch.clientX - rect.left) * lw) / rect.width,
+        y: ((touch.clientY - rect.top) * lh) / rect.height,
+      };
+    }
+    return { x: Number(touch.x) || 0, y: Number(touch.y) || 0 };
+  },
+
+  /**
    * 画布点击事件
    */
   onCanvasTap(e: any) {
@@ -385,63 +505,58 @@ Page({
       return;
     }
 
-    const { detail } = e;
-    const { x, y } = detail;
+    this.getCanvasLocalXYFromPointerEvent(e, (x, y) => {
+      const { scale, seatSize, seats, currentScale, offsetX, offsetY } = this;
 
-    const { scale, seatSize, seats, currentScale, offsetX, offsetY } = this;
+      // 转换坐标到世界坐标系（与 render 中 translate/scale 一致）
+      const transformedX = (x - offsetX) / currentScale;
+      const transformedY = (y - offsetY) / currentScale;
 
-    // 转换坐标到世界坐标系
-    const transformedX = (x - offsetX) / currentScale;
-    const transformedY = (y - offsetY) / currentScale;
+      let clickedSeat = null;
 
-    let clickedSeat = null;
+      // 检测是否点击到座位（热区与单座 seatDrawSize 一致）
+      for (let i = 0; i < seats.length; i++) {
+        const seat = seats[i];
+        const seatX = seat.x * scale;
+        const seatY = seat.y * scale;
 
-    // 检测是否点击到座位（热区与单座 seatDrawSize 一致）
-    for (let i = 0; i < seats.length; i++) {
-      const seat = seats[i];
-      const seatX = seat.x * scale;
-      const seatY = seat.y * scale;
+        const dot = seat.seatDrawSize ?? seatSize;
+        const halfSize = dot / 2 + 2;
 
-      const dot = seat.seatDrawSize ?? seatSize;
-      const halfSize = dot / 2 + 2;
-
-      if (
-        transformedX >= seatX - halfSize &&
-        transformedX <= seatX + halfSize &&
-        transformedY >= seatY - halfSize &&
-        transformedY <= seatY + halfSize
-      ) {
-        clickedSeat = seat;
-        break;
-      }
-    }
-
-    // 根据缩放比例执行不同操作
-    if (currentScale < 1.5) {
-      // 缩放比例小于1.5，执行放大操作
-      if (clickedSeat) {
-        this.zoomToSeat(clickedSeat);
-      } else {
-        this.zoomToPoint(transformedX, transformedY);
-      }
-    } else {
-      // 缩放比例大于等于1.5，执行座位选择操作
-      if (clickedSeat) {
-        // WAIT_PAY / SOLD / 赠票 不可选
         if (
-          clickedSeat.status === "WAIT_PAY" ||
-          clickedSeat.status === "SOLD" ||
-          isGiftTicketSeat(clickedSeat)
+          transformedX >= seatX - halfSize &&
+          transformedX <= seatX + halfSize &&
+          transformedY >= seatY - halfSize &&
+          transformedY <= seatY + halfSize
         ) {
-          return;
-        }
-        // 只有未售且非赠票的座位才能被选择
-        if (clickedSeat.status === "UNSOLD") {
-          clickedSeat.selected = !clickedSeat.selected;
-          this.updateSelectedSeats();
+          clickedSeat = seat;
+          break;
         }
       }
-    }
+
+      // 根据缩放比例执行不同操作
+      if (currentScale < 1.5) {
+        if (clickedSeat) {
+          this.zoomToSeat(clickedSeat);
+        } else {
+          this.zoomToPoint(transformedX, transformedY);
+        }
+      } else {
+        if (clickedSeat) {
+          if (
+            clickedSeat.status === "WAIT_PAY" ||
+            clickedSeat.status === "SOLD" ||
+            isGiftTicketSeat(clickedSeat)
+          ) {
+            return;
+          }
+          if (clickedSeat.status === "UNSOLD") {
+            clickedSeat.selected = !clickedSeat.selected;
+            this.updateSelectedSeats();
+          }
+        }
+      }
+    });
   },
 
   /**
@@ -588,6 +703,7 @@ Page({
    * 触摸开始事件
    */
   onTouchStart(e: any) {
+    this.refreshSeatCanvasViewport();
     const touches = e.touches;
     if (touches.length === 2) {
       // 双指触摸，开始缩放
@@ -612,7 +728,8 @@ Page({
       // 单指触摸，开始拖动
       this.isDragging = true;
       this.isPinching = false;
-      this.lastTouchPosition = { x: touches[0].x, y: touches[0].y };
+      const p0 = this.touchPointToCanvasLocal(touches[0]);
+      this.lastTouchPosition = { x: p0.x, y: p0.y };
       this.hasMoved = false;
     }
   },
@@ -635,7 +752,10 @@ Page({
       let newScale = this.currentScale * distanceRatio;
 
       // 限制缩放范围
-      newScale = Math.max(this.minScale, Math.min(this.maxScale, newScale));
+      newScale = Math.max(
+        this.minScale,
+        Math.min(this.pinchMaxScale, newScale),
+      );
 
       // 计算偏移量
       const scaleRatio = newScale / this.currentScale;
@@ -657,8 +777,9 @@ Page({
     } else if (this.isDragging && e.touches.length === 1) {
       // 单指移动，处理拖动
       const touch = e.touches[0];
-      const deltaX = touch.x - this.lastTouchPosition.x;
-      const deltaY = touch.y - this.lastTouchPosition.y;
+      const p = this.touchPointToCanvasLocal(touch);
+      const deltaX = p.x - this.lastTouchPosition.x;
+      const deltaY = p.y - this.lastTouchPosition.y;
 
       // 计算移动距离
       const moveDistance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
@@ -673,7 +794,7 @@ Page({
         this.offsetX += deltaX;
         this.offsetY += deltaY;
 
-        this.lastTouchPosition = { x: touch.x, y: touch.y };
+        this.lastTouchPosition = { x: p.x, y: p.y };
 
         // 节流渲染
         this.throttledRender();
@@ -705,8 +826,10 @@ Page({
    * 计算两点距离
    */
   getDistance(touch1: any, touch2: any) {
-    const dx = touch1.x - touch2.x;
-    const dy = touch1.y - touch2.y;
+    const p1 = this.touchPointToCanvasLocal(touch1);
+    const p2 = this.touchPointToCanvasLocal(touch2);
+    const dx = p1.x - p2.x;
+    const dy = p1.y - p2.y;
     return Math.sqrt(dx * dx + dy * dy);
   },
 
@@ -714,9 +837,11 @@ Page({
    * 计算两点中心点
    */
   getCenter(touch1: any, touch2: any) {
+    const p1 = this.touchPointToCanvasLocal(touch1);
+    const p2 = this.touchPointToCanvasLocal(touch2);
     return {
-      x: (touch1.x + touch2.x) / 2,
-      y: (touch1.y + touch2.y) / 2,
+      x: (p1.x + p2.x) / 2,
+      y: (p1.y + p2.y) / 2,
     };
   },
 
