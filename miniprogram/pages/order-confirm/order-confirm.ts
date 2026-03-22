@@ -231,6 +231,14 @@ Page({
     const index = e.currentTarget.dataset.index;
     const attendeeList = [...this.data.attendeeList];
 
+    // 如果是从购票选座来的，只清空表单数据，不做移除
+    if (this.data.buyIds.length) {
+      this.setData({
+        [`attendeeList[${[index]}]`]: {},
+      });
+      return;
+    }
+
     if (attendeeList.length <= 1) {
       wx.showToast({
         title: "至少需要一名观赛人",
