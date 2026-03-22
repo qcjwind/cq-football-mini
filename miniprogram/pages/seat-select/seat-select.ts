@@ -33,22 +33,24 @@ function isGiftTicketSeat(seat: Seat): boolean {
 }
 
 /**
- * 电影院选座角标：仅右下角小圆 + 对勾（约为原方案一半大小），不铺遮罩、不画整格边框，避免挡住 seat 贴图
+ * 电影院选座角标：圆 + 对勾置于座位格子正中心，尺寸随 seatDrawSize（dot）缩放
  */
 function drawCinemaSelectedOverlay(ctx: any, x: number, y: number, dot: number) {
+  if (!(dot > 0)) {
+    return;
+  }
   ctx.save();
 
-  const r = Math.max(1.6, Math.min(dot * 0.17, dot * 0.22));
-  const pad = Math.max(0.4, dot * 0.05);
-  const cx = x + dot - pad - r;
-  const cy = y + dot - pad - r;
+  const cx = x + dot / 2;
+  const cy = y + dot / 2;
+  const r = dot * 0.24;
 
   ctx.beginPath();
   ctx.arc(cx, cy, r, 0, Math.PI * 2);
   ctx.fillStyle = "#D32F2F";
   ctx.fill();
   ctx.strokeStyle = "rgba(255,255,255,0.9)";
-  ctx.lineWidth = Math.max(0.45, dot * 0.035);
+  ctx.lineWidth = Math.max(dot * 0.04, 0.35);
   ctx.stroke();
 
   const t = r * 0.58;
@@ -57,7 +59,7 @@ function drawCinemaSelectedOverlay(ctx: any, x: number, y: number, dot: number) 
   ctx.lineTo(cx - t * 0.1, cy + t * 0.34);
   ctx.lineTo(cx + t * 0.42, cy - t * 0.32);
   ctx.strokeStyle = "#FFFFFF";
-  ctx.lineWidth = Math.max(0.55, r * 0.2);
+  ctx.lineWidth = Math.max(dot * 0.055, r * 0.22);
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
   ctx.stroke();
