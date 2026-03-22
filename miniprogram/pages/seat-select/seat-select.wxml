@@ -24,8 +24,8 @@
   </view>
   <view class="order-info">
     <view class="price-info">
-      <text class="price-label">订单金额：</text>
-      <text class="price">¥{{ totalPrice }}</text>
+      <view class="price-label">订单金额：<text class="price">¥{{ totalPrice }}</text></view>
+      <view class="price-tip">每人最多购买{{ buyLimit }}张</view>
     </view>
     <button class="buy-btn" bindtap="buyTicket">立即购买</button>
   </view>

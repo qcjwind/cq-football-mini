@@ -18,6 +18,7 @@ interface MatchInfo {
   startTime: string;
   status: "ENABLE";
   venueId: number;
+  needIdForTicket: "Y" | "N";
 }
 
 // 赛事列表响应接口
@@ -51,7 +52,7 @@ interface ArenaInfo {
 }
 
 // 赛事SKU信息接口
-interface SkuInfo {
+export interface SkuInfo {
   area: string;
   gmtCreate: string;
   gmtModify: string;
@@ -94,9 +95,9 @@ interface MatchTicketList {
   seatRow: number;
   seatNo: number;
   price: number;
-  ticketType: string;       // 如 "SALE_TICKET"
-  saleStatus: "UNSOLD" | "WAIT_PAY" | "SOLD";       // 如 "UNSOLD"
-  syncStatus: string;       // 如 "NOT_SYNC"
+  ticketType: string; // 如 "SALE_TICKET"
+  saleStatus: "UNSOLD" | "WAIT_PAY" | "SOLD"; // 如 "UNSOLD"
+  syncStatus: string; // 如 "NOT_SYNC"
   verificationStatus: string; // 如 "N"
 }
 

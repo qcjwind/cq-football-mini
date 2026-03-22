@@ -1,4 +1,4 @@
-import matchService from "../../service/match";
+import matchService, { SkuInfo } from "../../service/match";
 import { RENDER_SEAT_MAP, DEFAULT_SEAT_DRAW_PX } from "./util";
 
 // 座位状态枚举
@@ -19,6 +19,7 @@ interface Seat {
   comment: string; // 座位注释（如区域）
   selected?: boolean; // 是否被选中
   status?: SeatStatus; // 座位状态
+  area?: string;
   subArea?: string; // 子区域名称
   data?: any; // 座位数据数据字段
   /** 由 RENDER_SEAT_MAP 按接口布局生成的区域名 */
@@ -101,6 +102,7 @@ Page({
     canvasHeight: 1334, // 画布高度
     showCanvas: false, // 是否显示canvas
     totalPrice: 0, // 订单金额
+    buyLimit: 1, // 每人最多购买张数
   },
 
   // 画布相关属性
@@ -147,6 +149,7 @@ Page({
   // 匹配ID
   matchId: null as number | null,
   skuId: null as string | null,
+  matchSkuList: [] as SkuInfo[],
 
   /** 接口座位：外层 key=area，内层 key=seatRow，value=该行下座位 item 数组 */
   areaSeatMap: {} as Record<string, Record<string, any[]>>,
@@ -157,10 +160,11 @@ Page({
   onLoad(options: any) {
     this.initCanvas();
 
-    const matchId = 14; // options.id ?? 15;
+    const matchId = options.id;
     this.skuId = options.skuId ?? "";
     if (matchId) {
       this.matchId = matchId;
+      this.loadMatchData(matchId);
       this.getSeatInfo(matchId);
     }
   },
@@ -449,6 +453,16 @@ Page({
         }
         // 只有未售且非赠票的座位才能被选择
         if (clickedSeat.status === "UNSOLD") {
+          if (
+            this.data.selectedSeats.length >= this.data.buyLimit &&
+            !clickedSeat.selected
+          ) {
+            wx.showToast({
+              icon: "none",
+              title: `最多可选择${this.data.buyLimit}个座位`,
+            });
+            return;
+          }
           clickedSeat.selected = !clickedSeat.selected;
           this.updateSelectedSeats();
         }
@@ -555,11 +569,13 @@ Page({
     const selectedSeatsText = selectedSeats
       .map((seat: Seat) => `${seat.comment} ${seat.number}号`)
       .join("、");
+
     // 计算订单金额
-    const totalPrice = selectedSeats.reduce(
-      (acc, cur) => acc + (cur.data?.price || 0),
-      0,
-    );
+    const totalPrice = selectedSeats.reduce((acc, cur) => {
+      const price =
+        this.matchSkuList.find((item) => item.area === cur.area)?.price || 0;
+      return acc + (price ? price / 100 : 0);
+    }, 0);
 
     // 更新数据
     this.setData({
@@ -799,6 +815,30 @@ Page({
     }
   },
 
+  /** 查询赛事信息 */
+  async loadMatchData(matchId: any) {
+    try {
+      // 调用真实的API接口
+      const { code, data } = await matchService.getMatchInfo({
+        matchId: Number(matchId),
+      });
+      if (code === 200) {
+        this.setData({
+          buyLimit: data.match.needIdForTicket === "Y" ? 3 : 3, //(data.match.buyLimit ?? 2)
+        });
+        this.matchSkuList = data.skuList;
+      }
+    } catch (error) {
+      wx.showToast({
+        title: "加载失败，请重试",
+        icon: "none",
+      });
+      this.setData({
+        loading: false,
+      });
+    }
+  },
+
   /** 确认选座 */
   buyTicket() {
     console.log(this.data.selectedSeats);
@@ -809,15 +849,11 @@ Page({
       });
       return;
     } else {
-      const totalPrice = this.data.selectedSeats.reduce(
-        (acc, cur: any) => acc + (cur.data?.price ?? 0),
-        0,
-      );
       const buyIds = this.data.selectedSeats
         .map((item: any) => item.data?.bid)
         ?.join(",");
       wx.redirectTo({
-        url: `/pages/order-confirm/order-confirm?matchId=${this.matchId}&buyIds=${buyIds}&price=${totalPrice}&needIdForTicket=Y&skuId=${this.skuId}`,
+        url: `/pages/order-confirm/order-confirm?matchId=${this.matchId}&buyIds=${buyIds}&price=${this.data.totalPrice}&needIdForTicket=Y&skuId=${this.skuId}`,
       });
     }
   },
