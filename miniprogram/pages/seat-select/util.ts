@@ -615,7 +615,7 @@ const renderThreeFloorASeat = (
     let y = 150 + (F3A_ROW_BASE_Y_DELTA[row] ?? 0);
     const list = byRow[rk] || [];
     for (let i = 0; i < list.length; i++) {
-      if (row >= 10 && row <= 13 && i === f3aFirstColExtraAtColumn(row)) {
+      if (row >= 10 && row <= 13 && i === row - 10) {
         y += F3A_FIRST_COL_EXTRA;
       }
       const item = list[i];
