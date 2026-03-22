@@ -1,18 +1,18 @@
 // service/order.ts - 订单服务
-import BaseService from './base';
+import BaseService from "./base";
 
 // 订单信息接口
 interface OrderInfo {
-  buyNum: number,
-  gmtCreate: string,
-  gmtModify: string,
-  id: number,
-  matchId: number,
-  orderNo: string,
-  skuId: number,
-  totalPrice: number,
-  userId: number,
-  venueId: number
+  buyNum: number;
+  gmtCreate: string;
+  gmtModify: string;
+  id: number;
+  matchId: number;
+  orderNo: string;
+  skuId: number;
+  totalPrice: number;
+  userId: number;
+  venueId: number;
 }
 
 // 订单列表响应接口
@@ -43,7 +43,7 @@ interface BuyTicketParams {
   // 幂等，前端生成UUID
   requestNo: string;
   skuId: number;
-  ticket?: string[];
+  tickets?: number[];
 }
 
 // 购票响应接口
@@ -67,21 +67,22 @@ interface BuyTicketResponse {
 }
 
 class OrderService extends BaseService {
-
   /**
    * 获取我的订单列表
    * @param params 查询参数
    * @returns Promise<OrderListResponse>
    */
-  async getMyOrderList(params: OrderListParams = {}): Promise<OrderListResponse> {
+  async getMyOrderList(
+    params: OrderListParams = {},
+  ): Promise<OrderListResponse> {
     try {
-      const response = await this.post('/app/order/myList', params, {
+      const response = await this.post("/app/order/myList", params, {
         showLoading: false,
         // loadingText: '加载订单列表中...'
       });
       return response as OrderListResponse;
     } catch (error) {
-      console.error('获取订单列表失败:', error);
+      console.error("获取订单列表失败:", error);
       throw error;
     }
   }
@@ -93,17 +94,20 @@ class OrderService extends BaseService {
    */
   async getOrderDetail(orderId: string): Promise<any> {
     try {
-      const response = await this.post(`/app/order/myInfo`, { orderId }, {
-        showLoading: true,
-        loadingText: '加载订单详情中...'
-      });
+      const response = await this.post(
+        `/app/order/myInfo`,
+        { orderId },
+        {
+          showLoading: true,
+          loadingText: "加载订单详情中...",
+        },
+      );
       return response;
     } catch (error) {
-      console.error('获取订单详情失败:', error);
+      console.error("获取订单详情失败:", error);
       throw error;
     }
   }
-
 
   /**
    * 支付订单
@@ -112,13 +116,17 @@ class OrderService extends BaseService {
    */
   async payOrder(orderId: number): Promise<any> {
     try {
-      const response = await this.post(`/app/order/pay/${orderId}`, {}, {
-        showLoading: true,
-        loadingText: '支付订单中...'
-      });
+      const response = await this.post(
+        `/app/order/pay/${orderId}`,
+        {},
+        {
+          showLoading: true,
+          loadingText: "支付订单中...",
+        },
+      );
       return response;
     } catch (error) {
-      console.error('支付订单失败:', error);
+      console.error("支付订单失败:", error);
       throw error;
     }
   }
@@ -130,14 +138,14 @@ class OrderService extends BaseService {
    */
   async buySaleTicket(params: BuyTicketParams): Promise<BuyTicketResponse> {
     try {
-      console.log('购票参数:', params);
-      const response = await this.post('/app/order/buySaleTicket', params, {
+      console.log("购票参数:", params);
+      const response = await this.post("/app/order/buySaleTicket", params, {
         showLoading: true,
-        loadingText: '正在购票...'
+        loadingText: "正在购票...",
       });
       return response;
     } catch (error) {
-      console.error('购票失败:', error);
+      console.error("购票失败:", error);
       throw error;
     }
   }
@@ -147,25 +155,31 @@ class OrderService extends BaseService {
    * @param params 购票参数
    * @returns Promise<BuyTicketResponse>
    */
-  async buyGiftTicket(params: {ticketBid: string}): Promise<BuyTicketResponse> {
+  async buyGiftTicket(params: {
+    ticketBid: string;
+  }): Promise<BuyTicketResponse> {
     try {
-      console.log('购票参数:', params);
-      const response = await this.post('/app/order/buyGiftTicket', params, {
+      console.log("购票参数:", params);
+      const response = await this.post("/app/order/buyGiftTicket", params, {
         showLoading: true,
-        loadingText: '正在购票...'
+        loadingText: "正在购票...",
       });
       return response;
     } catch (error) {
-      console.error('购票失败:', error);
+      console.error("购票失败:", error);
       throw error;
     }
   }
 }
 
-
-
 // 创建单例实例
 const orderService = new OrderService();
 
 export default orderService;
-export { OrderInfo, OrderListResponse, OrderListParams, BuyTicketParams, BuyTicketResponse };
+export {
+  OrderInfo,
+  OrderListResponse,
+  OrderListParams,
+  BuyTicketParams,
+  BuyTicketResponse,
+};
