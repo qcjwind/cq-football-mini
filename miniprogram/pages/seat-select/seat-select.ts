@@ -1,5 +1,5 @@
 import matchService from "../../service/match";
-import { RENDER_SEAT_MAP } from "./util";
+import { RENDER_SEAT_MAP, DEFAULT_SEAT_DRAW_PX } from "./util";
 
 // 座位状态枚举
 type SeatStatus = 'UNSOLD' | 'WAIT_PAY' | 'SOLD';
@@ -23,6 +23,8 @@ interface Seat {
   data?: any; // 座位数据数据字段
   /** 由 RENDER_SEAT_MAP 按接口布局生成的区域名 */
   apiArea?: string;
+  /** 画布上绘制边长（逻辑像素）；未设时回落到页面 seatSize / DEFAULT_SEAT_DRAW_PX */
+  seatDrawSize?: number;
 }
 
 /** 选中列表写入 setData 时补齐 seatNo / seatRow / seatArea（来自接口 data） */
@@ -59,7 +61,8 @@ Page({
   canvas: null as any, // 画布实例
   ctx: null as any, // 2D上下文
   canvasSize: { width: 750, height: 1334 } as CanvasSize, // 画布尺寸
-  seatSize: 4, // 座位大小（像素）
+  /** 无 seatDrawSize 的座位使用的默认绘制边长（逻辑像素），与 util DEFAULT_SEAT_DRAW_PX 一致 */
+  seatSize: DEFAULT_SEAT_DRAW_PX,
   bgImage: null as any, // 背景图片
   seats: [] as Seat[], // 座位数据
   scale: 1, // 基础缩放比例（设计稿750px转换为屏幕宽度）
@@ -235,8 +238,9 @@ Page({
     const { ctx, scale, seatSize, seats } = this;
 
     seats.forEach((seat: Seat) => {
-      const x = seat.x * scale - seatSize / 2;
-      const y = seat.y * scale - seatSize / 2;
+      const dot = seat.seatDrawSize ?? seatSize;
+      const x = seat.x * scale - dot / 2;
+      const y = seat.y * scale - dot / 2;
 
       // 优先根据status渲染颜色
       if (seat.status === 'SOLD') {
@@ -252,7 +256,7 @@ Page({
         // 未售：白色
         ctx.fillStyle = "#FFFFFF";
       }
-      ctx.fillRect(x, y, seatSize, seatSize);
+      ctx.fillRect(x, y, dot, dot);
     });
   },
 
@@ -284,13 +288,14 @@ Page({
 
     let clickedSeat = null;
 
-    // 检测是否点击到座位
+    // 检测是否点击到座位（热区与单座 seatDrawSize 一致）
     for (let i = 0; i < seats.length; i++) {
       const seat = seats[i];
       const seatX = seat.x * scale;
       const seatY = seat.y * scale;
 
-      const halfSize = seatSize / 2 + 2;
+      const dot = seat.seatDrawSize ?? seatSize;
+      const halfSize = dot / 2 + 2;
 
       if (
         transformedX >= seatX - halfSize &&
