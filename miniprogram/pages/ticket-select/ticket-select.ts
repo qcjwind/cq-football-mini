@@ -228,7 +228,7 @@ Page({
     //   url: `/pages/order-confirm/order-confirm?matchId=${this.data.matchInfo.id}&skuId=${this.data.selectedArea.id}&price=${this.data.totalPrice}&needIdForTicket=${this.data.matchInfo.needIdForTicket}`,
     // });
     wx.navigateTo({
-      url: `/pages/seat-select/seat-select?matchId=${this.data.matchInfo.id}&skuId=${this.data.selectedArea.id}&price=${this.data.totalPrice}&needIdForTicket=${this.data.matchInfo.needIdForTicket}`,
+      url: `/pages/seat-select/seat-select?matchId=${this.data.matchInfo.id}&price=${this.data.totalPrice}&needIdForTicket=${this.data.matchInfo.needIdForTicket}`,
     });
   },
 
